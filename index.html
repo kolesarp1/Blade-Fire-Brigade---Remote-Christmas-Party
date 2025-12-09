@@ -4,19 +4,174 @@
   <meta charset="UTF-8">
   <title>BladeLabs Winter Festival - Full Map</title>
   <style>
+    * {
+      box-sizing: border-box;
+    }
     body {
       margin: 0;
       background: #1a1a2e;
+      min-height: 100vh;
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+    }
+
+    /* Control Panel */
+    .controls {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 1000;
       display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .control-group {
+      background: rgba(0, 0, 0, 0.8);
+      border-radius: 8px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .control-group h3 {
+      margin: 0 0 5px 0;
+      color: #fff;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .btn-row {
+      display: flex;
+      gap: 5px;
+    }
+    .btn {
+      background: #4a4a6a;
+      border: none;
+      color: #fff;
+      padding: 10px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
+      transition: background 0.2s;
+    }
+    .btn:hover {
+      background: #6a6a8a;
+    }
+    .btn:active {
+      background: #3a3a5a;
+    }
+    .btn-large {
+      padding: 12px 20px;
+      font-size: 14px;
+    }
+    .btn-export {
+      background: #2d7a2d;
+    }
+    .btn-export:hover {
+      background: #3d9a3d;
+    }
+    .zoom-display {
+      color: #fff;
+      font-size: 14px;
+      text-align: center;
+      padding: 5px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 4px;
+    }
+
+    /* SVG Container */
+    .svg-container {
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      cursor: grab;
+    }
+    .svg-container:active {
+      cursor: grabbing;
+    }
+    .svg-container svg {
+      display: block;
+      transform-origin: 0 0;
+    }
+
+    /* Export modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      z-index: 2000;
       justify-content: center;
       align-items: center;
-      min-height: 100vh;
-      overflow: auto;
     }
-    svg {
+    .modal.active {
+      display: flex;
+    }
+    .modal-content {
+      background: #2a2a4a;
+      padding: 30px;
+      border-radius: 12px;
+      text-align: center;
+      color: #fff;
+      max-width: 400px;
+    }
+    .modal-content h2 {
+      margin-top: 0;
+    }
+    .modal-content select, .modal-content input {
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 5px;
+      border: none;
+      margin: 10px 0;
+      width: 100%;
+    }
+    .modal-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+      justify-content: center;
+    }
+    .progress-bar {
+      width: 100%;
+      height: 20px;
+      background: #1a1a2e;
+      border-radius: 10px;
+      overflow: hidden;
+      margin: 15px 0;
+      display: none;
+    }
+    .progress-bar.active {
       display: block;
-      max-width: 100%;
-      height: auto;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #4CAF50, #8BC34A);
+      width: 0%;
+      transition: width 0.3s;
+    }
+
+    /* Instructions */
+    .instructions {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      background: rgba(0, 0, 0, 0.7);
+      color: #aaa;
+      padding: 10px 15px;
+      border-radius: 8px;
+      font-size: 12px;
+      z-index: 1000;
+    }
+    .instructions kbd {
+      background: #4a4a6a;
+      padding: 2px 6px;
+      border-radius: 3px;
+      color: #fff;
     }
 
     @keyframes snowdrift {
@@ -48,7 +203,55 @@
   </style>
 </head>
 <body>
-  <svg viewBox="0 0 3200 2400" xmlns="http://www.w3.org/2000/svg">
+  <!-- Control Panel -->
+  <div class="controls">
+    <div class="control-group">
+      <h3>Zoom</h3>
+      <div class="btn-row">
+        <button class="btn" onclick="zoomIn()" title="Zoom In">+</button>
+        <button class="btn" onclick="zoomOut()" title="Zoom Out">−</button>
+        <button class="btn" onclick="resetView()" title="Reset View">⟲</button>
+      </div>
+      <div class="zoom-display" id="zoomLevel">100%</div>
+    </div>
+    <div class="control-group">
+      <h3>Export</h3>
+      <button class="btn btn-large btn-export" onclick="showExportModal()">
+        📥 Export PNG
+      </button>
+    </div>
+  </div>
+
+  <!-- Instructions -->
+  <div class="instructions">
+    <kbd>Scroll</kbd> to zoom • <kbd>Drag</kbd> to pan • <kbd>Double-click</kbd> to zoom in
+  </div>
+
+  <!-- Export Modal -->
+  <div class="modal" id="exportModal">
+    <div class="modal-content">
+      <h2>Export as PNG</h2>
+      <p>Select resolution for export:</p>
+      <select id="exportResolution">
+        <option value="1">Standard (3200 × 2400)</option>
+        <option value="2" selected>High Quality (6400 × 4800)</option>
+        <option value="3">Ultra High (9600 × 7200)</option>
+        <option value="4">Poster Print (12800 × 9600)</option>
+      </select>
+      <div class="progress-bar" id="progressBar">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+      <p id="exportStatus"></p>
+      <div class="modal-buttons">
+        <button class="btn" onclick="hideExportModal()">Cancel</button>
+        <button class="btn btn-export" onclick="exportPNG()" id="exportBtn">Export</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SVG Container -->
+  <div class="svg-container" id="svgContainer">
+    <svg id="mainSvg" viewBox="0 0 3200 2400" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <!-- Ground snow gradient -->
       <linearGradient id="snowGround" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -3505,5 +3708,313 @@
     </g>
 
   </svg>
+  </div>
+
+  <script>
+    // Zoom and Pan State
+    let scale = 1;
+    let panX = 0;
+    let panY = 0;
+    let isDragging = false;
+    let startX, startY;
+    const minScale = 0.25;
+    const maxScale = 10;
+    const zoomStep = 0.25;
+
+    const container = document.getElementById('svgContainer');
+    const svg = document.getElementById('mainSvg');
+    const zoomDisplay = document.getElementById('zoomLevel');
+
+    // Update transform
+    function updateTransform() {
+      svg.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
+      zoomDisplay.textContent = Math.round(scale * 100) + '%';
+    }
+
+    // Zoom functions
+    function zoomIn() {
+      const newScale = Math.min(scale + zoomStep, maxScale);
+      zoomToCenter(newScale);
+    }
+
+    function zoomOut() {
+      const newScale = Math.max(scale - zoomStep, minScale);
+      zoomToCenter(newScale);
+    }
+
+    function zoomToCenter(newScale) {
+      const rect = container.getBoundingClientRect();
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+
+      const scaleChange = newScale / scale;
+      panX = centerX - (centerX - panX) * scaleChange;
+      panY = centerY - (centerY - panY) * scaleChange;
+      scale = newScale;
+
+      updateTransform();
+    }
+
+    function resetView() {
+      scale = 1;
+      panX = 0;
+      panY = 0;
+      updateTransform();
+    }
+
+    // Mouse wheel zoom
+    container.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      const rect = container.getBoundingClientRect();
+      const mouseX = e.clientX - rect.left;
+      const mouseY = e.clientY - rect.top;
+
+      const delta = e.deltaY > 0 ? -zoomStep : zoomStep;
+      const newScale = Math.max(minScale, Math.min(maxScale, scale + delta));
+
+      if (newScale !== scale) {
+        const scaleChange = newScale / scale;
+        panX = mouseX - (mouseX - panX) * scaleChange;
+        panY = mouseY - (mouseY - panY) * scaleChange;
+        scale = newScale;
+        updateTransform();
+      }
+    }, { passive: false });
+
+    // Pan with mouse drag
+    container.addEventListener('mousedown', (e) => {
+      if (e.button === 0) {
+        isDragging = true;
+        startX = e.clientX - panX;
+        startY = e.clientY - panY;
+        container.style.cursor = 'grabbing';
+      }
+    });
+
+    document.addEventListener('mousemove', (e) => {
+      if (isDragging) {
+        panX = e.clientX - startX;
+        panY = e.clientY - startY;
+        updateTransform();
+      }
+    });
+
+    document.addEventListener('mouseup', () => {
+      isDragging = false;
+      container.style.cursor = 'grab';
+    });
+
+    // Double-click to zoom in
+    container.addEventListener('dblclick', (e) => {
+      const rect = container.getBoundingClientRect();
+      const mouseX = e.clientX - rect.left;
+      const mouseY = e.clientY - rect.top;
+
+      const newScale = Math.min(scale + 0.5, maxScale);
+      const scaleChange = newScale / scale;
+      panX = mouseX - (mouseX - panX) * scaleChange;
+      panY = mouseY - (mouseY - panY) * scaleChange;
+      scale = newScale;
+      updateTransform();
+    });
+
+    // Touch support for mobile
+    let lastTouchDistance = 0;
+    let lastTouchCenter = { x: 0, y: 0 };
+
+    container.addEventListener('touchstart', (e) => {
+      if (e.touches.length === 1) {
+        isDragging = true;
+        startX = e.touches[0].clientX - panX;
+        startY = e.touches[0].clientY - panY;
+      } else if (e.touches.length === 2) {
+        isDragging = false;
+        lastTouchDistance = Math.hypot(
+          e.touches[0].clientX - e.touches[1].clientX,
+          e.touches[0].clientY - e.touches[1].clientY
+        );
+        lastTouchCenter = {
+          x: (e.touches[0].clientX + e.touches[1].clientX) / 2,
+          y: (e.touches[0].clientY + e.touches[1].clientY) / 2
+        };
+      }
+    }, { passive: false });
+
+    container.addEventListener('touchmove', (e) => {
+      e.preventDefault();
+      if (e.touches.length === 1 && isDragging) {
+        panX = e.touches[0].clientX - startX;
+        panY = e.touches[0].clientY - startY;
+        updateTransform();
+      } else if (e.touches.length === 2) {
+        const distance = Math.hypot(
+          e.touches[0].clientX - e.touches[1].clientX,
+          e.touches[0].clientY - e.touches[1].clientY
+        );
+        const center = {
+          x: (e.touches[0].clientX + e.touches[1].clientX) / 2,
+          y: (e.touches[0].clientY + e.touches[1].clientY) / 2
+        };
+
+        const scaleChange = distance / lastTouchDistance;
+        const newScale = Math.max(minScale, Math.min(maxScale, scale * scaleChange));
+
+        const rect = container.getBoundingClientRect();
+        const touchX = center.x - rect.left;
+        const touchY = center.y - rect.top;
+
+        panX = touchX - (touchX - panX) * (newScale / scale);
+        panY = touchY - (touchY - panY) * (newScale / scale);
+        scale = newScale;
+
+        lastTouchDistance = distance;
+        lastTouchCenter = center;
+        updateTransform();
+      }
+    }, { passive: false });
+
+    container.addEventListener('touchend', () => {
+      isDragging = false;
+    });
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+      if (e.key === '+' || e.key === '=') zoomIn();
+      if (e.key === '-' || e.key === '_') zoomOut();
+      if (e.key === '0') resetView();
+    });
+
+    // Export Modal
+    function showExportModal() {
+      document.getElementById('exportModal').classList.add('active');
+      document.getElementById('exportStatus').textContent = '';
+      document.getElementById('progressBar').classList.remove('active');
+      document.getElementById('progressFill').style.width = '0%';
+    }
+
+    function hideExportModal() {
+      document.getElementById('exportModal').classList.remove('active');
+    }
+
+    // Export PNG
+    async function exportPNG() {
+      const multiplier = parseInt(document.getElementById('exportResolution').value);
+      const width = 3200 * multiplier;
+      const height = 2400 * multiplier;
+
+      const statusEl = document.getElementById('exportStatus');
+      const progressBar = document.getElementById('progressBar');
+      const progressFill = document.getElementById('progressFill');
+      const exportBtn = document.getElementById('exportBtn');
+
+      exportBtn.disabled = true;
+      progressBar.classList.add('active');
+      statusEl.textContent = 'Preparing SVG...';
+      progressFill.style.width = '10%';
+
+      try {
+        // Clone SVG and prepare for export
+        const svgClone = svg.cloneNode(true);
+        svgClone.setAttribute('width', width);
+        svgClone.setAttribute('height', height);
+        svgClone.removeAttribute('id');
+        svgClone.style.transform = '';
+
+        // Get computed styles and inline them
+        statusEl.textContent = 'Processing styles...';
+        progressFill.style.width = '20%';
+
+        // Add necessary styles inline
+        const styleEl = document.createElement('style');
+        styleEl.textContent = `
+          @keyframes snowdrift { 0%, 100% { opacity: 0.7; } 50% { opacity: 0.4; } }
+          @keyframes lightTwinkle { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+          @keyframes firePulse { 0%, 100% { transform: scaleY(1); opacity: 0.9; } 50% { transform: scaleY(1.1); opacity: 1; } }
+        `;
+        svgClone.insertBefore(styleEl, svgClone.firstChild);
+
+        // Serialize SVG
+        statusEl.textContent = 'Serializing SVG...';
+        progressFill.style.width = '30%';
+
+        const serializer = new XMLSerializer();
+        let svgString = serializer.serializeToString(svgClone);
+
+        // Fix any potential issues
+        svgString = svgString.replace(/&nbsp;/g, ' ');
+
+        // Create blob and image
+        statusEl.textContent = 'Creating image...';
+        progressFill.style.width = '40%';
+
+        const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+        const url = URL.createObjectURL(svgBlob);
+
+        const img = new Image();
+        img.width = width;
+        img.height = height;
+
+        await new Promise((resolve, reject) => {
+          img.onload = resolve;
+          img.onerror = reject;
+          img.src = url;
+        });
+
+        statusEl.textContent = 'Rendering to canvas...';
+        progressFill.style.width = '60%';
+
+        // Create canvas and draw
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+
+        // Fill background
+        ctx.fillStyle = '#1a1a2e';
+        ctx.fillRect(0, 0, width, height);
+
+        // Draw SVG
+        ctx.drawImage(img, 0, 0, width, height);
+
+        statusEl.textContent = 'Generating PNG...';
+        progressFill.style.width = '80%';
+
+        // Export as PNG
+        const pngUrl = canvas.toDataURL('image/png', 1.0);
+
+        statusEl.textContent = 'Downloading...';
+        progressFill.style.width = '95%';
+
+        // Download
+        const a = document.createElement('a');
+        a.href = pngUrl;
+        a.download = `BladeLabs-Winter-Festival-${width}x${height}.png`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+
+        // Cleanup
+        URL.revokeObjectURL(url);
+
+        progressFill.style.width = '100%';
+        statusEl.textContent = 'Export complete!';
+
+        setTimeout(() => {
+          hideExportModal();
+        }, 1500);
+
+      } catch (error) {
+        console.error('Export error:', error);
+        statusEl.textContent = 'Error: ' + error.message;
+        progressFill.style.width = '0%';
+        progressBar.classList.remove('active');
+      }
+
+      exportBtn.disabled = false;
+    }
+
+    // Initialize view
+    updateTransform();
+  </script>
 </body>
 </html>
