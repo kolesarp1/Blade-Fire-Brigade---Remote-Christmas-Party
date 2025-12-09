@@ -211,6 +211,432 @@
       100% { transform: translateY(-10px); opacity: 0; }
     }
     .steam { animation: steam 2s ease-out infinite; }
+
+    /* ========== MULTIPLAYER CARD SYSTEM ========== */
+
+    /* User Join Modal */
+    .join-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.9);
+      z-index: 5000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .join-modal.hidden {
+      display: none;
+    }
+    .join-content {
+      background: linear-gradient(135deg, #1a1a3e 0%, #2a2a5e 100%);
+      padding: 40px;
+      border-radius: 16px;
+      text-align: center;
+      color: #fff;
+      max-width: 400px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+      border: 2px solid #4a4a8a;
+    }
+    .join-content h2 {
+      margin-top: 0;
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+    .join-content .subtitle {
+      color: #aaa;
+      margin-bottom: 25px;
+    }
+    .name-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .name-btn {
+      background: #3a3a6a;
+      border: 2px solid transparent;
+      color: #fff;
+      padding: 12px 8px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+    .name-btn:hover {
+      background: #4a4a8a;
+      border-color: #6a6aaa;
+    }
+    .name-btn.taken {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+    .name-btn.selected {
+      background: #5a5aaa;
+      border-color: #8a8aff;
+    }
+    .host-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin: 20px 0;
+      color: #aaa;
+    }
+    .host-toggle input {
+      width: 18px;
+      height: 18px;
+    }
+    .join-btn {
+      background: linear-gradient(135deg, #4CAF50, #45a049);
+      border: none;
+      color: #fff;
+      padding: 15px 40px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 18px;
+      font-weight: bold;
+      transition: all 0.2s;
+    }
+    .join-btn:hover {
+      background: linear-gradient(135deg, #5CBF60, #55b059);
+      transform: scale(1.02);
+    }
+    .join-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* Card Deck Container */
+    .card-deck {
+      position: fixed;
+      top: 20px;
+      left: 200px;
+      z-index: 900;
+      background: rgba(0, 0, 0, 0.75);
+      border-radius: 12px;
+      padding: 15px;
+      max-width: 520px;
+    }
+    .card-deck h3 {
+      margin: 0 0 12px 0;
+      color: #fff;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .card-deck h3 .card-icon {
+      font-size: 18px;
+    }
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      gap: 6px;
+    }
+
+    /* Individual Card */
+    .card {
+      width: 55px;
+      height: 75px;
+      perspective: 1000px;
+      cursor: pointer;
+    }
+    .card.disabled {
+      cursor: not-allowed;
+    }
+    .card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.6s;
+      transform-style: preserve-3d;
+    }
+    .card.flipped .card-inner {
+      transform: rotateY(180deg);
+    }
+    .card-face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: 6px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: bold;
+    }
+
+    /* Card Back */
+    .card-back {
+      background: linear-gradient(135deg, #1a3a5c 0%, #0d2b45 100%);
+      border: 2px solid #2a5a8c;
+      color: #6a9acc;
+    }
+    .card-back .pattern {
+      font-size: 8px;
+      letter-spacing: 2px;
+      opacity: 0.6;
+    }
+    .card-back .logo {
+      font-size: 7px;
+      margin: 4px 0;
+    }
+    .card-back .card-num {
+      position: absolute;
+      bottom: 4px;
+      font-size: 12px;
+      color: #fff;
+    }
+
+    /* Card Front */
+    .card-front {
+      background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+      border: 2px solid #ccc;
+      transform: rotateY(180deg);
+      color: #333;
+      padding: 4px;
+    }
+    .card-front .card-name {
+      font-size: 7px;
+      color: #666;
+      text-transform: uppercase;
+    }
+    .card-front .card-title {
+      font-size: 6px;
+      color: #333;
+      text-align: center;
+      margin-top: 2px;
+      line-height: 1.2;
+    }
+
+    /* Card hover effects */
+    .card:not(.flipped):not(.disabled):hover .card-inner {
+      transform: scale(1.05);
+    }
+    .card:not(.disabled):hover {
+      z-index: 10;
+    }
+    .card.flipped:hover .card-inner {
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    }
+
+    /* Card Enlargement Modal */
+    .card-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      z-index: 3000;
+      justify-content: center;
+      align-items: center;
+    }
+    .card-modal.active {
+      display: flex;
+    }
+    .card-modal-content {
+      background: linear-gradient(135deg, #fffef5 0%, #f5f0e0 100%);
+      border-radius: 16px;
+      padding: 30px;
+      max-width: 500px;
+      width: 90%;
+      max-height: 85vh;
+      overflow-y: auto;
+      color: #333;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+      border: 3px solid #d4c4a0;
+      position: relative;
+    }
+    .card-modal-close {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: #e74c3c;
+      border: none;
+      color: #fff;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .card-modal-close:hover {
+      background: #c0392b;
+    }
+    .card-modal-header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .card-modal-header .person-name {
+      font-size: 14px;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+    .card-modal-header h2 {
+      margin: 10px 0;
+      font-size: 24px;
+      color: #2c3e50;
+    }
+    .card-modal-header .card-number {
+      display: inline-block;
+      background: #3498db;
+      color: #fff;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+    }
+    .card-modal-story {
+      font-size: 16px;
+      line-height: 1.7;
+      color: #444;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.6);
+      border-radius: 10px;
+      border-left: 4px solid #3498db;
+    }
+    .card-modal-hint {
+      margin-top: 20px;
+      padding: 12px;
+      background: rgba(46, 204, 113, 0.15);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #27ae60;
+      font-size: 14px;
+    }
+    .card-modal-hint .hint-icon {
+      font-size: 20px;
+    }
+
+    /* Online Users Panel */
+    .online-users {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1000;
+      background: rgba(0, 0, 0, 0.8);
+      border-radius: 12px;
+      padding: 15px;
+      min-width: 150px;
+    }
+    .online-users h3 {
+      margin: 0 0 10px 0;
+      color: #fff;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .online-users h3 .dot {
+      width: 8px;
+      height: 8px;
+      background: #2ecc71;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    .user-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .user-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #fff;
+      font-size: 13px;
+    }
+    .user-item .user-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+    .user-item .host-badge {
+      font-size: 12px;
+      margin-left: 4px;
+    }
+    .user-item.idle {
+      opacity: 0.5;
+    }
+
+    /* Multiplayer Cursors */
+    .cursor {
+      position: fixed;
+      pointer-events: none;
+      z-index: 4000;
+      transition: left 0.03s linear, top 0.03s linear, opacity 0.3s;
+    }
+    .cursor.idle {
+      opacity: 0.4;
+    }
+    .cursor svg {
+      width: 20px;
+      height: 20px;
+    }
+    .cursor-label {
+      position: absolute;
+      left: 16px;
+      top: 16px;
+      background: #fff;
+      color: #333;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: bold;
+      white-space: nowrap;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Connection Status */
+    .connection-status {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: rgba(0, 0, 0, 0.8);
+      color: #fff;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 12px;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .connection-status .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+    .connection-status.connected .status-dot {
+      background: #2ecc71;
+    }
+    .connection-status.connecting .status-dot {
+      background: #f39c12;
+      animation: pulse 1s infinite;
+    }
+    .connection-status.disconnected .status-dot {
+      background: #e74c3c;
+    }
   </style>
 </head>
 <body>
@@ -258,6 +684,66 @@
         <button class="btn btn-export" onclick="exportPNG()" id="exportBtn">Export</button>
       </div>
     </div>
+  </div>
+
+  <!-- User Join Modal -->
+  <div class="join-modal" id="joinModal">
+    <div class="join-content">
+      <h2>🎄 BladeLabs Winter Festival</h2>
+      <p class="subtitle">Select your name to join the party!</p>
+      <div class="name-grid" id="nameGrid">
+        <!-- Names will be populated by JavaScript -->
+      </div>
+      <div class="host-toggle">
+        <input type="checkbox" id="hostCheckbox">
+        <label for="hostCheckbox">Join as Host (can flip cards)</label>
+      </div>
+      <button class="join-btn" id="joinBtn" disabled>Join Festival</button>
+    </div>
+  </div>
+
+  <!-- Card Deck -->
+  <div class="card-deck" id="cardDeck">
+    <h3><span class="card-icon">🃏</span> Story Cards (24)</h3>
+    <div class="cards-grid" id="cardsGrid">
+      <!-- Cards will be populated by JavaScript -->
+    </div>
+  </div>
+
+  <!-- Online Users Panel -->
+  <div class="online-users" id="onlineUsers">
+    <h3><span class="dot"></span> Online</h3>
+    <div class="user-list" id="userList">
+      <!-- Users will be populated by JavaScript -->
+    </div>
+  </div>
+
+  <!-- Card Enlargement Modal -->
+  <div class="card-modal" id="cardModal">
+    <div class="card-modal-content">
+      <button class="card-modal-close" onclick="closeCardModal()">×</button>
+      <div class="card-modal-header">
+        <div class="person-name" id="modalPersonName">SAMI</div>
+        <h2 id="modalCardTitle">The Hot Speech</h2>
+        <span class="card-number" id="modalCardNumber">Card #1</span>
+      </div>
+      <div class="card-modal-story" id="modalCardStory">
+        Story text will appear here...
+      </div>
+      <div class="card-modal-hint">
+        <span class="hint-icon">🔍</span>
+        <span id="modalCardHint">Find the scene on the map!</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cursors Container -->
+  <div id="cursorsContainer"></div>
+
+  <!-- Connection Status -->
+  <div class="connection-status connecting" id="connectionStatus">
+    <span class="status-dot"></span>
+    <span id="connectionText">Connecting...</span>
   </div>
 
   <!-- SVG Container -->
@@ -5175,7 +5661,7 @@
     <!-- VERSION INDICATOR (bottom right corner) - bump with each release -->
     <g id="version-indicator" transform="translate(3050, 2360)">
       <rect x="0" y="0" width="140" height="30" rx="5" fill="#000" opacity="0.6"/>
-      <text x="70" y="20" text-anchor="middle" font-family="monospace" font-size="14" fill="#fff" font-weight="bold">v2.9</text>
+      <text x="70" y="20" text-anchor="middle" font-family="monospace" font-size="14" fill="#fff" font-weight="bold">v3.0</text>
     </g>
 
   </svg>
@@ -5486,6 +5972,661 @@
 
     // Initialize view
     updateTransform();
+
+    // ========== MULTIPLAYER CARD SYSTEM ==========
+
+    // Card content data (24 cards, 2 per person)
+    const CARDS_DATA = [
+      // Sami (1-2)
+      {
+        id: 1,
+        person: "Sami",
+        title: "The Hot Speech",
+        story: "Sami rolls up in the official Blade Fire Brigade fire truck wearing the full red chief's hat → steps out to give a big motivational speech → the mic literally catches fire from how hot the speech is → Sami just keeps talking like it's normal.",
+        hint: "Find near the fire truck"
+      },
+      {
+        id: 2,
+        person: "Sami",
+        title: "Snow Sculpture",
+        story: "Sami volunteers as human snowball target for kids → gets buried → emerges 10 minutes later as perfect snow-Sami sculpture.",
+        hint: "Look for the snow pile area"
+      },
+      // Ints (3-4)
+      {
+        id: 3,
+        person: "Ints",
+        title: "Duck Invasion",
+        story: "Ints brings his legendary rubber duck collection to the festival → ducks escape → 47 yellow ducks invade the hot-chocolate stand → Ints rescues them one by one with a tiny net.",
+        hint: "Check near the hot chocolate stand"
+      },
+      {
+        id: 4,
+        person: "Ints",
+        title: "Yeti Git Tutorial",
+        story: "Ints patiently teaches a yeti how to use Git → yeti proudly creates branch \"yeti/main\" → later seen proudly merging with giant paws.",
+        hint: "Find the yeti learning area"
+      },
+      // Kasturi (5-6)
+      {
+        id: 5,
+        person: "Kasturi",
+        title: "Spicy Disaster",
+        story: "Kasturi tests \"extra-spicy\" hot chocolate → volcano-style eruption → runs away wearing inflatable penguin ring → hides in server-room freezer eating ice cubes.",
+        hint: "Look for the penguin and freezer"
+      },
+      {
+        id: 6,
+        person: "Kasturi",
+        title: "Compliance Chaos",
+        story: "Kasturi live-blogs \"Perfect Compliance at Winterfest\" → tries to fill risk forms for every ride → ends up on a runaway sled with a 47-page document → posts it and gets 10k yeti likes.",
+        hint: "Find the runaway sled"
+      },
+      // Patrik (7-8)
+      {
+        id: 7,
+        person: "Patrik",
+        title: "Baby Shark Mosh Pit",
+        story: "Patrik accidentally plays Baby Shark remix at 200 bpm → yetis start headbanging → Patrik jumps into the mosh pit with glow sticks in his beard.",
+        hint: "Look for the DJ area"
+      },
+      {
+        id: 8,
+        person: "Patrik",
+        title: "Aerial Yoga Coding",
+        story: "Patrik gets tangled in aerial-yoga silks on the lights → hangs upside down calmly vibe-coding demo for an hour.",
+        hint: "Check the festival lights area"
+      },
+      // Artem (9-10)
+      {
+        id: 9,
+        person: "Artem",
+        title: "Snow Valera",
+        story: "Artem builds a snowman that looks exactly like Valera → snow-Valera comes alive → terrorizes gift tents demanding protein shakes → Artem calms it with a cookie.",
+        hint: "Find near the gift tents"
+      },
+      {
+        id: 10,
+        person: "Artem",
+        title: "Drone Fireworks",
+        story: "Artem flies his drone through the bonfire for an epic shot → drone exits on fire but still flying → becomes the festival fireworks.",
+        hint: "Look above the bonfire"
+      },
+      // Kostya (11-12)
+      {
+        id: 11,
+        person: "Kostya",
+        title: "Igloo Robot",
+        story: "Kostya brings a \"small\" homemade robot to clear snow → robot goes rogue → starts building a perfect igloo fortress around the ULTRA COFFEE stand → refuses to let anyone leave until they pay \"igloo tax\" in cookies.",
+        hint: "Find the ULTRA COFFEE stand"
+      },
+      {
+        id: 12,
+        person: "Kostya",
+        title: "Potato Wi-Fi",
+        story: "Kostya builds emergency potato-powered Wi-Fi → becomes festival hero and gets free cocoa for life.",
+        hint: "Look for the potato contraption"
+      },
+      // Olena (13-14)
+      {
+        id: 13,
+        person: "Olena",
+        title: "Tiny Water Pistol",
+        story: "Olena tries to put out a small fire with a comically tiny water pistol → fails spectacularly → crowd lifts her onto their shoulders and crowns her \"Empress of Beautiful Chaos\".",
+        hint: "Find near the small fire"
+      },
+      {
+        id: 14,
+        person: "Olena",
+        title: "Epic Conga Line",
+        story: "Olena starts an innocent conga line → it circles the entire city picking up yetis, penguins, and one confused reindeer → returns to the exact starting spot.",
+        hint: "Follow the conga line"
+      },
+      // Valera (15-16)
+      {
+        id: 15,
+        person: "Valera",
+        title: "Gingerbread Challenge",
+        story: "Valera bets he can eat 10 gingerbread houses → succeeds → gets sugar rush → runs around the festival at light speed leaving rainbow trail.",
+        hint: "Look for rainbow trail"
+      },
+      {
+        id: 16,
+        person: "Valera",
+        title: "Bell Deadlift",
+        story: "Valera deadlifts the giant festival bell \"just to test\" → rings it once → avalanche of snow from nearby roof → everyone gets free snow shower.",
+        hint: "Find the giant bell"
+      },
+      // Vova (17-18)
+      {
+        id: 17,
+        person: "Vova",
+        title: "Bass Drop",
+        story: "Vova brings his \"small\" Bluetooth speaker (size of a car) → drops bass so hard the ice rink cracks → instant ice disco with sliding penguins.",
+        hint: "Check the ice rink"
+      },
+      {
+        id: 18,
+        person: "Vova",
+        title: "Yeti Arm Wrestling",
+        story: "Vova challenges a yeti to arm wrestling → loses instantly → yeti feels bad and gives Vova his fluffy hat → Vova wears it the rest of the festival looking adorable.",
+        hint: "Find the arm wrestling spot"
+      },
+      // Dima (19-20)
+      {
+        id: 19,
+        person: "Dima",
+        title: "Works on My Machine",
+        story: "Dima \"quickly\" reprograms the snow-making machine → accidentally sets it to blizzard → 3 metres of snow in 10 minutes → emerges from drift saying \"Works on my machine\".",
+        hint: "Look for the snow machine"
+      },
+      {
+        id: 20,
+        person: "Dima",
+        title: "Perfect Marshmallow",
+        story: "Dima tries to roast one perfect marshmallow → sets the entire grill station on fire → walks away whistling while firefighters high-five him.",
+        hint: "Check the grill station"
+      },
+      // Misha (21-22)
+      {
+        id: 21,
+        person: "Misha",
+        title: "Rocket Bonfire",
+        story: "Misha tries to \"optimize\" the bonfire with rocket fuel → rides flaming bonfire like a rodeo cowboy → lands in marshmallow pile wearing singed hat.",
+        hint: "Find the main bonfire"
+      },
+      {
+        id: 22,
+        person: "Misha",
+        title: "5 Minute Bug Fix",
+        story: "Misha says \"this bug will take 5 minutes\" → still fixing festival lights 3 hours later → lights finally spell \"MISHA WAS RIGHT\" in the sky.",
+        hint: "Look at the festival lights"
+      },
+      // Ruslan (23-24)
+      {
+        id: 23,
+        person: "Ruslan",
+        title: "Ultra Coffee",
+        story: "Ruslan brews his legendary ultra-strong coffee at the festival stand → one sip turns normal people into superheroes → queue becomes 3 km long → Ruslan calmly reads a book.",
+        hint: "Find the coffee stand"
+      },
+      {
+        id: 24,
+        person: "Ruslan",
+        title: "Photo Bomb",
+        story: "Ruslan tries to take a serious photo → photobombed by literally everyone in the city one by one → final photo has 312 people and 1 sneaky yeti.",
+        hint: "Look for the photo spot"
+      }
+    ];
+
+    // Team member names with assigned colors
+    const TEAM_MEMBERS = [
+      { name: "Sami", color: "#e74c3c" },
+      { name: "Ints", color: "#3498db" },
+      { name: "Kasturi", color: "#9b59b6" },
+      { name: "Patrik", color: "#2ecc71" },
+      { name: "Artem", color: "#f39c12" },
+      { name: "Kostya", color: "#1abc9c" },
+      { name: "Olena", color: "#e91e63" },
+      { name: "Valera", color: "#ff5722" },
+      { name: "Vova", color: "#00bcd4" },
+      { name: "Dima", color: "#8bc34a" },
+      { name: "Misha", color: "#ff9800" },
+      { name: "Ruslan", color: "#673ab7" }
+    ];
+
+    // App state
+    const appState = {
+      currentUser: null,
+      isHost: false,
+      users: {},
+      cards: {},
+      userId: 'user-' + Math.random().toString(36).substr(2, 9),
+      selectedName: null
+    };
+
+    // Initialize cards state (all face-down)
+    for (let i = 1; i <= 24; i++) {
+      appState.cards[i] = { flipped: false };
+    }
+
+    // DOM Elements
+    const joinModal = document.getElementById('joinModal');
+    const nameGrid = document.getElementById('nameGrid');
+    const joinBtn = document.getElementById('joinBtn');
+    const hostCheckbox = document.getElementById('hostCheckbox');
+    const cardDeck = document.getElementById('cardDeck');
+    const cardsGrid = document.getElementById('cardsGrid');
+    const cardModal = document.getElementById('cardModal');
+    const userList = document.getElementById('userList');
+    const cursorsContainer = document.getElementById('cursorsContainer');
+    const connectionStatus = document.getElementById('connectionStatus');
+    const connectionText = document.getElementById('connectionText');
+
+    // Check for host parameter in URL
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('host') === 'true' || urlParams.get('role') === 'host') {
+      hostCheckbox.checked = true;
+    }
+
+    // Initialize name selection grid
+    function initNameGrid() {
+      nameGrid.innerHTML = '';
+      TEAM_MEMBERS.forEach(member => {
+        const btn = document.createElement('button');
+        btn.className = 'name-btn';
+        btn.textContent = member.name;
+        btn.style.borderColor = member.color;
+        btn.onclick = () => selectName(member.name, btn);
+        nameGrid.appendChild(btn);
+      });
+    }
+
+    function selectName(name, btn) {
+      // Deselect previous
+      document.querySelectorAll('.name-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      appState.selectedName = name;
+      joinBtn.disabled = false;
+    }
+
+    // Join the session
+    joinBtn.onclick = function() {
+      if (!appState.selectedName) return;
+
+      const member = TEAM_MEMBERS.find(m => m.name === appState.selectedName);
+      appState.currentUser = {
+        id: appState.userId,
+        name: appState.selectedName,
+        color: member.color,
+        isHost: hostCheckbox.checked
+      };
+      appState.isHost = hostCheckbox.checked;
+
+      // Hide join modal
+      joinModal.classList.add('hidden');
+
+      // Initialize the session
+      initSession();
+    };
+
+    // Initialize the session after joining
+    function initSession() {
+      // Add current user to users list
+      appState.users[appState.userId] = {
+        ...appState.currentUser,
+        cursor: { x: 0, y: 0 },
+        lastActive: Date.now()
+      };
+
+      // Render cards
+      renderCards();
+
+      // Render users list
+      renderUsersList();
+
+      // Set up cursor tracking
+      setupCursorTracking();
+
+      // Update connection status
+      updateConnectionStatus('connected');
+
+      // Start Firebase sync (or local simulation)
+      initFirebaseSync();
+    }
+
+    // Render all 24 cards
+    function renderCards() {
+      cardsGrid.innerHTML = '';
+      CARDS_DATA.forEach(cardData => {
+        const card = document.createElement('div');
+        card.className = 'card' + (appState.cards[cardData.id]?.flipped ? ' flipped' : '');
+        card.dataset.cardId = cardData.id;
+
+        if (!appState.isHost && !appState.cards[cardData.id]?.flipped) {
+          card.classList.add('disabled');
+        }
+
+        card.innerHTML = `
+          <div class="card-inner">
+            <div class="card-face card-back">
+              <div class="pattern">✦ ✦ ✦</div>
+              <div class="logo">BLADE 2025</div>
+              <div class="pattern">✦ ✦ ✦</div>
+              <div class="card-num">${cardData.id}</div>
+            </div>
+            <div class="card-face card-front">
+              <div class="card-name">${cardData.person}</div>
+              <div class="card-title">${cardData.title.substring(0, 20)}${cardData.title.length > 20 ? '...' : ''}</div>
+            </div>
+          </div>
+        `;
+
+        card.onclick = () => handleCardClick(cardData.id);
+        cardsGrid.appendChild(card);
+      });
+    }
+
+    // Handle card click
+    function handleCardClick(cardId) {
+      const isFlipped = appState.cards[cardId]?.flipped;
+
+      if (isFlipped) {
+        // Anyone can view a flipped card
+        openCardModal(cardId);
+      } else if (appState.isHost) {
+        // Only host can flip cards
+        flipCard(cardId);
+      }
+    }
+
+    // Flip a card (host only)
+    function flipCard(cardId) {
+      appState.cards[cardId] = { flipped: true };
+
+      // Update UI
+      const cardEl = document.querySelector(`.card[data-card-id="${cardId}"]`);
+      if (cardEl) {
+        cardEl.classList.add('flipped');
+        cardEl.classList.remove('disabled');
+      }
+
+      // Sync to other users
+      broadcastCardFlip(cardId);
+
+      // Open the card modal after flip animation
+      setTimeout(() => {
+        openCardModal(cardId);
+      }, 600);
+    }
+
+    // Open card modal
+    function openCardModal(cardId) {
+      const cardData = CARDS_DATA.find(c => c.id === cardId);
+      if (!cardData) return;
+
+      document.getElementById('modalPersonName').textContent = cardData.person;
+      document.getElementById('modalCardTitle').textContent = cardData.title;
+      document.getElementById('modalCardNumber').textContent = `Card #${cardData.id}`;
+      document.getElementById('modalCardStory').textContent = cardData.story;
+      document.getElementById('modalCardHint').textContent = cardData.hint;
+
+      cardModal.classList.add('active');
+    }
+
+    // Close card modal
+    function closeCardModal() {
+      cardModal.classList.remove('active');
+    }
+
+    // Close modal on outside click
+    cardModal.onclick = function(e) {
+      if (e.target === cardModal) {
+        closeCardModal();
+      }
+    };
+
+    // Close modal on ESC
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closeCardModal();
+      }
+    });
+
+    // Render online users list
+    function renderUsersList() {
+      userList.innerHTML = '';
+      Object.values(appState.users).forEach(user => {
+        const isIdle = Date.now() - user.lastActive > 5000;
+        const item = document.createElement('div');
+        item.className = 'user-item' + (isIdle ? ' idle' : '');
+        item.innerHTML = `
+          <span class="user-dot" style="background: ${user.color}"></span>
+          <span>${user.name}</span>
+          ${user.isHost ? '<span class="host-badge">👑</span>' : ''}
+        `;
+        userList.appendChild(item);
+      });
+    }
+
+    // Setup cursor tracking
+    function setupCursorTracking() {
+      let lastCursorUpdate = 0;
+      const throttleMs = 33; // ~30fps
+
+      document.addEventListener('mousemove', (e) => {
+        const now = Date.now();
+        if (now - lastCursorUpdate < throttleMs) return;
+        lastCursorUpdate = now;
+
+        const cursorData = {
+          x: e.clientX,
+          y: e.clientY
+        };
+
+        // Update local state
+        if (appState.users[appState.userId]) {
+          appState.users[appState.userId].cursor = cursorData;
+          appState.users[appState.userId].lastActive = now;
+        }
+
+        // Broadcast to others
+        broadcastCursor(cursorData);
+      });
+    }
+
+    // Render other users' cursors
+    function renderCursors() {
+      // Clear old cursors
+      cursorsContainer.innerHTML = '';
+
+      Object.entries(appState.users).forEach(([id, user]) => {
+        if (id === appState.userId) return; // Don't show own cursor
+
+        const isIdle = Date.now() - user.lastActive > 5000;
+        const cursorEl = document.createElement('div');
+        cursorEl.className = 'cursor' + (isIdle ? ' idle' : '');
+        cursorEl.style.left = user.cursor.x + 'px';
+        cursorEl.style.top = user.cursor.y + 'px';
+
+        cursorEl.innerHTML = `
+          <svg viewBox="0 0 24 24" fill="${user.color}">
+            <path d="M4 4l16 8-7 2-2 7z" stroke="#fff" stroke-width="1"/>
+          </svg>
+          <div class="cursor-label" style="background: ${user.color}; color: #fff;">${user.name}</div>
+        `;
+
+        cursorsContainer.appendChild(cursorEl);
+      });
+    }
+
+    // Update connection status display
+    function updateConnectionStatus(status) {
+      connectionStatus.className = 'connection-status ' + status;
+      const statusMessages = {
+        connected: 'Connected',
+        connecting: 'Connecting...',
+        disconnected: 'Disconnected'
+      };
+      connectionText.textContent = statusMessages[status] || status;
+    }
+
+    // ========== FIREBASE REAL-TIME SYNC ==========
+    // Using localStorage + BroadcastChannel for local demo (no Firebase setup needed)
+    // To use real Firebase, replace this section with Firebase SDK
+
+    let broadcastChannel = null;
+
+    function initFirebaseSync() {
+      // Use BroadcastChannel API for cross-tab communication (simulates real-time)
+      if ('BroadcastChannel' in window) {
+        broadcastChannel = new BroadcastChannel('blade-winter-festival');
+
+        broadcastChannel.onmessage = (event) => {
+          handleSyncMessage(event.data);
+        };
+
+        // Announce ourselves
+        broadcastChannel.postMessage({
+          type: 'user-join',
+          user: appState.users[appState.userId]
+        });
+
+        // Request current state
+        broadcastChannel.postMessage({
+          type: 'state-request',
+          userId: appState.userId
+        });
+      }
+
+      // Periodic sync and cursor rendering
+      setInterval(() => {
+        renderCursors();
+        renderUsersList();
+
+        // Clean up stale users (no activity for 30s)
+        const now = Date.now();
+        Object.entries(appState.users).forEach(([id, user]) => {
+          if (id !== appState.userId && now - user.lastActive > 30000) {
+            delete appState.users[id];
+          }
+        });
+      }, 100);
+
+      // Heartbeat
+      setInterval(() => {
+        if (broadcastChannel && appState.users[appState.userId]) {
+          appState.users[appState.userId].lastActive = Date.now();
+          broadcastChannel.postMessage({
+            type: 'heartbeat',
+            user: appState.users[appState.userId]
+          });
+        }
+      }, 2000);
+    }
+
+    function handleSyncMessage(data) {
+      switch (data.type) {
+        case 'user-join':
+          appState.users[data.user.id] = data.user;
+          renderUsersList();
+          // Share our state with new user
+          if (broadcastChannel) {
+            broadcastChannel.postMessage({
+              type: 'state-sync',
+              cards: appState.cards,
+              user: appState.users[appState.userId]
+            });
+          }
+          break;
+
+        case 'state-sync':
+          // Merge cards state (only flipped cards matter)
+          Object.entries(data.cards).forEach(([id, card]) => {
+            if (card.flipped) {
+              appState.cards[id] = card;
+            }
+          });
+          if (data.user) {
+            appState.users[data.user.id] = data.user;
+          }
+          renderCards();
+          break;
+
+        case 'state-request':
+          if (broadcastChannel && data.userId !== appState.userId) {
+            broadcastChannel.postMessage({
+              type: 'state-sync',
+              cards: appState.cards,
+              user: appState.users[appState.userId]
+            });
+          }
+          break;
+
+        case 'card-flip':
+          appState.cards[data.cardId] = { flipped: true };
+          const cardEl = document.querySelector(`.card[data-card-id="${data.cardId}"]`);
+          if (cardEl) {
+            cardEl.classList.add('flipped');
+            cardEl.classList.remove('disabled');
+          }
+          break;
+
+        case 'cursor-move':
+          if (appState.users[data.userId]) {
+            appState.users[data.userId].cursor = data.cursor;
+            appState.users[data.userId].lastActive = Date.now();
+          } else if (data.user) {
+            appState.users[data.userId] = {
+              ...data.user,
+              cursor: data.cursor,
+              lastActive: Date.now()
+            };
+          }
+          break;
+
+        case 'heartbeat':
+          if (data.user) {
+            appState.users[data.user.id] = {
+              ...appState.users[data.user.id],
+              ...data.user,
+              lastActive: Date.now()
+            };
+          }
+          break;
+
+        case 'user-leave':
+          delete appState.users[data.userId];
+          renderUsersList();
+          break;
+      }
+    }
+
+    function broadcastCursor(cursor) {
+      if (broadcastChannel) {
+        broadcastChannel.postMessage({
+          type: 'cursor-move',
+          userId: appState.userId,
+          cursor: cursor,
+          user: appState.users[appState.userId]
+        });
+      }
+    }
+
+    function broadcastCardFlip(cardId) {
+      if (broadcastChannel) {
+        broadcastChannel.postMessage({
+          type: 'card-flip',
+          cardId: cardId,
+          userId: appState.userId
+        });
+      }
+    }
+
+    // Clean up on page unload
+    window.addEventListener('beforeunload', () => {
+      if (broadcastChannel) {
+        broadcastChannel.postMessage({
+          type: 'user-leave',
+          userId: appState.userId
+        });
+      }
+    });
+
+    // Initialize the app
+    initNameGrid();
+
+    // Hide card deck and online users until user joins
+    cardDeck.style.display = 'none';
+    document.getElementById('onlineUsers').style.display = 'none';
+
+    // Show them after joining
+    const originalInitSession = initSession;
+    initSession = function() {
+      originalInitSession();
+      cardDeck.style.display = 'block';
+      document.getElementById('onlineUsers').style.display = 'block';
+    };
   </script>
 </body>
 </html>
