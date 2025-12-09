@@ -961,6 +961,81 @@
     </g>
 
     <!-- ============================================ -->
+    <!-- MISHA #2: At the light control panel, celebrating! -->
+    <!-- ============================================ -->
+    <g id="misha-control-panel" transform="translate(2700, 280)">
+      <!-- Light Control Panel / Console -->
+      <g id="control-panel" transform="translate(0, 0)">
+        <!-- Panel body (isometric desk) -->
+        <polygon points="0,30 50,10 100,30 50,50" fill="#444" stroke="#333" stroke-width="2"/>
+        <polygon points="0,30 0,60 50,80 50,50" fill="#333" stroke="#222" stroke-width="1.5"/>
+        <polygon points="50,50 100,30 100,60 50,80" fill="#2a2a2a" stroke="#222" stroke-width="1.5"/>
+        <!-- Control screen -->
+        <rect x="20" y="15" width="30" height="20" rx="2" fill="#1a1a2a" stroke="#555" stroke-width="1"/>
+        <text x="35" y="27" text-anchor="middle" font-family="monospace" font-size="6" fill="#00ff00">LIGHTS: ON</text>
+        <text x="35" y="33" text-anchor="middle" font-family="monospace" font-size="4" fill="#ffff00">MSG ACTIVE!</text>
+        <!-- Blinking lights on panel -->
+        <circle cx="55" cy="22" r="3" fill="#ff0000" class="christmas-light"/>
+        <circle cx="62" cy="22" r="3" fill="#00ff00" class="christmas-light"/>
+        <circle cx="69" cy="22" r="3" fill="#ffff00" class="christmas-light"/>
+        <!-- Sliders -->
+        <rect x="58" y="28" width="15" height="3" fill="#666"/>
+        <rect x="62" y="27" width="4" height="5" fill="#888"/>
+        <rect x="58" y="33" width="15" height="3" fill="#666"/>
+        <rect x="68" y="32" width="4" height="5" fill="#888"/>
+        <!-- Big red button (pressed!) -->
+        <ellipse cx="80" cy="25" rx="6" ry="4" fill="#cc0000" stroke="#880000" stroke-width="1"/>
+        <text x="80" y="27" text-anchor="middle" font-family="Arial, sans-serif" font-size="4" fill="#fff">MSG</text>
+      </g>
+
+      <!-- MISHA #2: Standing triumphantly at the controls! -->
+      <g id="misha-celebrating" transform="translate(-30, 10)">
+        <!-- Shadow -->
+        <ellipse cx="0" cy="50" rx="15" ry="6" fill="#000" opacity="0.2"/>
+        <!-- Body (same red jacket as bonfire MISHA) -->
+        <ellipse cx="0" cy="30" rx="12" ry="18" fill="#cc3333" stroke="#333" stroke-width="1.5"/>
+        <!-- Jacket details -->
+        <line x1="0" y1="15" x2="0" y2="45" stroke="#aa2020" stroke-width="1"/>
+        <!-- Head -->
+        <circle cx="0" cy="5" r="10" fill="#ffd5b4" stroke="#333" stroke-width="1"/>
+        <!-- Victorious grin -->
+        <circle cx="-3" cy="3" r="1.5" fill="#333"/>
+        <circle cx="3" cy="3" r="1.5" fill="#333"/>
+        <path d="M -5,8 Q 0,14 5,8" stroke="#333" fill="none" stroke-width="1.2"/>
+        <!-- Hair -->
+        <ellipse cx="0" cy="-2" rx="9" ry="6" fill="#3a2a1a" stroke="#333" stroke-width="0.5"/>
+        <!-- BOTH ARMS RAISED IN VICTORY! -->
+        <line x1="-10" y1="20" x2="-20" y2="-5" stroke="#ffd5b4" stroke-width="5" stroke-linecap="round"/>
+        <line x1="10" y1="20" x2="20" y2="-5" stroke="#ffd5b4" stroke-width="5" stroke-linecap="round"/>
+        <!-- Fists pumped -->
+        <circle cx="-21" cy="-7" r="4" fill="#ffd5b4" stroke="#333" stroke-width="0.5"/>
+        <circle cx="21" cy="-7" r="4" fill="#ffd5b4" stroke="#333" stroke-width="0.5"/>
+        <!-- Victory sparkles! -->
+        <text x="-28" y="-15" font-size="10">✨</text>
+        <text x="25" y="-12" font-size="10">✨</text>
+        <text x="0" y="-20" font-size="12">🎉</text>
+        <!-- Name tag -->
+        <g transform="translate(0, 55)">
+          <rect x="-15" y="0" width="30" height="12" rx="2" fill="#cc3333" stroke="#333" stroke-width="1"/>
+          <text x="0" y="9" text-anchor="middle" font-family="Arial, sans-serif" font-size="7" font-weight="bold" fill="#fff">MISHA</text>
+        </g>
+        <!-- Speech bubble: "I TOLD YOU SO!" -->
+        <g transform="translate(40, -10)">
+          <ellipse cx="0" cy="0" rx="38" ry="15" fill="#fff" stroke="#333" stroke-width="1"/>
+          <polygon points="-30,10 -35,20 -25,12" fill="#fff" stroke="#333" stroke-width="1"/>
+          <text x="0" y="-3" text-anchor="middle" font-family="Arial, sans-serif" font-size="8" font-weight="bold" fill="#cc3333">I TOLD</text>
+          <text x="0" y="8" text-anchor="middle" font-family="Arial, sans-serif" font-size="8" font-weight="bold" fill="#cc3333">YOU SO! 🔥</text>
+        </g>
+      </g>
+
+      <!-- Arrow pointing up to the message in sky -->
+      <g transform="translate(50, -30)">
+        <line x1="0" y1="0" x2="-100" y2="-80" stroke="#ffdd44" stroke-width="2" stroke-dasharray="5,3"/>
+        <polygon points="-100,-80 -95,-70 -105,-72" fill="#ffdd44"/>
+      </g>
+    </g>
+
+    <!-- ============================================ -->
     <!-- CHARACTER SCENES -->
     <!-- ============================================ -->
 
@@ -1866,9 +1941,63 @@
         <text x="0" y="3" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#ffd700">👑 EMPRESS OF BEAUTIFUL CHAOS 👑</text>
       </g>
 
-      <!-- CONGA LINE (curving line of people, yetis, penguins, 1 reindeer) -->
+      <!-- CONGA LINE (OLENA leading, then people, yetis, penguins, 1 reindeer) -->
       <g id="conga-line" transform="translate(150, 50)">
-        <!-- Person 1 -->
+        <!-- OLENA #2: LEADING THE CONGA LINE! -->
+        <g id="olena-conga-leader" transform="translate(-30, -5)">
+          <!-- Shadow -->
+          <ellipse cx="0" cy="22" rx="10" ry="4" fill="#000" opacity="0.2"/>
+          <!-- Dancing body (slight tilt for energy) -->
+          <ellipse cx="0" cy="10" rx="8" ry="12" fill="#ff1493" stroke="#333" stroke-width="1"/>
+          <!-- Rainbow cape flowing behind -->
+          <path d="M -6,5 Q -20,10 -25,20 L -18,22 Q -12,12 -4,8" fill="#ff0000" opacity="0.7"/>
+          <path d="M -5,7 Q -18,12 -23,22 L -16,24 Q -10,14 -3,10" fill="#ff8800" opacity="0.7"/>
+          <path d="M -4,9 Q -16,14 -21,24 L -14,26 Q -8,16 -2,12" fill="#ffff00" opacity="0.6"/>
+          <path d="M -3,11 Q -14,16 -19,26 L -12,28 Q -6,18 -1,14" fill="#00ff00" opacity="0.6"/>
+          <path d="M -2,13 Q -12,18 -17,28 L -10,30 Q -4,20 0,16" fill="#00ffff" opacity="0.6"/>
+          <path d="M -1,15 Q -10,20 -15,30 L -8,32 Q -2,22 1,18" fill="#ff00ff" opacity="0.6"/>
+          <!-- Head -->
+          <circle cx="0" cy="-6" r="7" fill="#ffd5b4" stroke="#333" stroke-width="0.8"/>
+          <!-- Hair (wild and flowing) -->
+          <ellipse cx="0" cy="-10" rx="8" ry="5" fill="#8b4513" stroke="#333" stroke-width="0.5"/>
+          <path d="M -8,-8 Q -12,-15 -6,-12" stroke="#8b4513" stroke-width="3" fill="none"/>
+          <path d="M 8,-8 Q 12,-15 6,-12" stroke="#8b4513" stroke-width="3" fill="none"/>
+          <!-- GOLDEN CROWN/TIARA -->
+          <g transform="translate(0, -15)">
+            <polygon points="0,-6 -4,0 4,0" fill="#ffd700" stroke="#daa520" stroke-width="0.5"/>
+            <polygon points="-3,-4 -6,0 -1,0" fill="#ffd700" stroke="#daa520" stroke-width="0.5"/>
+            <polygon points="3,-4 6,0 1,0" fill="#ffd700" stroke="#daa520" stroke-width="0.5"/>
+            <circle cx="0" cy="-4" r="1.5" fill="#ff0000"/>
+            <circle cx="-3" cy="-2" r="1" fill="#00ff00"/>
+            <circle cx="3" cy="-2" r="1" fill="#0000ff"/>
+          </g>
+          <!-- Happy dancing face -->
+          <circle cx="-2" cy="-7" r="1.2" fill="#333"/>
+          <circle cx="2" cy="-7" r="1.2" fill="#333"/>
+          <path d="M -3,-3 Q 0,1 3,-3" stroke="#333" fill="none" stroke-width="0.8"/>
+          <!-- Arms UP in dancing pose! -->
+          <line x1="-6" y1="2" x2="-14" y2="-8" stroke="#ffd5b4" stroke-width="3" stroke-linecap="round"/>
+          <line x1="6" y1="2" x2="14" y2="-8" stroke="#ffd5b4" stroke-width="3" stroke-linecap="round"/>
+          <!-- Water pistol holster on hip -->
+          <rect x="6" y="8" width="6" height="4" rx="1" fill="#333"/>
+          <rect x="8" y="5" width="4" height="5" rx="1" fill="#00bfff" stroke="#333" stroke-width="0.5"/>
+          <!-- Sparkles around her -->
+          <text x="-15" y="-18" font-size="8">✨</text>
+          <text x="12" y="-15" font-size="8">✨</text>
+          <text x="-18" y="5" font-size="6">⭐</text>
+          <text x="15" y="0" font-size="6">⭐</text>
+          <!-- Name tag -->
+          <g transform="translate(0, 30)">
+            <rect x="-12" y="0" width="24" height="10" rx="2" fill="#ff1493" stroke="#333" stroke-width="1"/>
+            <text x="0" y="7" text-anchor="middle" font-family="Arial, sans-serif" font-size="6" font-weight="bold" fill="#fff">OLENA</text>
+          </g>
+          <!-- Speech bubble: "FOLLOW ME!" -->
+          <g transform="translate(20, -20)">
+            <ellipse cx="0" cy="0" rx="28" ry="10" fill="#fff" stroke="#333" stroke-width="0.8"/>
+            <text x="0" y="4" text-anchor="middle" font-family="Arial, sans-serif" font-size="7" font-weight="bold" fill="#ff1493">🎉 FOLLOW ME! 🎉</text>
+          </g>
+        </g>
+        <!-- Person 1 (now following OLENA) -->
         <g transform="translate(0, 0)">
           <ellipse cx="0" cy="15" rx="5" ry="3" fill="#000" opacity="0.15"/>
           <ellipse cx="0" cy="8" rx="5" ry="8" fill="#ff6699" stroke="#333" stroke-width="0.6"/>
@@ -2896,6 +3025,79 @@
         </g>
       </g>
 
+      <!-- RUSLAN #2: The EPIC 312-person photobomb scene -->
+      <g id="ruslan-photobomb-epic" transform="translate(-200, 150)">
+        <!-- Photo frame mockup -->
+        <rect x="0" y="0" width="140" height="100" rx="5" fill="#fff" stroke="#333" stroke-width="3"/>
+        <rect x="5" y="5" width="130" height="90" fill="#87ceeb"/>
+        <!-- Background festive elements -->
+        <polygon points="30,90 35,70 40,90" fill="#2d5a3d" opacity="0.5"/>
+        <polygon points="100,90 107,65 114,90" fill="#2d5a3d" opacity="0.5"/>
+
+        <!-- TONS of tiny photobomber heads! -->
+        <g fill="#ffd5b4" stroke="#333" stroke-width="0.2">
+          <!-- Row 1 (back) -->
+          <circle cx="15" cy="20" r="4"/><circle cx="25" cy="18" r="3.5"/>
+          <circle cx="35" cy="22" r="4"/><circle cx="45" cy="19" r="3"/>
+          <circle cx="55" cy="21" r="4"/><circle cx="65" cy="18" r="3.5"/>
+          <circle cx="75" cy="20" r="4"/><circle cx="85" cy="22" r="3"/>
+          <circle cx="95" cy="19" r="4"/><circle cx="105" cy="21" r="3.5"/>
+          <circle cx="115" cy="20" r="4"/><circle cx="125" cy="18" r="3"/>
+          <!-- Row 2 -->
+          <circle cx="20" cy="32" r="4"/><circle cx="32" cy="30" r="3.5"/>
+          <circle cx="42" cy="34" r="4"/><circle cx="52" cy="31" r="3"/>
+          <circle cx="62" cy="33" r="4"/><circle cx="72" cy="30" r="3.5"/>
+          <circle cx="82" cy="32" r="4"/><circle cx="92" cy="34" r="3"/>
+          <circle cx="102" cy="31" r="4"/><circle cx="112" cy="33" r="3.5"/>
+          <circle cx="122" cy="32" r="4"/>
+          <!-- Row 3 -->
+          <circle cx="12" cy="44" r="4"/><circle cx="22" cy="42" r="3.5"/>
+          <circle cx="32" cy="46" r="4"/><circle cx="42" cy="43" r="3"/>
+          <circle cx="52" cy="45" r="4"/><circle cx="62" cy="42" r="3.5"/>
+          <circle cx="82" cy="44" r="4"/><circle cx="92" cy="46" r="3"/>
+          <circle cx="102" cy="43" r="4"/><circle cx="112" cy="45" r="3.5"/>
+          <circle cx="122" cy="44" r="4"/><circle cx="130" cy="42" r="3"/>
+          <!-- Row 4 -->
+          <circle cx="18" cy="56" r="4"/><circle cx="28" cy="54" r="3.5"/>
+          <circle cx="38" cy="58" r="4"/><circle cx="48" cy="55" r="3"/>
+          <circle cx="92" cy="56" r="4"/><circle cx="102" cy="58" r="3"/>
+          <circle cx="112" cy="55" r="4"/><circle cx="122" cy="57" r="3.5"/>
+          <!-- Row 5 (front) -->
+          <circle cx="15" cy="68" r="4.5"/><circle cx="27" cy="66" r="4"/>
+          <circle cx="37" cy="70" r="4.5"/><circle cx="95" cy="68" r="4.5"/>
+          <circle cx="107" cy="66" r="4"/><circle cx="117" cy="70" r="4.5"/>
+          <circle cx="127" cy="68" r="4"/>
+        </g>
+
+        <!-- RUSLAN in center trying to pose seriously -->
+        <g transform="translate(70, 55)">
+          <ellipse cx="0" cy="18" rx="10" ry="6" fill="#000" opacity="0.1"/>
+          <ellipse cx="0" cy="8" rx="9" ry="14" fill="#2255aa" stroke="#333" stroke-width="1"/>
+          <circle cx="0" cy="-10" r="10" fill="#ffd5b4" stroke="#333" stroke-width="1"/>
+          <!-- Trying to look serious -->
+          <rect x="-5" y="-12" width="4" height="3" rx="0.5" fill="#333"/>
+          <rect x="1" y="-12" width="4" height="3" rx="0.5" fill="#333"/>
+          <path d="M -3,-5 L 3,-5" stroke="#333" stroke-width="1.5"/>
+          <!-- NAME TAG -->
+          <rect x="-12" y="22" width="24" height="10" rx="1" fill="#fff" stroke="#333" stroke-width="0.5"/>
+          <text x="0" y="29" text-anchor="middle" font-family="Arial, sans-serif" font-size="6" font-weight="bold" fill="#333">RUSLAN</text>
+        </g>
+
+        <!-- Sneaky yeti hiding in corner! -->
+        <g transform="translate(125, 75)">
+          <ellipse cx="0" cy="0" rx="10" ry="12" fill="#e8e8f0" stroke="#333" stroke-width="0.8"/>
+          <circle cx="-3" cy="-4" r="2" fill="#333"/>
+          <circle cx="3" cy="-4" r="2" fill="#333"/>
+          <ellipse cx="0" cy="2" rx="3" ry="2" fill="#4a6fa5"/>
+        </g>
+
+        <!-- Counter -->
+        <g transform="translate(70, -15)">
+          <rect x="-45" y="0" width="90" height="20" rx="3" fill="#ff3366" stroke="#cc1144" stroke-width="1.5"/>
+          <text x="0" y="14" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="#fff">📸 312 + 1 YETI</text>
+        </g>
+      </g>
+
       <!-- Caffeinated penguins -->
       <g transform="translate(120, 120)">
         <g transform="translate(0, 0)">
@@ -3416,6 +3618,63 @@
         <text x="25" y="-15" font-family="Arial, sans-serif" font-size="14" fill="#666">?</text>
         <text x="30" y="-5" font-family="Arial, sans-serif" font-size="10" fill="#888">?</text>
         <text x="-30" y="-10" font-family="Arial, sans-serif" font-size="12" fill="#777">?</text>
+      </g>
+
+      <!-- INTS #2: Teaching the yeti Git commands! -->
+      <g id="ints-git-teacher" transform="translate(-180, 55)">
+        <!-- Shadow -->
+        <ellipse cx="0" cy="40" rx="12" ry="5" fill="#000" opacity="0.2"/>
+        <!-- Body (warm winter coat) -->
+        <ellipse cx="0" cy="22" rx="11" ry="17" fill="#2e7d32" stroke="#333" stroke-width="1.5"/>
+        <!-- Coat details -->
+        <line x1="0" y1="5" x2="0" y2="35" stroke="#1b5e20" stroke-width="1"/>
+        <circle cx="0" cy="12" r="1.5" fill="#ffd700"/>
+        <circle cx="0" cy="18" r="1.5" fill="#ffd700"/>
+        <circle cx="0" cy="24" r="1.5" fill="#ffd700"/>
+        <!-- Scarf -->
+        <path d="M -8,5 Q 0,8 8,5" fill="#ff5722" stroke="#333" stroke-width="0.5"/>
+        <rect x="7" y="5" width="4" height="18" rx="1" fill="#ff5722" stroke="#333" stroke-width="0.3"/>
+        <!-- Head -->
+        <circle cx="0" cy="-3" r="9" fill="#ffd5b4" stroke="#333" stroke-width="1"/>
+        <!-- Hair (neat, professional) -->
+        <ellipse cx="0" cy="-8" rx="8" ry="5" fill="#4a3728" stroke="#333" stroke-width="0.5"/>
+        <!-- Glasses -->
+        <rect x="-8" y="-5" width="6" height="5" rx="1" fill="none" stroke="#333" stroke-width="1"/>
+        <rect x="2" y="-5" width="6" height="5" rx="1" fill="none" stroke="#333" stroke-width="1"/>
+        <line x1="-2" y1="-3" x2="2" y2="-3" stroke="#333" stroke-width="0.8"/>
+        <!-- Eyes behind glasses (focused, teaching) -->
+        <circle cx="-5" cy="-3" r="1.5" fill="#333"/>
+        <circle cx="5" cy="-3" r="1.5" fill="#333"/>
+        <!-- Confident smile -->
+        <path d="M -3,3 Q 0,6 3,3" stroke="#333" fill="none" stroke-width="0.8"/>
+        <!-- Pointing arm toward yeti -->
+        <line x1="8" y1="15" x2="25" y2="10" stroke="#ffd5b4" stroke-width="4" stroke-linecap="round"/>
+        <!-- Hand pointing -->
+        <circle cx="27" cy="9" r="3" fill="#ffd5b4" stroke="#333" stroke-width="0.5"/>
+        <line x1="29" y1="8" x2="35" y2="5" stroke="#ffd5b4" stroke-width="2" stroke-linecap="round"/>
+        <!-- Other arm holding coffee mug -->
+        <line x1="-8" y1="15" x2="-18" y2="18" stroke="#ffd5b4" stroke-width="4" stroke-linecap="round"/>
+        <rect x="-24" y="14" width="8" height="10" rx="1" fill="#8b4513" stroke="#333" stroke-width="0.5"/>
+        <ellipse cx="-20" cy="14" rx="4" ry="2" fill="#6d4c41"/>
+        <text x="-20" y="22" text-anchor="middle" font-size="4" fill="#fff">☕</text>
+        <!-- Name tag -->
+        <g transform="translate(0, 45)">
+          <rect x="-12" y="0" width="24" height="10" rx="2" fill="#2e7d32" stroke="#333" stroke-width="1"/>
+          <text x="0" y="7" text-anchor="middle" font-family="Arial, sans-serif" font-size="6" font-weight="bold" fill="#fff">INTS</text>
+        </g>
+        <!-- Speech bubble: Teaching Git! -->
+        <g transform="translate(-5, -45)">
+          <rect x="-45" y="-5" width="90" height="35" rx="5" fill="#fff" stroke="#333" stroke-width="1"/>
+          <polygon points="20,30 25,40 30,30" fill="#fff" stroke="#333" stroke-width="1"/>
+          <text x="0" y="5" text-anchor="middle" font-family="monospace" font-size="6" fill="#333">First, try:</text>
+          <text x="0" y="14" text-anchor="middle" font-family="monospace" font-size="6" fill="#0066cc" font-weight="bold">git fetch origin</text>
+          <text x="0" y="23" text-anchor="middle" font-family="monospace" font-size="6" fill="#0066cc" font-weight="bold">git rebase -i HEAD~3</text>
+        </g>
+        <!-- Lightbulb above INTS (teaching moment!) -->
+        <g transform="translate(15, -35)">
+          <circle cx="0" cy="0" r="6" fill="#ffeb3b" stroke="#ffc107" stroke-width="1"/>
+          <text x="0" y="3" text-anchor="middle" font-size="8">💡</text>
+        </g>
       </g>
     </g>
 
