@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>BladeLabs Winter Festival - Line Art</title>
+  <style>
+    body {
+      margin: 0;
+      background: #f5f5f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    svg {
+      display: block;
+      max-width: 100%;
+      height: auto;
+      background: #fafafa;
+    }
+  </style>
+</head>
+<body>
+  <svg viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+    <!-- Line Art Style: Black outlines on white, no color fills -->
+    <!-- Line weights: 1.5px main outlines, 1px secondary, 0.5px details/textures -->
+
+    <!-- ============================================ -->
+    <!-- GROUND/SNOW AREA -->
+    <!-- ============================================ -->
+    <ellipse cx="400" cy="480" rx="420" ry="180" fill="#fafafa" stroke="#333" stroke-width="1"/>
+
+    <!-- Snow texture (small dots and marks) -->
+    <g fill="none" stroke="#333" stroke-width="0.3" opacity="0.4">
+      <circle cx="80" cy="420" r="1"/><circle cx="150" cy="380" r="0.8"/>
+      <circle cx="250" cy="450" r="1"/><circle cx="350" cy="400" r="0.8"/>
+      <circle cx="480" cy="430" r="1"/><circle cx="580" cy="380" r="0.8"/>
+      <circle cx="680" cy="450" r="1"/><circle cx="720" cy="400" r="0.8"/>
+      <path d="M 100,500 L 105,502 L 100,504"/>
+      <path d="M 300,520 L 305,522 L 300,524"/>
+      <path d="M 600,510 L 605,512 L 600,514"/>
+    </g>
+
+    <!-- ============================================ -->
+    <!-- FROZEN POND -->
+    <!-- ============================================ -->
+    <g id="pond-lineart" transform="translate(520, 490)">
+      <!-- Pond outline -->
+      <ellipse cx="0" cy="0" rx="85" ry="42" fill="#fff" stroke="#333" stroke-width="1.2"/>
+
+      <!-- Ice crack lines -->
+      <g stroke="#333" stroke-width="0.5" fill="none">
+        <path d="M -55,0 L -25,5 L 5,-5 L 40,3"/>
+        <path d="M -35,18 L -10,12 L 15,22 L 40,15"/>
+        <path d="M -25,-12 L 0,-18 L 25,-10"/>
+        <path d="M -10,8 L 5,0 L 20,10"/>
+        <path d="M 0,-3 L 8,8 L 3,20"/>
+        <path d="M -45,-8 L -30,3"/>
+        <path d="M 35,-3 L 50,6"/>
+        <path d="M -60,10 L -48,15"/>
+        <path d="M 50,-12 L 65,0"/>
+        <path d="M -20,-25 L -5,-28 L 12,-20"/>
+      </g>
+
+      <!-- Shine marks -->
+      <path d="M -35,-8 L -25,-12 L -30,-6" fill="none" stroke="#333" stroke-width="0.3"/>
+      <path d="M 20,5 L 30,2 L 25,10" fill="none" stroke="#333" stroke-width="0.3"/>
+    </g>
+
+    <!-- ============================================ -->
+    <!-- COBBLESTONE PATH -->
+    <!-- ============================================ -->
+    <g id="path-lineart">
+      <!-- Main path outline -->
+      <path d="M 0,330 Q 200,310 400,320 Q 600,330 800,310
+               L 800,370 Q 600,390 400,380 Q 200,370 0,390 Z"
+            fill="#fff" stroke="#333" stroke-width="1.2"/>
+
+      <!-- Cobblestone pattern -->
+      <g fill="none" stroke="#333" stroke-width="0.4">
+        <!-- Row 1 -->
+        <rect x="20" y="335" width="10" height="8" rx="1"/>
+        <rect x="35" y="333" width="12" height="9" rx="1"/>
+        <rect x="52" y="336" width="10" height="8" rx="1"/>
+        <rect x="67" y="334" width="11" height="8" rx="1"/>
+        <rect x="83" y="332" width="10" height="9" rx="1"/>
+        <rect x="98" y="335" width="12" height="8" rx="1"/>
+        <rect x="115" y="333" width="10" height="8" rx="1"/>
+        <rect x="130" y="331" width="11" height="9" rx="1"/>
+        <rect x="146" y="334" width="10" height="8" rx="1"/>
+        <rect x="161" y="332" width="12" height="8" rx="1"/>
+        <rect x="178" y="330" width="10" height="9" rx="1"/>
+        <rect x="193" y="333" width="11" height="8" rx="1"/>
+        <!-- Continue pattern... -->
+        <rect x="220" y="330" width="10" height="8" rx="1"/>
+        <rect x="235" y="328" width="12" height="9" rx="1"/>
+        <rect x="252" y="331" width="10" height="8" rx="1"/>
+        <rect x="280" y="329" width="11" height="8" rx="1"/>
+        <rect x="310" y="327" width="10" height="9" rx="1"/>
+        <rect x="340" y="330" width="12" height="8" rx="1"/>
+        <rect x="370" y="328" width="10" height="8" rx="1"/>
+        <rect x="400" y="326" width="11" height="9" rx="1"/>
+        <rect x="430" y="329" width="10" height="8" rx="1"/>
+        <rect x="460" y="327" width="12" height="8" rx="1"/>
+        <rect x="490" y="325" width="10" height="9" rx="1"/>
+        <rect x="520" y="328" width="11" height="8" rx="1"/>
+        <rect x="550" y="326" width="10" height="8" rx="1"/>
+        <rect x="580" y="324" width="12" height="9" rx="1"/>
+        <rect x="610" y="327" width="10" height="8" rx="1"/>
+        <rect x="640" y="322" width="11" height="8" rx="1"/>
+        <rect x="670" y="320" width="10" height="9" rx="1"/>
+        <rect x="700" y="318" width="12" height="8" rx="1"/>
+        <rect x="730" y="316" width="10" height="8" rx="1"/>
+        <rect x="760" y="314" width="11" height="9" rx="1"/>
+
+        <!-- Row 2 -->
+        <rect x="25" y="350" width="11" height="8" rx="1"/>
+        <rect x="42" y="348" width="10" height="9" rx="1"/>
+        <rect x="58" y="351" width="12" height="8" rx="1"/>
+        <rect x="75" y="349" width="10" height="8" rx="1"/>
+        <rect x="92" y="352" width="11" height="8" rx="1"/>
+        <rect x="108" y="350" width="10" height="9" rx="1"/>
+        <rect x="165" y="347" width="12" height="8" rx="1"/>
+        <rect x="230" y="345" width="10" height="8" rx="1"/>
+        <rect x="295" y="343" width="11" height="8" rx="1"/>
+        <rect x="360" y="346" width="10" height="9" rx="1"/>
+        <rect x="425" y="348" width="12" height="8" rx="1"/>
+        <rect x="490" y="346" width="10" height="8" rx="1"/>
+        <rect x="555" y="344" width="11" height="8" rx="1"/>
+        <rect x="620" y="347" width="10" height="9" rx="1"/>
+        <rect x="685" y="350" width="12" height="8" rx="1"/>
+        <rect x="750" y="348" width="10" height="8" rx="1"/>
+
+        <!-- Row 3 -->
+        <rect x="30" y="365" width="10" height="8" rx="1"/>
+        <rect x="55" y="368" width="11" height="8" rx="1"/>
+        <rect x="82" y="370" width="10" height="8" rx="1"/>
+        <rect x="140" y="366" width="12" height="8" rx="1"/>
+        <rect x="200" y="363" width="10" height="8" rx="1"/>
+        <rect x="260" y="360" width="11" height="8" rx="1"/>
+        <rect x="320" y="364" width="10" height="8" rx="1"/>
+        <rect x="380" y="368" width="12" height="8" rx="1"/>
+        <rect x="440" y="365" width="10" height="8" rx="1"/>
+        <rect x="500" y="362" width="11" height="8" rx="1"/>
+        <rect x="560" y="366" width="10" height="8" rx="1"/>
+        <rect x="620" y="370" width="12" height="8" rx="1"/>
+        <rect x="680" y="374" width="10" height="8" rx="1"/>
+        <rect x="740" y="370" width="11" height="8" rx="1"/>
+      </g>
+    </g>
+
+    <!-- Secondary path -->
+    <g id="secondary-path-lineart">
+      <path d="M 340,380 Q 370,430 350,480 Q 330,530 370,580"
+            fill="none" stroke="#333" stroke-width="25"/>
+      <path d="M 340,380 Q 370,430 350,480 Q 330,530 370,580"
+            fill="#fff" stroke="#333" stroke-width="1"/>
+      <!-- Stone pattern on secondary path -->
+      <g fill="none" stroke="#333" stroke-width="0.3">
+        <rect x="345" y="400" width="8" height="6" rx="1"/>
+        <rect x="355" y="420" width="7" height="6" rx="1"/>
+        <rect x="348" y="440" width="9" height="6" rx="1"/>
+        <rect x="340" y="460" width="8" height="6" rx="1"/>
+        <rect x="350" y="480" width="7" height="6" rx="1"/>
+        <rect x="342" y="500" width="9" height="6" rx="1"/>
+      </g>
+    </g>
+
+    <!-- ============================================ -->
+    <!-- PINE TREES (Line art style) -->
+    <!-- ============================================ -->
+
+    <!-- Tree 1 -->
+    <g id="tree-1-lineart" transform="translate(80, 270)">
+      <!-- Trunk -->
+      <rect x="-4" y="20" width="8" height="18" fill="#fff" stroke="#333" stroke-width="1"/>
+      <!-- Foliage layers -->
+      <ellipse cx="0" cy="8" rx="24" ry="16" fill="#fff" stroke="#333" stroke-width="1.2"/>
+      <ellipse cx="0" cy="2" rx="19" ry="12" fill="#fff" stroke="#333" stroke-width="1"/>
+      <ellipse cx="0" cy="-4" rx="14" ry="9" fill="#fff" stroke="#333" stroke-width="1"/>
+      <ellipse cx="0" cy="-8" rx="8" ry="5" fill="#fff" stroke="#333" stroke-width="0.8"/>
+      <!-- Texture lines -->
+      <path d="M -12,5 Q -8,10 -4,5" fill="none" stroke="#333" stroke-width="0.5"/>
+      <path d="M 4,8 Q 8,12 12,8" fill="none" stroke="#333" stroke-width="0.5"/>
+      <path d="M -8,-2 Q -4,2 0,-2" fill="none" stroke="#333" stroke-width="0.4"/>
+    </g>
+
+    <!-- Tree 2 -->
+    <g id="tree-2-lineart" transform="translate(210, 250)">
+      <rect x="-3" y="16" width="6" height="14" fill="#fff" stroke="#333" stroke-width="0.8"/>
+      <ellipse cx="0" cy="6" rx="18" ry="12" fill="#fff" stroke="#333" stroke-width="1"/>
+      <ellipse cx="0" cy="1" rx="14" ry="9" fill="#fff" stroke="#333" stroke-width="0.8"/>
+      <ellipse cx="0" cy="-3" rx="10" ry="6" fill="#fff" stroke="#333" stroke-width="0.8"/>
+      <ellipse cx="0" cy="-6" rx="5" ry="3" fill="#fff" stroke="#333" stroke-width="0.6"/>
+      <path d="M -8,4 Q -4,8 0,4" fill="none" stroke="#333" stroke-width="0.4"/>
+      <path d="M 2,6 Q 6,10 10,6" fill="none" stroke="#333" stroke-width="0.4"/>
+    </g>
+
+    <!-- Tree 3 -->
+    <g id="tree-3-lineart" transform="translate(680, 260)">
+      <rect x="-4" y="18" width="8" height="16" fill="#fff" stroke="#333" stroke-width="1"/>
+      <ellipse cx="0" cy="7" rx="22" ry="14" fill="#fff" stroke="#333" stroke-width="1.2"/>
+      <ellipse cx="0" cy="2" rx="17" ry="10" fill="#fff" stroke="#333" stroke-width="1"/>
+      <ellipse cx="0" cy="-3" rx="12" ry="7" fill="#fff" stroke="#333" stroke-width="0.8"/>
+      <ellipse cx="0" cy="-7" rx="6" ry="4" fill="#fff" stroke="#333" stroke-width="0.6"/>
+      <path d="M -10,5 Q -6,9 -2,5" fill="none" stroke="#333" stroke-width="0.4"/>
+      <path d="M 3,7 Q 7,11 11,7" fill="none" stroke="#333" stroke-width="0.4"/>
+    </g>
+
+    <!-- Tree 4 -->
+    <g id="tree-4-lineart" transform="translate(720, 390)">
+      <rect x="-3" y="14" width="6" height="12" fill="#fff" stroke="#333" stroke-width="0.8"/>
+      <ellipse cx="0" cy="5" rx="15" ry="10" fill="#fff" stroke="#333" stroke-width="1"/>
+      <ellipse cx="0" cy="1" rx="11" ry="7" fill="#fff" stroke="#333" stroke-width="0.8"/>
+      <ellipse cx="0" cy="-2" rx="7" ry="4" fill="#fff" stroke="#333" stroke-width="0.6"/>
+      <path d="M -6,3 Q -3,6 0,3" fill="none" stroke="#333" stroke-width="0.3"/>
+    </g>
+
+    <!-- ============================================ -->
+    <!-- HOT COCOA STAND (True isometric line art) -->
+    <!-- ============================================ -->
+    <g id="stand-lineart" transform="translate(260, 280)">
+      <!-- Base/floor -->
+      <polygon points="10,120 100,80 190,120 100,160" fill="#fff" stroke="#333" stroke-width="1.2"/>
+
+      <!-- Left wall (front-facing) -->
+      <polygon points="10,120 10,50 100,10 100,80" fill="#fff" stroke="#333" stroke-width="1.5"/>
+
+      <!-- Wood plank lines on left wall -->
+      <line x1="10" y1="65" x2="100" y2="25" stroke="#333" stroke-width="0.4"/>
+      <line x1="10" y1="80" x2="100" y2="40" stroke="#333" stroke-width="0.4"/>
+      <line x1="10" y1="95" x2="100" y2="55" stroke="#333" stroke-width="0.4"/>
+      <line x1="10" y1="110" x2="100" y2="70" stroke="#333" stroke-width="0.4"/>
+
+      <!-- Service window on left wall -->
+      <polygon points="25,90 25,55 75,30 75,65" fill="#fff" stroke="#333" stroke-width="1"/>
+      <!-- Window cross-bars -->
+      <line x1="25" y1="72" x2="75" y2="47" stroke="#333" stroke-width="0.5"/>
+      <line x1="50" y1="42" x2="50" y2="78" stroke="#333" stroke-width="0.5"/>
+
+      <!-- Counter shelf -->
+      <polygon points="22,95 22,90 78,63 78,68" fill="#fff" stroke="#333" stroke-width="0.8"/>
+
+      <!-- Right wall (side) -->
+      <polygon points="100,80 100,10 190,50 190,120" fill="#fff" stroke="#333" stroke-width="1.5"/>
+
+      <!-- Wood plank lines on right wall -->
+      <line x1="100" y1="25" x2="190" y2="65" stroke="#333" stroke-width="0.4"/>
+      <line x1="100" y1="40" x2="190" y2="80" stroke="#333" stroke-width="0.4"/>
+      <line x1="100" y1="55" x2="190" y2="95" stroke="#333" stroke-width="0.4"/>
+      <line x1="100" y1="70" x2="190" y2="110" stroke="#333" stroke-width="0.4"/>
+
+      <!-- Side window -->
+      <polygon points="115,55 115,35 160,55 160,75" fill="#fff" stroke="#333" stroke-width="0.8"/>
+      <line x1="137" y1="45" x2="137" y2="65" stroke="#333" stroke-width="0.4"/>
+
+      <!-- Roof - left slope -->
+      <polygon points="-5,45 100,0 100,10 -5,55" fill="#fff" stroke="#333" stroke-width="1.5"/>
+      <!-- Roof tiles/lines -->
+      <line x1="20" y1="40" x2="100" y2="8" stroke="#333" stroke-width="0.3"/>
+      <line x1="45" y1="35" x2="100" y2="5" stroke="#333" stroke-width="0.3"/>
+      <line x1="70" y1="28" x2="100" y2="2" stroke="#333" stroke-width="0.3"/>
+
+      <!-- Roof - right slope -->
+      <polygon points="100,0 205,45 205,55 100,10" fill="#fff" stroke="#333" stroke-width="1.5"/>
+      <line x1="100" y1="8" x2="180" y2="42" stroke="#333" stroke-width="0.3"/>
+      <line x1="100" y1="5" x2="155" y2="30" stroke="#333" stroke-width="0.3"/>
+      <line x1="100" y1="2" x2="130" y2="18" stroke="#333" stroke-width="0.3"/>
+
+      <!-- Sign -->
+      <rect x="35" y="20" width="50" height="15" rx="2" fill="#fff" stroke="#333" stroke-width="1"/>
+      <text x="60" y="31" font-family="Arial, sans-serif" font-size="7" font-weight="bold" fill="#333" text-anchor="middle">HOT COCOA</text>
+
+      <!-- Cups on counter (line art) -->
+      <g transform="translate(32, 72)">
+        <rect x="0" y="0" width="8" height="10" rx="1" fill="#fff" stroke="#333" stroke-width="0.6"/>
+        <ellipse cx="4" cy="1" rx="4" ry="2" fill="#fff" stroke="#333" stroke-width="0.4"/>
+        <!-- Steam -->
+        <path d="M 2,-3 Q 4,-7 2,-11" stroke="#333" stroke-width="0.4" fill="none"/>
+        <path d="M 6,-3 Q 4,-6 6,-9" stroke="#333" stroke-width="0.4" fill="none"/>
+      </g>
+      <g transform="translate(44, 68)">
+        <rect x="0" y="0" width="8" height="10" rx="1" fill="#fff" stroke="#333" stroke-width="0.6"/>
+        <ellipse cx="4" cy="1" rx="4" ry="2" fill="#fff" stroke="#333" stroke-width="0.4"/>
+        <path d="M 4,-3 Q 2,-6 4,-9" stroke="#333" stroke-width="0.4" fill="none"/>
+      </g>
+      <g transform="translate(56, 64)">
+        <rect x="0" y="0" width="8" height="10" rx="1" fill="#fff" stroke="#333" stroke-width="0.6"/>
+        <!-- Whipped cream -->
+        <ellipse cx="4" cy="0" rx="5" ry="3" fill="#fff" stroke="#333" stroke-width="0.5"/>
+      </g>
+
+      <!-- Vendor (line art) -->
+      <g transform="translate(50, 48)">
+        <!-- Head -->
+        <circle cx="0" cy="0" r="9" fill="#fff" stroke="#333" stroke-width="1"/>
+        <!-- Hat outline -->
+        <path d="M -9,-3 Q -7,-14 0,-12 Q 7,-14 9,-3" fill="#fff" stroke="#333" stroke-width="0.8"/>
+        <ellipse cx="0" cy="-3" rx="10" ry="3" fill="#fff" stroke="#333" stroke-width="0.6"/>
+        <!-- Pom pom -->
+        <circle cx="0" cy="-13" r="3" fill="#fff" stroke="#333" stroke-width="0.6"/>
+        <!-- Eyes -->
+        <circle cx="-3" cy="0" r="1.2" fill="#333"/>
+        <circle cx="3" cy="0" r="1.2" fill="#333"/>
+        <!-- Smile -->
+        <path d="M -3,3 Q 0,6 3,3" stroke="#333" stroke-width="0.8" fill="none"/>
+        <!-- Body hint -->
+        <ellipse cx="0" cy="14" rx="8" ry="6" fill="#fff" stroke="#333" stroke-width="0.8"/>
+      </g>
+
+      <!-- String lights -->
+      <path d="M 5,52 Q 30,58 55,52 Q 80,58 100,52" stroke="#333" stroke-width="0.6" fill="none"/>
+      <circle cx="22" cy="55" r="3" fill="#fff" stroke="#333" stroke-width="0.5"/>
+      <circle cx="40" cy="53" r="3" fill="#fff" stroke="#333" stroke-width="0.5"/>
+      <circle cx="58" cy="56" r="3" fill="#fff" stroke="#333" stroke-width="0.5"/>
+      <circle cx="76" cy="53" r="3" fill="#fff" stroke="#333" stroke-width="0.5"/>
+      <circle cx="94" cy="55" r="3" fill="#fff" stroke="#333" stroke-width="0.5"/>
+
+      <!-- Barrel (line art) -->
+      <g transform="translate(198, 100)">
+        <ellipse cx="0" cy="0" rx="12" ry="8" fill="#fff" stroke="#333" stroke-width="1"/>
+        <ellipse cx="0" cy="0" rx="8" ry="5" fill="#fff" stroke="#333" stroke-width="0.5"/>
+        <line x1="-10" y1="0" x2="10" y2="0" stroke="#333" stroke-width="0.5"/>
+        <!-- Band lines -->
+        <ellipse cx="0" cy="-3" rx="11" ry="4" fill="none" stroke="#333" stroke-width="0.4"/>
+        <ellipse cx="0" cy="3" rx="11" ry="4" fill="none" stroke="#333" stroke-width="0.4"/>
+      </g>
+
+      <!-- Crate (line art) -->
+      <g transform="translate(-8, 108)">
+        <rect x="0" y="0" width="18" height="14" fill="#fff" stroke="#333" stroke-width="0.8"/>
+        <line x1="0" y1="7" x2="18" y2="7" stroke="#333" stroke-width="0.4"/>
+        <line x1="9" y1="0" x2="9" y2="14" stroke="#333" stroke-width="0.4"/>
+        <rect x="3" y="-8" width="15" height="10" fill="#fff" stroke="#333" stroke-width="0.8"/>
+        <line x1="3" y1="-3" x2="18" y2="-3" stroke="#333" stroke-width="0.4"/>
+        <line x1="10" y1="-8" x2="10" y2="2" stroke="#333" stroke-width="0.4"/>
+      </g>
+    </g>
+
+    <!-- ============================================ -->
+    <!-- LAMP POSTS (Line art) -->
+    <!-- ============================================ -->
+
+    <!-- Lamp 1 -->
+    <g id="lamp-1-lineart" transform="translate(150, 340)">
+      <!-- Post -->
+      <rect x="-2" y="-30" width="4" height="45" fill="#fff" stroke="#333" stroke-width="0.8"/>
+      <!-- Lamp head -->
+      <rect x="-8" y="-38" width="16" height="10" rx="2" fill="#fff" stroke="#333" stroke-width="1"/>
+      <!-- Glass panes -->
+      <line x1="-6" y1="-36" x2="-6" y2="-30" stroke="#333" stroke-width="0.4"/>
+      <line x1="0" y1="-36" x2="0" y2="-30" stroke="#333" stroke-width="0.4"/>
+      <line x1="6" y1="-36" x2="6" y2="-30" stroke="#333" stroke-width="0.4"/>
+      <!-- Light rays -->
+      <g stroke="#333" stroke-width="0.3" opacity="0.5">
+        <line x1="0" y1="-25" x2="-15" y2="5"/>
+        <line x1="0" y1="-25" x2="0" y2="10"/>
+        <line x1="0" y1="-25" x2="15" y2="5"/>
+      </g>
+    </g>
+
+    <!-- Lamp 2 -->
+    <g id="lamp-2-lineart" transform="translate(600, 320)">
+      <rect x="-2" y="-30" width="4" height="45" fill="#fff" stroke="#333" stroke-width="0.8"/>
+      <rect x="-8" y="-38" width="16" height="10" rx="2" fill="#fff" stroke="#333" stroke-width="1"/>
+      <line x1="-6" y1="-36" x2="-6" y2="-30" stroke="#333" stroke-width="0.4"/>
+      <line x1="0" y1="-36" x2="0" y2="-30" stroke="#333" stroke-width="0.4"/>
+      <line x1="6" y1="-36" x2="6" y2="-30" stroke="#333" stroke-width="0.4"/>
+      <g stroke="#333" stroke-width="0.3" opacity="0.5">
+        <line x1="0" y1="-25" x2="-15" y2="5"/>
+        <line x1="0" y1="-25" x2="0" y2="10"/>
+        <line x1="0" y1="-25" x2="15" y2="5"/>
+      </g>
+    </g>
+
+    <!-- ============================================ -->
+    <!-- BENCHES (Line art) -->
+    <!-- ============================================ -->
+
+    <!-- Bench 1 -->
+    <g id="bench-1-lineart" transform="translate(120, 285)">
+      <rect x="-14" y="-4" width="28" height="10" rx="1" fill="#fff" stroke="#333" stroke-width="0.8"/>
+      <!-- Slats -->
+      <line x1="-12" y1="-1" x2="12" y2="-1" stroke="#333" stroke-width="0.4"/>
+      <line x1="-12" y1="2" x2="12" y2="2" stroke="#333" stroke-width="0.4"/>
+      <line x1="-12" y1="5" x2="12" y2="5" stroke="#333" stroke-width="0.4"/>
+      <!-- Legs -->
+      <rect x="-16" y="-3" width="4" height="8" rx="0.5" fill="#fff" stroke="#333" stroke-width="0.6"/>
+      <rect x="12" y="-3" width="4" height="8" rx="0.5" fill="#fff" stroke="#333" stroke-width="0.6"/>
+    </g>
+
+    <!-- Bench 2 -->
+    <g id="bench-2-lineart" transform="translate(580, 425) rotate(-20)">
+      <rect x="-14" y="-4" width="28" height="10" rx="1" fill="#fff" stroke="#333" stroke-width="0.8"/>
+      <line x1="-12" y1="-1" x2="12" y2="-1" stroke="#333" stroke-width="0.4"/>
+      <line x1="-12" y1="2" x2="12" y2="2" stroke="#333" stroke-width="0.4"/>
+      <line x1="-12" y1="5" x2="12" y2="5" stroke="#333" stroke-width="0.4"/>
+      <rect x="-16" y="-3" width="4" height="8" rx="0.5" fill="#fff" stroke="#333" stroke-width="0.6"/>
+      <rect x="12" y="-3" width="4" height="8" rx="0.5" fill="#fff" stroke="#333" stroke-width="0.6"/>
+    </g>
+
+    <!-- ============================================ -->
+    <!-- TRASH CAN (Line art) -->
+    <!-- ============================================ -->
+    <g id="trash-lineart" transform="translate(480, 395)">
+      <ellipse cx="0" cy="0" rx="6" ry="5" fill="#fff" stroke="#333" stroke-width="0.8"/>
+      <ellipse cx="0" cy="-3" rx="6" ry="4" fill="#fff" stroke="#333" stroke-width="0.6"/>
+      <!-- Lid handle -->
+      <rect x="-2" y="-6" width="4" height="2" rx="0.5" fill="#fff" stroke="#333" stroke-width="0.5"/>
+    </g>
+
+    <!-- ============================================ -->
+    <!-- SIGN POST (Line art) -->
+    <!-- ============================================ -->
+    <g id="sign-lineart" transform="translate(350, 295)">
+      <rect x="-2" y="-5" width="4" height="25" fill="#fff" stroke="#333" stroke-width="0.6"/>
+      <g transform="rotate(-25)">
+        <rect x="3" y="-5" width="25" height="10" rx="1" fill="#fff" stroke="#333" stroke-width="0.8"/>
+        <text x="15" y="1" font-family="Arial" font-size="5" fill="#333" text-anchor="middle">FESTIVAL</text>
+      </g>
+    </g>
+
+    <!-- ============================================ -->
+    <!-- FENCE (Line art) -->
+    <!-- ============================================ -->
+    <g id="fence-lineart" transform="translate(40, 385)">
+      <!-- Posts -->
+      <rect x="0" y="-8" width="4" height="12" fill="#fff" stroke="#333" stroke-width="0.6"/>
+      <rect x="18" y="-8" width="4" height="12" fill="#fff" stroke="#333" stroke-width="0.6"/>
+      <rect x="36" y="-8" width="4" height="12" fill="#fff" stroke="#333" stroke-width="0.6"/>
+      <rect x="54" y="-8" width="4" height="12" fill="#fff" stroke="#333" stroke-width="0.6"/>
+      <!-- Rails -->
+      <line x1="2" y1="-4" x2="56" y2="-4" stroke="#333" stroke-width="1.2"/>
+      <line x1="2" y1="0" x2="56" y2="0" stroke="#333" stroke-width="1.2"/>
+    </g>
+
+    <!-- ============================================ -->
+    <!-- FOOTPRINTS (Line art) -->
+    <!-- ============================================ -->
+    <g id="footprints-lineart" fill="none" stroke="#333" stroke-width="0.4" opacity="0.5">
+      <!-- Human footprints -->
+      <ellipse cx="420" cy="405" rx="2.5" ry="1.5"/>
+      <ellipse cx="430" cy="415" rx="2.5" ry="1.5"/>
+      <ellipse cx="438" cy="425" rx="2.5" ry="1.5"/>
+      <ellipse cx="448" cy="435" rx="2.5" ry="1.5"/>
+      <ellipse cx="456" cy="447" rx="2.5" ry="1.5"/>
+
+      <ellipse cx="200" cy="348" rx="2.5" ry="1.5"/>
+      <ellipse cx="222" cy="346" rx="2.5" ry="1.5"/>
+      <ellipse cx="244" cy="350" rx="2.5" ry="1.5"/>
+
+      <!-- Duck footprints (V shapes) -->
+      <path d="M 380,425 L 383,420 L 386,425"/>
+      <path d="M 395,435 L 398,430 L 401,435"/>
+      <path d="M 388,448 L 391,443 L 394,448"/>
+      <path d="M 520,408 L 523,403 L 526,408"/>
+      <path d="M 535,402 L 538,397 L 541,402"/>
+    </g>
+
+    <!-- ============================================ -->
+    <!-- INTS CHARACTER (Line art) -->
+    <!-- ============================================ -->
+    <g id="ints-lineart" transform="translate(520, 390)">
+      <!-- Body -->
+      <ellipse cx="0" cy="6" rx="8" ry="12" fill="#fff" stroke="#333" stroke-width="1.2"/>
+
+      <!-- Sweater pattern lines -->
+      <line x1="-6" y1="2" x2="6" y2="2" stroke="#333" stroke-width="0.4"/>
+      <line x1="-6" y1="6" x2="6" y2="6" stroke="#333" stroke-width="0.4"/>
+      <line x1="-6" y1="10" x2="6" y2="10" stroke="#333" stroke-width="0.4"/>
+
+      <!-- Arms -->
+      <ellipse cx="-14" cy="3" rx="6" ry="4" fill="#fff" stroke="#333" stroke-width="1"/>
+      <ellipse cx="14" cy="0" rx="6" ry="4" fill="#fff" stroke="#333" stroke-width="1"/>
+
+      <!-- Hands -->
+      <circle cx="-19" cy="3" r="3" fill="#fff" stroke="#333" stroke-width="0.8"/>
+      <circle cx="19" cy="0" r="3" fill="#fff" stroke="#333" stroke-width="0.8"/>
+
+      <!-- Net handle -->
+      <line x1="21" y1="-2" x2="42" y2="-22" stroke="#333" stroke-width="1.5"/>
+
+      <!-- Net ring -->
+      <ellipse cx="50" cy="-30" rx="16" ry="12" fill="#fff" stroke="#333" stroke-width="1.2"/>
+
+      <!-- Net mesh -->
+      <path d="M 38,-35 Q 50,-20 62,-35" stroke="#333" stroke-width="0.4" fill="none"/>
+      <path d="M 40,-28 Q 50,-15 60,-28" stroke="#333" stroke-width="0.4" fill="none"/>
+      <line x1="50" y1="-42" x2="50" y2="-18" stroke="#333" stroke-width="0.4"/>
+      <line x1="40" y1="-36" x2="60" y2="-24" stroke="#333" stroke-width="0.4"/>
+      <line x1="60" y1="-36" x2="40" y2="-24" stroke="#333" stroke-width="0.4"/>
+
+      <!-- Head -->
+      <circle cx="0" cy="-10" r="11" fill="#fff" stroke="#333" stroke-width="1.2"/>
+
+      <!-- Hair -->
+      <path d="M -9,-14 Q -6,-22 0,-20 Q 6,-22 9,-14" fill="#fff" stroke="#333" stroke-width="1"/>
+
+      <!-- Ear muffs -->
+      <ellipse cx="-11" cy="-10" rx="5" ry="4" fill="#fff" stroke="#333" stroke-width="0.8"/>
+      <ellipse cx="11" cy="-10" rx="5" ry="4" fill="#fff" stroke="#333" stroke-width="0.8"/>
+      <path d="M -9,-17 Q 0,-25 9,-17" stroke="#333" stroke-width="1.5" fill="none"/>
+
+      <!-- Eyes -->
+      <circle cx="-4" cy="-10" r="1.8" fill="#333"/>
+      <circle cx="4" cy="-10" r="1.8" fill="#333"/>
+
+      <!-- Worried mouth -->
+      <ellipse cx="0" cy="-5" rx="3" ry="1.5" fill="#fff" stroke="#333" stroke-width="0.8"/>
+
+      <!-- NAME TAG -->
+      <g transform="translate(0, 28)">
+        <rect x="-14" y="0" width="28" height="12" rx="2" fill="#fff" stroke="#333" stroke-width="1"/>
+        <text x="0" y="9" font-family="Arial, sans-serif" font-size="7" font-weight="bold" fill="#333" text-anchor="middle">INTS</text>
+      </g>
+    </g>
+
+    <!-- ============================================ -->
+    <!-- RUBBER DUCKS (Line art - ~10px) -->
+    <!-- ============================================ -->
+
+    <!-- Duck template: body oval, head circle, beak triangle, eye dot -->
+
+    <!-- Duck 1 -->
+    <g class="duck-lineart" transform="translate(400, 390)">
+      <ellipse cx="0" cy="0" rx="6" ry="5" fill="#fff" stroke="#333" stroke-width="0.8"/>
+      <circle cx="-4" cy="-3" r="4" fill="#fff" stroke="#333" stroke-width="0.8"/>
+      <path d="M -8,-3 L -11,-2 L -8,-1" fill="#fff" stroke="#333" stroke-width="0.5"/>
+      <circle cx="-5" cy="-3.5" r="0.8" fill="#333"/>
+    </g>
+
+    <!-- Duck 2 -->
+    <g class="duck-lineart" transform="translate(320, 405) rotate(-15)">
+      <ellipse cx="0" cy="0" rx="6" ry="5" fill="#fff" stroke="#333" stroke-width="0.8"/>
+      <circle cx="-4" cy="-3" r="4" fill="#fff" stroke="#333" stroke-width="0.8"/>
+      <path d="M -8,-3 L -11,-2 L -8,-1" fill="#fff" stroke="#333" stroke-width="0.5"/>
+      <circle cx="-5" cy="-3.5" r="0.8" fill="#333"/>
+    </g>
+
+    <!-- Duck 3 -->
+    <g class="duck-lineart" transform="translate(490, 410)">
+      <ellipse cx="0" cy="0" rx="6" ry="5" fill="#fff" stroke="#333" stroke-width="0.8"/>
+      <circle cx="-4" cy="-3" r="4" fill="#fff" stroke="#333" stroke-width="0.8"/>
+      <path d="M -8,-3 L -11,-2 L -8,-1" fill="#fff" stroke="#333" stroke-width="0.5"/>
+      <circle cx="-5" cy="-3.5" r="0.8" fill="#333"/>
+    </g>
+
+    <!-- Duck 4 -->
+    <g class="duck-lineart" transform="translate(570, 375) rotate(20)">
+      <ellipse cx="0" cy="0" rx="6" ry="5" fill="#fff" stroke="#333" stroke-width="0.8"/>
+      <circle cx="-4" cy="-3" r="4" fill="#fff" stroke="#333" stroke-width="0.8"/>
+      <path d="M -8,-3 L -11,-2 L -8,-1" fill="#fff" stroke="#333" stroke-width="0.5"/>
+      <circle cx="-5" cy="-3.5" r="0.8" fill="#333"/>
+    </g>
+
+    <!-- Duck 5 -->
+    <g class="duck-lineart" transform="translate(385, 350)">
+      <ellipse cx="0" cy="0" rx="6" ry="5" fill="#fff" stroke="#333" stroke-width="0.8"/>
+      <circle cx="-4" cy="-3" r="4" fill="#fff" stroke="#333" stroke-width="0.8"/>
+      <path d="M -8,-3 L -11,-2 L -8,-1" fill="#fff" stroke="#333" stroke-width="0.5"/>
+      <circle cx="-5" cy="-3.5" r="0.8" fill="#333"/>
+    </g>
+
+    <!-- Duck 6 -->
+    <g class="duck-lineart" transform="translate(445, 375) rotate(-25)">
+      <ellipse cx="0" cy="0" rx="6" ry="5" fill="#fff" stroke="#333" stroke-width="0.8"/>
+      <circle cx="-4" cy="-3" r="4" fill="#fff" stroke="#333" stroke-width="0.8"/>
+      <path d="M -8,-3 L -11,-2 L -8,-1" fill="#fff" stroke="#333" stroke-width="0.5"/>
+      <circle cx="-5" cy="-3.5" r="0.8" fill="#333"/>
+    </g>
+
+    <!-- Duck 7 -->
+    <g class="duck-lineart" transform="translate(180, 425) rotate(-20)">
+      <ellipse cx="0" cy="0" rx="6" ry="5" fill="#fff" stroke="#333" stroke-width="0.8"/>
+      <circle cx="-4" cy="-3" r="4" fill="#fff" stroke="#333" stroke-width="0.8"/>
+      <path d="M -8,-3 L -11,-2 L -8,-1" fill="#fff" stroke="#333" stroke-width="0.5"/>
+      <circle cx="-5" cy="-3.5" r="0.8" fill="#333"/>
+    </g>
+
+    <!-- Duck 8 -->
+    <g class="duck-lineart" transform="translate(100, 355)">
+      <ellipse cx="0" cy="0" rx="6" ry="5" fill="#fff" stroke="#333" stroke-width="0.8"/>
+      <circle cx="-4" cy="-3" r="4" fill="#fff" stroke="#333" stroke-width="0.8"/>
+      <path d="M -8,-3 L -11,-2 L -8,-1" fill="#fff" stroke="#333" stroke-width="0.5"/>
+      <circle cx="-5" cy="-3.5" r="0.8" fill="#333"/>
+    </g>
+
+    <!-- Duck 9 - on pond -->
+    <g class="duck-lineart" transform="translate(500, 475)">
+      <ellipse cx="0" cy="0" rx="6" ry="5" fill="#fff" stroke="#333" stroke-width="0.8"/>
+      <circle cx="-4" cy="-3" r="4" fill="#fff" stroke="#333" stroke-width="0.8"/>
+      <path d="M -8,-3 L -11,-2 L -8,-1" fill="#fff" stroke="#333" stroke-width="0.5"/>
+      <circle cx="-5" cy="-3.5" r="0.8" fill="#333"/>
+    </g>
+
+    <!-- Duck 10 - on pond -->
+    <g class="duck-lineart" transform="translate(540, 495) rotate(10)">
+      <ellipse cx="0" cy="0" rx="6" ry="5" fill="#fff" stroke="#333" stroke-width="0.8"/>
+      <circle cx="-4" cy="-3" r="4" fill="#fff" stroke="#333" stroke-width="0.8"/>
+      <path d="M -8,-3 L -11,-2 L -8,-1" fill="#fff" stroke="#333" stroke-width="0.5"/>
+      <circle cx="-5" cy="-3.5" r="0.8" fill="#333"/>
+    </g>
+
+    <!-- Duck 11 -->
+    <g class="duck-lineart" transform="translate(560, 405) rotate(8)">
+      <ellipse cx="0" cy="0" rx="6" ry="5" fill="#fff" stroke="#333" stroke-width="0.8"/>
+      <circle cx="-4" cy="-3" r="4" fill="#fff" stroke="#333" stroke-width="0.8"/>
+      <path d="M -8,-3 L -11,-2 L -8,-1" fill="#fff" stroke="#333" stroke-width="0.5"/>
+      <circle cx="-5" cy="-3.5" r="0.8" fill="#333"/>
+    </g>
+
+    <!-- Duck 12 -->
+    <g class="duck-lineart" transform="translate(650, 345) rotate(25)">
+      <ellipse cx="0" cy="0" rx="6" ry="5" fill="#fff" stroke="#333" stroke-width="0.8"/>
+      <circle cx="-4" cy="-3" r="4" fill="#fff" stroke="#333" stroke-width="0.8"/>
+      <path d="M -8,-3 L -11,-2 L -8,-1" fill="#fff" stroke="#333" stroke-width="0.5"/>
+      <circle cx="-5" cy="-3.5" r="0.8" fill="#333"/>
+    </g>
+
+    <!-- Duck 13 -->
+    <g class="duck-lineart" transform="translate(250, 505) rotate(-10)">
+      <ellipse cx="0" cy="0" rx="6" ry="5" fill="#fff" stroke="#333" stroke-width="0.8"/>
+      <circle cx="-4" cy="-3" r="4" fill="#fff" stroke="#333" stroke-width="0.8"/>
+      <path d="M -8,-3 L -11,-2 L -8,-1" fill="#fff" stroke="#333" stroke-width="0.5"/>
+      <circle cx="-5" cy="-3.5" r="0.8" fill="#333"/>
+    </g>
+
+    <!-- Duck 14 -->
+    <g class="duck-lineart" transform="translate(220, 480)">
+      <ellipse cx="0" cy="0" rx="6" ry="5" fill="#fff" stroke="#333" stroke-width="0.8"/>
+      <circle cx="-4" cy="-3" r="4" fill="#fff" stroke="#333" stroke-width="0.8"/>
+      <path d="M -8,-3 L -11,-2 L -8,-1" fill="#fff" stroke="#333" stroke-width="0.5"/>
+      <circle cx="-5" cy="-3.5" r="0.8" fill="#333"/>
+    </g>
+
+    <!-- Duck 15 -->
+    <g class="duck-lineart" transform="translate(570, 515) rotate(-5)">
+      <ellipse cx="0" cy="0" rx="6" ry="5" fill="#fff" stroke="#333" stroke-width="0.8"/>
+      <circle cx="-4" cy="-3" r="4" fill="#fff" stroke="#333" stroke-width="0.8"/>
+      <path d="M -8,-3 L -11,-2 L -8,-1" fill="#fff" stroke="#333" stroke-width="0.5"/>
+      <circle cx="-5" cy="-3.5" r="0.8" fill="#333"/>
+    </g>
+
+    <!-- Duck 16 -->
+    <g class="duck-lineart" transform="translate(70, 405) rotate(-35)">
+      <ellipse cx="0" cy="0" rx="6" ry="5" fill="#fff" stroke="#333" stroke-width="0.8"/>
+      <circle cx="-4" cy="-3" r="4" fill="#fff" stroke="#333" stroke-width="0.8"/>
+      <path d="M -8,-3 L -11,-2 L -8,-1" fill="#fff" stroke="#333" stroke-width="0.5"/>
+      <circle cx="-5" cy="-3.5" r="0.8" fill="#333"/>
+    </g>
+
+    <!-- Duck 17 -->
+    <g class="duck-lineart" transform="translate(305, 360) rotate(5)">
+      <ellipse cx="0" cy="0" rx="6" ry="5" fill="#fff" stroke="#333" stroke-width="0.8"/>
+      <circle cx="-4" cy="-3" r="4" fill="#fff" stroke="#333" stroke-width="0.8"/>
+      <path d="M -8,-3 L -11,-2 L -8,-1" fill="#fff" stroke="#333" stroke-width="0.5"/>
+      <circle cx="-5" cy="-3.5" r="0.8" fill="#333"/>
+    </g>
+
+    <!-- ============================================ -->
+    <!-- SNOWFLAKES (Line art - simple dots and stars) -->
+    <!-- ============================================ -->
+    <g id="snowflakes-lineart" fill="none" stroke="#333">
+      <!-- Dot snowflakes -->
+      <circle cx="50" cy="50" r="2" stroke-width="0.6"/>
+      <circle cx="150" cy="70" r="1.5" stroke-width="0.5"/>
+      <circle cx="250" cy="45" r="2" stroke-width="0.6"/>
+      <circle cx="350" cy="80" r="1.5" stroke-width="0.5"/>
+      <circle cx="450" cy="40" r="2" stroke-width="0.6"/>
+      <circle cx="550" cy="65" r="1.5" stroke-width="0.5"/>
+      <circle cx="650" cy="50" r="2" stroke-width="0.6"/>
+      <circle cx="750" cy="75" r="1.5" stroke-width="0.5"/>
+
+      <circle cx="100" cy="120" r="1.2" stroke-width="0.4"/>
+      <circle cx="200" cy="100" r="1" stroke-width="0.4"/>
+      <circle cx="300" cy="130" r="1.2" stroke-width="0.4"/>
+      <circle cx="400" cy="95" r="1" stroke-width="0.4"/>
+      <circle cx="500" cy="115" r="1.2" stroke-width="0.4"/>
+      <circle cx="600" cy="105" r="1" stroke-width="0.4"/>
+      <circle cx="700" cy="125" r="1.2" stroke-width="0.4"/>
+
+      <!-- Star snowflakes -->
+      <g transform="translate(120, 60)" stroke-width="0.5">
+        <line x1="-4" y1="0" x2="4" y2="0"/>
+        <line x1="0" y1="-4" x2="0" y2="4"/>
+        <line x1="-3" y1="-3" x2="3" y2="3"/>
+        <line x1="3" y1="-3" x2="-3" y2="3"/>
+      </g>
+      <g transform="translate(380, 55)" stroke-width="0.5">
+        <line x1="-4" y1="0" x2="4" y2="0"/>
+        <line x1="0" y1="-4" x2="0" y2="4"/>
+        <line x1="-3" y1="-3" x2="3" y2="3"/>
+        <line x1="3" y1="-3" x2="-3" y2="3"/>
+      </g>
+      <g transform="translate(580, 45)" stroke-width="0.5">
+        <line x1="-4" y1="0" x2="4" y2="0"/>
+        <line x1="0" y1="-4" x2="0" y2="4"/>
+        <line x1="-3" y1="-3" x2="3" y2="3"/>
+        <line x1="3" y1="-3" x2="-3" y2="3"/>
+      </g>
+      <g transform="translate(720, 60)" stroke-width="0.5">
+        <line x1="-4" y1="0" x2="4" y2="0"/>
+        <line x1="0" y1="-4" x2="0" y2="4"/>
+        <line x1="-3" y1="-3" x2="3" y2="3"/>
+        <line x1="3" y1="-3" x2="-3" y2="3"/>
+      </g>
+
+      <!-- Small dots -->
+      <circle cx="80" cy="160" r="0.8" stroke-width="0.3"/>
+      <circle cx="180" cy="145" r="0.6" stroke-width="0.3"/>
+      <circle cx="280" cy="170" r="0.8" stroke-width="0.3"/>
+      <circle cx="420" cy="155" r="0.6" stroke-width="0.3"/>
+      <circle cx="520" cy="175" r="0.8" stroke-width="0.3"/>
+      <circle cx="620" cy="150" r="0.6" stroke-width="0.3"/>
+      <circle cx="760" cy="165" r="0.8" stroke-width="0.3"/>
+    </g>
+
+    <!-- ============================================ -->
+    <!-- SHRUBS (Line art) -->
+    <!-- ============================================ -->
+    <g id="shrub-lineart" transform="translate(750, 405)">
+      <ellipse cx="0" cy="0" rx="14" ry="10" fill="#fff" stroke="#333" stroke-width="0.8"/>
+      <ellipse cx="-5" cy="-3" rx="7" ry="5" fill="#fff" stroke="#333" stroke-width="0.6"/>
+      <ellipse cx="6" cy="-2" rx="6" ry="4" fill="#fff" stroke="#333" stroke-width="0.6"/>
+      <!-- Texture -->
+      <path d="M -8,2 Q -5,5 -2,2" fill="none" stroke="#333" stroke-width="0.3"/>
+      <path d="M 2,3 Q 5,6 8,3" fill="none" stroke="#333" stroke-width="0.3"/>
+    </g>
+
+    <g id="shrub-2-lineart" transform="translate(30, 325)">
+      <ellipse cx="0" cy="0" rx="10" ry="7" fill="#fff" stroke="#333" stroke-width="0.8"/>
+      <ellipse cx="3" cy="-2" rx="5" ry="3" fill="#fff" stroke="#333" stroke-width="0.5"/>
+      <path d="M -5,2 Q -2,4 1,2" fill="none" stroke="#333" stroke-width="0.3"/>
+    </g>
+
+  </svg>
+</body>
+</html>
