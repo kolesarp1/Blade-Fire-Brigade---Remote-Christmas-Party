@@ -1548,6 +1548,50 @@
         </g>
       </g>
 
+      <!-- ARTEM #2: With drone controller, looking up at sky -->
+      <g id="artem-controller" transform="translate(200, 80)">
+        <!-- Shadow -->
+        <ellipse cx="0" cy="40" rx="12" ry="5" fill="#000" opacity="0.2"/>
+        <!-- Body -->
+        <ellipse cx="0" cy="22" rx="10" ry="16" fill="#336699" stroke="#333" stroke-width="1.5"/>
+        <!-- Arms holding controller -->
+        <line x1="-10" y1="15" x2="-18" y2="25" stroke="#336699" stroke-width="4"/>
+        <line x1="10" y1="15" x2="18" y2="25" stroke="#336699" stroke-width="4"/>
+        <!-- Hands -->
+        <circle cx="-18" cy="27" r="3" fill="#ffd5b4" stroke="#333" stroke-width="0.4"/>
+        <circle cx="18" cy="27" r="3" fill="#ffd5b4" stroke="#333" stroke-width="0.4"/>
+        <!-- Drone controller -->
+        <rect x="-15" y="22" width="30" height="18" rx="3" fill="#333" stroke="#222" stroke-width="1"/>
+        <ellipse cx="-7" cy="30" rx="4" ry="4" fill="#444" stroke="#555" stroke-width="0.5"/>
+        <ellipse cx="7" cy="30" rx="4" ry="4" fill="#444" stroke="#555" stroke-width="0.5"/>
+        <rect x="-3" y="25" width="6" height="8" rx="1" fill="#222"/>
+        <!-- Antenna -->
+        <line x1="12" y1="22" x2="15" y2="15" stroke="#333" stroke-width="1.5"/>
+        <!-- Head tilted UP looking at drone -->
+        <circle cx="0" cy="-5" r="11" fill="#ffd5b4" stroke="#333" stroke-width="1.5"/>
+        <!-- Hair -->
+        <ellipse cx="0" cy="-13" rx="9" ry="5" fill="#5c4033" stroke="#333" stroke-width="0.5"/>
+        <!-- Eyes looking UP -->
+        <circle cx="-4" cy="-8" r="2" fill="#333"/>
+        <circle cx="4" cy="-8" r="2" fill="#333"/>
+        <!-- Pupils at top (looking up) -->
+        <circle cx="-4" cy="-9" r="0.8" fill="#fff"/>
+        <circle cx="4" cy="-9" r="0.8" fill="#fff"/>
+        <!-- Excited/nervous smile -->
+        <ellipse cx="0" cy="0" rx="4" ry="2" fill="#333"/>
+        <!-- NAME TAG -->
+        <g transform="translate(0, 50)">
+          <rect x="-15" y="0" width="30" height="12" rx="2" fill="#fff" stroke="#333" stroke-width="1"/>
+          <text x="0" y="9" font-family="Arial, sans-serif" font-size="8" font-weight="bold" fill="#333" text-anchor="middle">ARTEM</text>
+        </g>
+        <!-- Speech bubble -->
+        <g transform="translate(40, -20)">
+          <ellipse cx="0" cy="0" rx="35" ry="15" fill="#fff" stroke="#333" stroke-width="1"/>
+          <polygon points="-25,10 -40,20 -22,12" fill="#fff" stroke="#333" stroke-width="1"/>
+          <text x="0" y="4" text-anchor="middle" font-family="Arial, sans-serif" font-size="7" fill="#333">Uh oh...</text>
+        </g>
+      </g>
+
       <!-- FLAMING DRONE -->
       <g id="flaming-drone" transform="translate(250, -30)">
         <!-- Drone body -->
@@ -2498,6 +2542,58 @@
         <!-- Frozen steam -->
         <path d="M -3,-5 Q 0,-10 3,-5" stroke="#add8e6" stroke-width="2" fill="none" opacity="0.7"/>
         <path d="M 0,-8 Q 3,-15 0,-20" stroke="#add8e6" stroke-width="1.5" fill="none" opacity="0.5"/>
+      </g>
+
+      <!-- DIMA #1: Emerging from 3-meter snow pile (snow machine chaos) -->
+      <g id="dima-snowpile" transform="translate(-100, 50)">
+        <!-- 3-METER SNOW PILE (huge!) -->
+        <ellipse cx="0" cy="80" rx="70" ry="25" fill="#f0f8ff" stroke="#cce0ee" stroke-width="1"/>
+        <ellipse cx="0" cy="50" rx="60" ry="45" fill="#e8f4fc" stroke="#cce0ee" stroke-width="1.5"/>
+        <ellipse cx="-25" cy="40" rx="30" ry="25" fill="#f0f8ff"/>
+        <ellipse cx="25" cy="45" rx="35" ry="22" fill="#f0f8ff"/>
+        <ellipse cx="0" cy="20" rx="45" ry="35" fill="#dce8f0"/>
+        <ellipse cx="-15" cy="10" rx="25" ry="20" fill="#e8f4fc"/>
+        <ellipse cx="20" cy="15" rx="28" ry="18" fill="#e8f4fc"/>
+        <!-- DIMA emerging from top of pile -->
+        <g transform="translate(0, -10)">
+          <!-- Visible upper body -->
+          <ellipse cx="0" cy="15" rx="10" ry="12" fill="#3366aa" stroke="#333" stroke-width="1.2"/>
+          <!-- Arms reaching up -->
+          <line x1="-10" y1="5" x2="-20" y2="-15" stroke="#3366aa" stroke-width="4"/>
+          <line x1="10" y1="5" x2="20" y2="-15" stroke="#3366aa" stroke-width="4"/>
+          <circle cx="-22" cy="-17" r="3" fill="#ffd5b4" stroke="#333" stroke-width="0.4"/>
+          <circle cx="22" cy="-17" r="3" fill="#ffd5b4" stroke="#333" stroke-width="0.4"/>
+          <!-- Head -->
+          <circle cx="0" cy="-8" r="10" fill="#ffd5b4" stroke="#333" stroke-width="1.2"/>
+          <!-- Glasses (crooked/snow-covered) -->
+          <rect x="-8" y="-11" width="6" height="5" rx="1" fill="none" stroke="#333" stroke-width="1"/>
+          <rect x="2" y="-10" width="6" height="5" rx="1" fill="none" stroke="#333" stroke-width="1" transform="rotate(5 5 -7)"/>
+          <line x1="-2" y1="-9" x2="2" y2="-8" stroke="#333" stroke-width="1"/>
+          <!-- Snow on head/hair -->
+          <ellipse cx="-5" cy="-16" rx="5" ry="3" fill="#f0f8ff"/>
+          <ellipse cx="5" cy="-15" rx="4" ry="3" fill="#f0f8ff"/>
+          <ellipse cx="0" cy="-18" rx="6" ry="3" fill="#e8f4fc"/>
+          <!-- Calm expression (completely unbothered) -->
+          <circle cx="-4" cy="-9" r="1.5" fill="#333"/>
+          <circle cx="4" cy="-8" r="1.5" fill="#333"/>
+          <path d="M -3,-3 Q 0,0 3,-3" stroke="#333" fill="none" stroke-width="1"/>
+          <!-- NAME TAG -->
+          <g transform="translate(0, 35)">
+            <rect x="-13" y="0" width="26" height="12" rx="2" fill="#fff" stroke="#333" stroke-width="1"/>
+            <text x="0" y="9" font-family="Arial, sans-serif" font-size="8" font-weight="bold" fill="#333" text-anchor="middle">DIMA</text>
+          </g>
+        </g>
+        <!-- Speech bubble: "Works on my machine" -->
+        <g transform="translate(50, -30)">
+          <ellipse cx="0" cy="0" rx="55" ry="20" fill="#fff" stroke="#333" stroke-width="1"/>
+          <polygon points="-40,12 -55,25 -35,14" fill="#fff" stroke="#333" stroke-width="1"/>
+          <text x="0" y="-3" text-anchor="middle" font-family="Arial, sans-serif" font-size="7" fill="#333">Works on</text>
+          <text x="0" y="8" text-anchor="middle" font-family="Arial, sans-serif" font-size="8" font-weight="bold" fill="#333">my machine</text>
+        </g>
+        <!-- Scattered snow debris -->
+        <circle cx="-50" cy="70" r="5" fill="#f0f8ff" stroke="#cce0ee" stroke-width="0.5"/>
+        <circle cx="55" cy="65" r="4" fill="#f0f8ff" stroke="#cce0ee" stroke-width="0.5"/>
+        <circle cx="-40" cy="85" r="3" fill="#f0f8ff" stroke="#cce0ee" stroke-width="0.5"/>
       </g>
     </g>
 
