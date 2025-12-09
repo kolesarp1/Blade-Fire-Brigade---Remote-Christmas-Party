@@ -1046,34 +1046,58 @@
       <!-- Fire Truck "BLADE FIRE BRIGADE" -->
       <g id="fire-truck" transform="translate(0, 0)">
         <!-- Truck shadow -->
-        <ellipse cx="80" cy="95" rx="90" ry="30" fill="#000" opacity="0.15"/>
-        <!-- Truck body (isometric) -->
-        <polygon points="0,60 60,30 160,30 160,80 60,80 0,60" fill="#cc2222" stroke="#333" stroke-width="2"/>
-        <polygon points="160,30 200,50 200,100 160,80" fill="#aa1818" stroke="#333" stroke-width="2"/>
-        <polygon points="60,80 160,80 200,100 100,100" fill="#881414" stroke="#333" stroke-width="1.5"/>
-        <!-- Cab -->
-        <polygon points="0,60 40,40 40,10 0,30" fill="#cc2222" stroke="#333" stroke-width="1.5"/>
-        <polygon points="40,40 60,30 60,0 40,10" fill="#aa1818" stroke="#333" stroke-width="1.5"/>
+        <ellipse cx="100" cy="110" rx="100" ry="25" fill="#000" opacity="0.15"/>
+
+        <!-- Main truck body (cleaner isometric box) -->
+        <!-- Top face -->
+        <polygon points="30,30 130,30 180,55 80,55" fill="#dd3333" stroke="#333" stroke-width="2"/>
+        <!-- Front face -->
+        <polygon points="30,30 30,70 80,95 80,55" fill="#cc2222" stroke="#333" stroke-width="2"/>
+        <!-- Side face -->
+        <polygon points="30,70 130,70 180,95 80,95" fill="#aa1818" stroke="#333" stroke-width="1.5"/>
+        <!-- Right face -->
+        <polygon points="130,30 180,55 180,95 130,70" fill="#991515" stroke="#333" stroke-width="2"/>
+
+        <!-- Cab section -->
+        <!-- Cab top -->
+        <polygon points="0,45 30,30 55,42 25,57" fill="#dd3333" stroke="#333" stroke-width="1.5"/>
+        <!-- Cab front -->
+        <polygon points="0,45 0,75 25,90 25,57" fill="#cc2222" stroke="#333" stroke-width="1.5"/>
+        <!-- Cab side -->
+        <polygon points="25,57 55,42 55,72 25,90" fill="#aa1818" stroke="#333" stroke-width="1.5"/>
+
         <!-- Windshield -->
-        <polygon points="5,55 35,38 35,18 5,35" fill="#6699cc" stroke="#333" stroke-width="1" opacity="0.8"/>
+        <polygon points="5,50 5,70 22,82 22,60" fill="#6699cc" stroke="#333" stroke-width="1" opacity="0.85"/>
+
         <!-- "BLADE FIRE BRIGADE" text on side -->
-        <text x="110" y="58" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="#fff">BLADE FIRE</text>
-        <text x="110" y="70" text-anchor="middle" font-family="Arial, sans-serif" font-size="8" font-weight="bold" fill="#fff">BRIGADE</text>
+        <text x="105" y="80" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#fff">BLADE FIRE</text>
+        <text x="105" y="92" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" font-weight="bold" fill="#fff">BRIGADE</text>
+
         <!-- Wheels -->
-        <ellipse cx="30" cy="85" rx="15" ry="8" fill="#222" stroke="#333" stroke-width="1"/>
-        <ellipse cx="130" cy="92" rx="15" ry="8" fill="#222" stroke="#333" stroke-width="1"/>
-        <ellipse cx="170" cy="95" rx="15" ry="8" fill="#222" stroke="#333" stroke-width="1"/>
-        <!-- Light bar -->
-        <rect x="15" y="5" width="40" height="8" rx="2" fill="#333" stroke="#222" stroke-width="0.5"/>
-        <circle cx="25" cy="9" r="4" fill="#ff3333" class="christmas-light"/>
-        <circle cx="45" cy="9" r="4" fill="#3366ff" class="christmas-light"/>
+        <ellipse cx="50" cy="98" rx="18" ry="8" fill="#222" stroke="#333" stroke-width="1.5"/>
+        <ellipse cx="50" cy="98" rx="10" ry="5" fill="#444"/>
+        <ellipse cx="140" cy="100" rx="18" ry="8" fill="#222" stroke="#333" stroke-width="1.5"/>
+        <ellipse cx="140" cy="100" rx="10" ry="5" fill="#444"/>
+
+        <!-- Light bar on cab roof -->
+        <rect x="8" y="38" width="35" height="8" rx="2" fill="#333" stroke="#222" stroke-width="0.5"/>
+        <circle cx="18" cy="42" r="4" fill="#ff3333" class="christmas-light"/>
+        <circle cx="33" cy="42" r="4" fill="#3366ff" class="christmas-light"/>
+
         <!-- Ladder on top -->
-        <line x1="70" y1="25" x2="150" y2="25" stroke="#888" stroke-width="3"/>
-        <line x1="70" y1="20" x2="150" y2="20" stroke="#888" stroke-width="3"/>
-        <line x1="80" y1="20" x2="80" y2="25" stroke="#666" stroke-width="1.5"/>
-        <line x1="100" y1="20" x2="100" y2="25" stroke="#666" stroke-width="1.5"/>
-        <line x1="120" y1="20" x2="120" y2="25" stroke="#666" stroke-width="1.5"/>
-        <line x1="140" y1="20" x2="140" y2="25" stroke="#666" stroke-width="1.5"/>
+        <g transform="translate(60, 25)">
+          <line x1="0" y1="0" x2="90" y2="0" stroke="#888" stroke-width="3"/>
+          <line x1="0" y1="6" x2="90" y2="6" stroke="#888" stroke-width="3"/>
+          <line x1="10" y1="0" x2="10" y2="6" stroke="#666" stroke-width="1.5"/>
+          <line x1="30" y1="0" x2="30" y2="6" stroke="#666" stroke-width="1.5"/>
+          <line x1="50" y1="0" x2="50" y2="6" stroke="#666" stroke-width="1.5"/>
+          <line x1="70" y1="0" x2="70" y2="6" stroke="#666" stroke-width="1.5"/>
+          <line x1="90" y1="0" x2="90" y2="6" stroke="#666" stroke-width="1.5"/>
+        </g>
+
+        <!-- Hose reel on side -->
+        <circle cx="160" cy="70" r="12" fill="#881414" stroke="#333" stroke-width="1"/>
+        <circle cx="160" cy="70" r="6" fill="#666" stroke="#333" stroke-width="0.5"/>
       </g>
 
       <!-- Podium -->
@@ -4232,7 +4256,7 @@
     <!-- VERSION INDICATOR (bottom right corner) - bump with each release -->
     <g id="version-indicator" transform="translate(3050, 2360)">
       <rect x="0" y="0" width="140" height="30" rx="5" fill="#000" opacity="0.6"/>
-      <text x="70" y="20" text-anchor="middle" font-family="monospace" font-size="14" fill="#fff" font-weight="bold">v1.1</text>
+      <text x="70" y="20" text-anchor="middle" font-family="monospace" font-size="14" fill="#fff" font-weight="bold">v1.2</text>
     </g>
 
   </svg>
