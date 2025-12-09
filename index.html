@@ -2179,9 +2179,15 @@
     <!-- OLENA SCENE (Left Center) - Water Pistol + Crown + Conga -->
     <!-- ============================================ -->
     <g id="olena-scene" transform="translate(400, 1200)">
-      <!-- Small fire -->
+      <!-- Small fire with wood logs -->
       <g transform="translate(0, 30)">
         <ellipse cx="0" cy="25" rx="20" ry="10" fill="#000" opacity="0.15"/>
+        <!-- Wood logs under fire -->
+        <g transform="translate(0, 15)">
+          <rect x="-18" y="0" width="36" height="8" rx="2" fill="#8b4513" stroke="#5c3317" stroke-width="1" transform="rotate(-5)"/>
+          <rect x="-15" y="5" width="30" height="7" rx="2" fill="#a0522d" stroke="#5c3317" stroke-width="1" transform="rotate(8)"/>
+          <rect x="-12" y="-3" width="24" height="6" rx="2" fill="#6b4423" stroke="#5c3317" stroke-width="1" transform="rotate(-10)"/>
+        </g>
         <g class="fire">
           <ellipse cx="0" cy="0" rx="15" ry="25" fill="#ff4500" opacity="0.9"/>
           <ellipse cx="0" cy="-3" rx="11" ry="18" fill="#ff8c00"/>
@@ -2196,15 +2202,15 @@
         <ellipse cx="0" cy="45" rx="12" ry="6" fill="#000" opacity="0.2"/>
         <!-- Body (purple outfit) -->
         <ellipse cx="0" cy="25" rx="11" ry="18" fill="#8844cc" stroke="#333" stroke-width="1.5"/>
-        <!-- Arm holding tiny water pistol -->
-        <ellipse cx="18" cy="18" rx="10" ry="4" fill="#8844cc" stroke="#333" stroke-width="1"/>
-        <circle cx="26" cy="18" r="3" fill="#ffd5b4" stroke="#333" stroke-width="0.5"/>
-        <!-- TINY water pistol (comically small) -->
-        <g transform="translate(32, 16)">
-          <rect x="0" y="-2" width="8" height="5" rx="1" fill="#ff69b4" stroke="#333" stroke-width="0.5"/>
-          <rect x="2" y="-5" width="3" height="4" fill="#ff69b4" stroke="#333" stroke-width="0.3"/>
-          <!-- Tiny water droplet -->
-          <ellipse cx="12" cy="0" rx="2" ry="3" fill="#87ceeb" opacity="0.7"/>
+        <!-- Arm holding tiny water pistol (pointing left towards fire) -->
+        <ellipse cx="-18" cy="18" rx="10" ry="4" fill="#8844cc" stroke="#333" stroke-width="1"/>
+        <circle cx="-26" cy="18" r="3" fill="#ffd5b4" stroke="#333" stroke-width="0.5"/>
+        <!-- TINY water pistol (comically small, pointing at fire) -->
+        <g transform="translate(-32, 16)">
+          <rect x="-8" y="-2" width="8" height="5" rx="1" fill="#ff69b4" stroke="#333" stroke-width="0.5"/>
+          <rect x="-5" y="-5" width="3" height="4" fill="#ff69b4" stroke="#333" stroke-width="0.3"/>
+          <!-- Tiny water droplet shooting at fire -->
+          <ellipse cx="-12" cy="0" rx="2" ry="3" fill="#87ceeb" opacity="0.7"/>
         </g>
         <!-- Head -->
         <circle cx="0" cy="0" r="12" fill="#ffd5b4" stroke="#333" stroke-width="1.5"/>
@@ -2607,18 +2613,59 @@
         <text x="0" y="16" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="#fff">VALERA: JUST A TEST 🏋️‍♂️❄️</text>
       </g>
 
-      <!-- Snow avalanche from nearby roof -->
-      <g transform="translate(100, 20)">
+      <!-- Snow avalanche from small house roof -->
+      <g transform="translate(100, -30)">
+        <!-- Small house -->
+        <g transform="translate(0, 0)">
+          <!-- House shadow -->
+          <ellipse cx="0" cy="85" rx="30" ry="10" fill="#000" opacity="0.1"/>
+          <!-- House body -->
+          <rect x="-25" y="40" width="50" height="40" fill="#d4a574" stroke="#8b6914" stroke-width="1.5"/>
+          <!-- Door -->
+          <rect x="-8" y="55" width="16" height="25" fill="#5c3317" stroke="#333" stroke-width="1"/>
+          <!-- Window -->
+          <rect x="10" y="48" width="10" height="10" fill="#87ceeb" stroke="#333" stroke-width="0.5"/>
+          <!-- Roof with snow -->
+          <polygon points="-35,40 0,10 35,40" fill="#8b4513" stroke="#5c3317" stroke-width="1.5"/>
+          <!-- Snow on roof (about to fall!) -->
+          <ellipse cx="20" cy="25" rx="18" ry="8" fill="#f0f8ff" stroke="#cce0ee" stroke-width="1"/>
+          <ellipse cx="25" cy="30" rx="12" ry="6" fill="#f0f8ff" stroke="#cce0ee" stroke-width="1"/>
+        </g>
         <!-- Falling snow chunks -->
-        <ellipse cx="0" cy="0" rx="25" ry="12" fill="#f0f8ff" stroke="#cce0ee" stroke-width="1"/>
-        <ellipse cx="15" cy="15" rx="20" ry="10" fill="#f0f8ff" stroke="#cce0ee" stroke-width="1"/>
-        <ellipse cx="-5" cy="30" rx="28" ry="14" fill="#f0f8ff" stroke="#cce0ee" stroke-width="1"/>
-        <!-- Person getting snowed -->
-        <g transform="translate(5, 50)">
-          <ellipse cx="0" cy="15" rx="6" ry="3" fill="#000" opacity="0.15"/>
-          <ellipse cx="0" cy="8" rx="6" ry="10" fill="#cc6644" stroke="#333" stroke-width="0.8"/>
-          <circle cx="0" cy="-5" r="6" fill="#ffd5b4" stroke="#333" stroke-width="0.5"/>
-          <text x="15" y="0" font-size="10">❄️</text>
+        <g transform="translate(25, 45)">
+          <ellipse cx="0" cy="0" rx="20" ry="10" fill="#f0f8ff" stroke="#cce0ee" stroke-width="1"/>
+          <ellipse cx="10" cy="12" rx="16" ry="8" fill="#f0f8ff" stroke="#cce0ee" stroke-width="1"/>
+          <ellipse cx="-5" cy="25" rx="22" ry="11" fill="#f0f8ff" stroke="#cce0ee" stroke-width="1"/>
+        </g>
+        <!-- People getting snowed on -->
+        <g transform="translate(15, 90)">
+          <!-- Person 1 (brown) -->
+          <g transform="translate(-15, 0)">
+            <ellipse cx="0" cy="15" rx="6" ry="3" fill="#000" opacity="0.15"/>
+            <ellipse cx="0" cy="8" rx="6" ry="10" fill="#cc6644" stroke="#333" stroke-width="0.8"/>
+            <circle cx="0" cy="-5" r="6" fill="#ffd5b4" stroke="#333" stroke-width="0.5"/>
+            <!-- Surprised eyes -->
+            <circle cx="-2" cy="-6" r="1" fill="#333"/>
+            <circle cx="2" cy="-6" r="1" fill="#333"/>
+          </g>
+          <!-- Person 2 (blue) -->
+          <g transform="translate(10, 5)">
+            <ellipse cx="0" cy="15" rx="6" ry="3" fill="#000" opacity="0.15"/>
+            <ellipse cx="0" cy="8" rx="6" ry="10" fill="#4488cc" stroke="#333" stroke-width="0.8"/>
+            <circle cx="0" cy="-5" r="6" fill="#ffd5b4" stroke="#333" stroke-width="0.5"/>
+            <circle cx="-2" cy="-6" r="1" fill="#333"/>
+            <circle cx="2" cy="-6" r="1" fill="#333"/>
+          </g>
+          <!-- Person 3 (green) -->
+          <g transform="translate(35, 3)">
+            <ellipse cx="0" cy="15" rx="6" ry="3" fill="#000" opacity="0.15"/>
+            <ellipse cx="0" cy="8" rx="6" ry="10" fill="#44aa66" stroke="#333" stroke-width="0.8"/>
+            <circle cx="0" cy="-5" r="6" fill="#ffd5b4" stroke="#333" stroke-width="0.5"/>
+            <circle cx="-2" cy="-6" r="1" fill="#333"/>
+            <circle cx="2" cy="-6" r="1" fill="#333"/>
+          </g>
+          <!-- Snowflake emoji -->
+          <text x="50" y="0" font-size="12">❄️</text>
         </g>
       </g>
     </g>
