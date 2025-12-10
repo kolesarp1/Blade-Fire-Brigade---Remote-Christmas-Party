@@ -5730,7 +5730,7 @@
     <!-- VERSION INDICATOR (bottom right corner) - bump with each release -->
     <g id="version-indicator" transform="translate(3050, 2360)">
       <rect x="0" y="0" width="140" height="30" rx="5" fill="#000" opacity="0.6"/>
-      <text x="70" y="20" text-anchor="middle" font-family="monospace" font-size="14" fill="#fff" font-weight="bold">v4.0</text>
+      <text x="70" y="20" text-anchor="middle" font-family="monospace" font-size="14" fill="#fff" font-weight="bold">v4.1</text>
     </g>
 
   </svg>
@@ -6520,24 +6520,34 @@
       });
     }
 
-    // Setup cursor tracking - converts to map coordinates for sync
+    // Setup cursor tracking - converts to SVG viewBox coordinates for sync
     function setupCursorTracking() {
       let lastCursorUpdate = 0;
       const throttleMs = 33; // ~30fps
+
+      // Create SVG point for coordinate transformation
+      const svgPoint = svg.createSVGPoint();
 
       document.addEventListener('mousemove', (e) => {
         const now = Date.now();
         if (now - lastCursorUpdate < throttleMs) return;
         lastCursorUpdate = now;
 
-        // Convert screen coordinates to map coordinates (accounting for zoom/pan)
+        // Convert screen coordinates to SVG viewBox coordinates
         // This ensures cursors appear at the same MAP position for all users
-        const mapX = (e.clientX - panX) / scale;
-        const mapY = (e.clientY - panY) / scale;
+        // regardless of their zoom level or pan position
+        svgPoint.x = e.clientX;
+        svgPoint.y = e.clientY;
+
+        // Get the inverse of the SVG's current transform matrix
+        const ctm = svg.getScreenCTM();
+        if (!ctm) return;
+
+        const svgCoords = svgPoint.matrixTransform(ctm.inverse());
 
         const cursorData = {
-          x: mapX,
-          y: mapY
+          x: svgCoords.x,
+          y: svgCoords.y
         };
 
         // Update local state
@@ -6551,7 +6561,7 @@
       });
     }
 
-    // Render other users' cursors - converts map coordinates to screen coordinates
+    // Render other users' cursors - converts SVG coordinates to screen coordinates
     // Cursor element cache for in-place updates (avoids DOM recreation)
     const cursorCache = new Map();
 
@@ -6559,15 +6569,24 @@
       const activeUserIds = new Set();
       const now = Date.now();
 
+      // Get current transform matrix for SVG to screen conversion
+      const ctm = svg.getScreenCTM();
+      if (!ctm) return;
+
       Object.entries(appState.users).forEach(([id, user]) => {
         if (id === appState.userId) return; // Don't show own cursor
         if (!user.cursor) return;
 
         activeUserIds.add(id);
 
-        // Convert map coordinates to screen coordinates (GPU-accelerated)
-        const screenX = user.cursor.x * scale + panX;
-        const screenY = user.cursor.y * scale + panY;
+        // Convert SVG viewBox coordinates to screen coordinates
+        const svgPoint = svg.createSVGPoint();
+        svgPoint.x = user.cursor.x;
+        svgPoint.y = user.cursor.y;
+        const screenPoint = svgPoint.matrixTransform(ctm);
+
+        const screenX = screenPoint.x;
+        const screenY = screenPoint.y;
         const isIdle = now - user.lastActive > 5000;
 
         let cursorEl = cursorCache.get(id);
