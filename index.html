@@ -24,9 +24,6 @@
     }
     svg text {
       pointer-events: none;
-      /* Crisp text at all zoom levels */
-      text-rendering: geometricPrecision;
-      -webkit-font-smoothing: antialiased;
     }
 
     /* Control Panel - Collapsible */
@@ -113,13 +110,6 @@
     .svg-container svg {
       display: block;
       transform-origin: 0 0;
-      will-change: transform;
-      /* Crisp rendering for zoomed SVG */
-      shape-rendering: geometricPrecision;
-      text-rendering: geometricPrecision;
-      image-rendering: -webkit-optimize-contrast;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
     }
 
     /* Export modal */
@@ -5701,7 +5691,7 @@
     <!-- VERSION INDICATOR (bottom right corner) - bump with each release -->
     <g id="version-indicator" transform="translate(3050, 2360)">
       <rect x="0" y="0" width="140" height="30" rx="5" fill="#000" opacity="0.6"/>
-      <text x="70" y="20" text-anchor="middle" font-family="monospace" font-size="14" fill="#fff" font-weight="bold">v3.9</text>
+      <text x="70" y="20" text-anchor="middle" font-family="monospace" font-size="14" fill="#fff" font-weight="bold">v3.10</text>
     </g>
 
   </svg>
@@ -5727,15 +5717,18 @@
     const CARD_ANCHOR_X = -360;
     const CARD_ANCHOR_Y = 80;
 
-    // Update transform (GPU-accelerated with translate3d)
+    // Update transform (using translate for crisp SVG rendering)
     function updateTransform() {
-      svg.style.transform = `translate3d(${panX}px, ${panY}px, 0) scale(${scale})`;
+      // Round values to avoid subpixel blur
+      const roundedPanX = Math.round(panX);
+      const roundedPanY = Math.round(panY);
+      svg.style.transform = `translate(${roundedPanX}px, ${roundedPanY}px) scale(${scale})`;
 
       // Move card deck with map (anchored to left side, no scaling)
       if (cardDeckEl) {
-        const screenX = CARD_ANCHOR_X * scale + panX;
-        const screenY = CARD_ANCHOR_Y * scale + panY;
-        cardDeckEl.style.transform = `translate3d(${screenX}px, ${screenY}px, 0)`;
+        const screenX = Math.round(CARD_ANCHOR_X * scale + panX);
+        const screenY = Math.round(CARD_ANCHOR_Y * scale + panY);
+        cardDeckEl.style.transform = `translate(${screenX}px, ${screenY}px)`;
       }
 
       zoomDisplay.textContent = Math.round(scale * 100) + '%';
