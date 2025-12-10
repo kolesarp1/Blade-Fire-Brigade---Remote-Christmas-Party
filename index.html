@@ -467,6 +467,28 @@
       margin-top: 2px;
       line-height: 1.2;
     }
+    .card-front .hide-btn {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      width: 12px;
+      height: 12px;
+      background: rgba(200, 0, 0, 0.7);
+      border-radius: 50%;
+      font-size: 8px;
+      line-height: 12px;
+      text-align: center;
+      color: #fff;
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .card.flipped:hover .hide-btn {
+      opacity: 1;
+    }
+    .card-front .hide-btn:hover {
+      background: rgba(200, 0, 0, 1);
+    }
 
     /* Card hover effects */
     .card:not(.flipped):not(.disabled):hover .card-inner {
@@ -5691,7 +5713,7 @@
     <!-- VERSION INDICATOR (bottom right corner) - bump with each release -->
     <g id="version-indicator" transform="translate(3050, 2360)">
       <rect x="0" y="0" width="140" height="30" rx="5" fill="#000" opacity="0.6"/>
-      <text x="70" y="20" text-anchor="middle" font-family="monospace" font-size="14" fill="#fff" font-weight="bold">v3.10</text>
+      <text x="70" y="20" text-anchor="middle" font-family="monospace" font-size="14" fill="#fff" font-weight="bold">v3.11</text>
     </g>
 
   </svg>
@@ -6358,6 +6380,7 @@
 
         // Calculate card number within person's set (1 or 2)
         const cardNum = ((cardData.id - 1) % 2) + 1;
+        const hideBtn = appState.isHost ? `<div class="hide-btn" data-hide-card="${cardData.id}">×</div>` : '';
         card.innerHTML = `
           <div class="card-inner">
             <div class="card-face card-back">
@@ -6366,13 +6389,22 @@
               <div class="pattern">✦ ✦ ✦</div>
             </div>
             <div class="card-face card-front">
+              ${hideBtn}
               <div class="card-name">${cardData.person}</div>
               <div class="card-title">${cardData.title.substring(0, 20)}${cardData.title.length > 20 ? '...' : ''}</div>
             </div>
           </div>
         `;
 
-        card.onclick = () => handleCardClick(cardData.id);
+        card.onclick = (e) => {
+          // Check if hide button was clicked
+          if (e.target.classList.contains('hide-btn')) {
+            e.stopPropagation();
+            hideCard(cardData.id);
+            return;
+          }
+          handleCardClick(cardData.id);
+        };
         cardsGrid.appendChild(card);
       });
     }
@@ -6404,6 +6436,25 @@
       // Sync to other users
       broadcastCardFlip(cardId);
       // Note: Host must click the flipped card again to view the story
+    }
+
+    // Hide a card (host only) - unflip it back
+    function hideCard(cardId) {
+      if (!appState.isHost) return;
+
+      appState.cards[cardId] = { flipped: false };
+
+      // Update UI
+      const cardEl = document.querySelector(`.card[data-card-id="${cardId}"]`);
+      if (cardEl) {
+        cardEl.classList.remove('flipped');
+      }
+
+      // Close story preview if showing this card
+      closeStoryPreview();
+
+      // Sync to other users
+      broadcastCardHide(cardId);
     }
 
     // Open story preview (bottom-left panel instead of modal)
@@ -6656,6 +6707,17 @@
           }
           break;
 
+        case 'card-hide':
+          appState.cards[data.cardId] = { flipped: false };
+          const hideCardEl = document.querySelector(`.card[data-card-id="${data.cardId}"]`);
+          if (hideCardEl) {
+            hideCardEl.classList.remove('flipped');
+            if (!appState.isHost) {
+              hideCardEl.classList.add('disabled');
+            }
+          }
+          break;
+
         case 'cursor-move':
           if (appState.users[data.userId]) {
             appState.users[data.userId].cursor = data.cursor;
@@ -6701,6 +6763,16 @@
       if (broadcastChannel) {
         broadcastChannel.postMessage({
           type: 'card-flip',
+          cardId: cardId,
+          userId: appState.userId
+        });
+      }
+    }
+
+    function broadcastCardHide(cardId) {
+      if (broadcastChannel) {
+        broadcastChannel.postMessage({
+          type: 'card-hide',
           cardId: cardId,
           userId: appState.userId
         });
