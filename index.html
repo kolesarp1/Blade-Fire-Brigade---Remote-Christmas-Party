@@ -623,9 +623,19 @@
     .online-users h3 .dot {
       width: 8px;
       height: 8px;
-      background: #2ecc71;
       border-radius: 50%;
+    }
+    .online-users h3 .dot.online {
+      background: #2ecc71;
       animation: pulse 2s infinite;
+    }
+    .online-users h3 .dot.offline {
+      background: #e74c3c;
+    }
+    .online-users .offline-header {
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255,255,255,0.2);
     }
     @keyframes pulse {
       0%, 100% { opacity: 1; }
@@ -635,6 +645,11 @@
       display: flex;
       flex-direction: column;
       gap: 6px;
+    }
+    .user-list:empty + .offline-header {
+      margin-top: 0;
+      padding-top: 0;
+      border-top: none;
     }
     .user-item {
       display: flex;
@@ -648,12 +663,18 @@
       height: 10px;
       border-radius: 50%;
     }
+    .user-item.offline {
+      opacity: 0.6;
+    }
+    .user-item.offline .user-dot {
+      background: #e74c3c !important;
+    }
     .user-item .host-badge {
       font-size: 12px;
       margin-left: 4px;
     }
     .user-item.idle {
-      opacity: 0.5;
+      opacity: 0.7;
     }
 
     /* Multiplayer Cursors */
@@ -783,9 +804,13 @@
 
   <!-- Online Users Panel -->
   <div class="online-users" id="onlineUsers">
-    <h3><span class="dot"></span> Online</h3>
-    <div class="user-list" id="userList">
-      <!-- Users will be populated by JavaScript -->
+    <h3><span class="dot online"></span> Online</h3>
+    <div class="user-list" id="userListOnline">
+      <!-- Online users will be populated by JavaScript -->
+    </div>
+    <h3 class="offline-header"><span class="dot offline"></span> Offline</h3>
+    <div class="user-list" id="userListOffline">
+      <!-- Offline users will be populated by JavaScript -->
     </div>
   </div>
 
@@ -5730,7 +5755,7 @@
     <!-- VERSION INDICATOR (bottom right corner) - bump with each release -->
     <g id="version-indicator" transform="translate(3050, 2360)">
       <rect x="0" y="0" width="140" height="30" rx="5" fill="#000" opacity="0.6"/>
-      <text x="70" y="20" text-anchor="middle" font-family="monospace" font-size="14" fill="#fff" font-weight="bold">v4.1</text>
+      <text x="70" y="20" text-anchor="middle" font-family="monospace" font-size="14" fill="#fff" font-weight="bold">v4.2</text>
     </g>
 
   </svg>
@@ -6293,7 +6318,8 @@
     const cardDeck = document.getElementById('cardDeck');
     const cardsGrid = document.getElementById('cardsGrid');
     const storyPreview = document.getElementById('storyPreview');
-    const userList = document.getElementById('userList');
+    const userListOnline = document.getElementById('userListOnline');
+    const userListOffline = document.getElementById('userListOffline');
     const cursorsContainer = document.getElementById('cursorsContainer');
     const connectionStatus = document.getElementById('connectionStatus');
     const connectionText = document.getElementById('connectionText');
@@ -6504,19 +6530,35 @@
       }
     });
 
-    // Render online users list
+    // Render online/offline users lists
     function renderUsersList() {
-      userList.innerHTML = '';
-      Object.values(appState.users).forEach(user => {
-        const isIdle = Date.now() - user.lastActive > 5000;
+      userListOnline.innerHTML = '';
+      userListOffline.innerHTML = '';
+
+      // Get online user names
+      const onlineNames = new Set(Object.values(appState.users).map(u => u.name));
+
+      // Sort all team members alphabetically
+      const sortedMembers = [...TEAM_MEMBERS].sort((a, b) => a.name.localeCompare(b.name));
+
+      sortedMembers.forEach(member => {
+        const isOnline = onlineNames.has(member.name);
+        const user = isOnline ? Object.values(appState.users).find(u => u.name === member.name) : null;
+        const isIdle = user ? (Date.now() - user.lastActive > 5000) : false;
+
         const item = document.createElement('div');
-        item.className = 'user-item' + (isIdle ? ' idle' : '');
+        item.className = 'user-item' + (isOnline ? (isIdle ? ' idle' : '') : ' offline');
         item.innerHTML = `
-          <span class="user-dot" style="background: ${user.color}"></span>
-          <span>${user.name}</span>
-          ${user.isHost ? '<span class="host-badge">👑</span>' : ''}
+          <span class="user-dot" style="background: ${member.color}"></span>
+          <span>${member.name}</span>
+          ${user?.isHost ? '<span class="host-badge">👑</span>' : ''}
         `;
-        userList.appendChild(item);
+
+        if (isOnline) {
+          userListOnline.appendChild(item);
+        } else {
+          userListOffline.appendChild(item);
+        }
       });
     }
 
