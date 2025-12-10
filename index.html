@@ -398,6 +398,21 @@
       display: flex;
       align-items: center;
       gap: 8px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .card-deck h3:hover {
+      opacity: 0.8;
+    }
+    .card-deck h3 .toggle-arrow {
+      margin-left: auto;
+      transition: transform 0.2s;
+    }
+    .card-deck h3.collapsed .toggle-arrow {
+      transform: rotate(-90deg);
+    }
+    .card-deck h3.collapsed + .cards-grid {
+      display: none;
     }
     .card-deck h3 .card-icon {
       font-size: 20px;
@@ -619,6 +634,21 @@
       display: flex;
       align-items: center;
       gap: 6px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .online-users h3:hover {
+      opacity: 0.8;
+    }
+    .online-users h3 .toggle-arrow {
+      margin-left: auto;
+      transition: transform 0.2s;
+    }
+    .online-users h3.collapsed .toggle-arrow {
+      transform: rotate(-90deg);
+    }
+    .online-users h3.collapsed + .user-list {
+      display: none;
     }
     .online-users h3 .dot {
       width: 8px;
@@ -796,7 +826,7 @@
 
   <!-- Card Deck -->
   <div class="card-deck" id="cardDeck">
-    <h3><span class="card-icon">🃏</span> Story Cards (24)</h3>
+    <h3 id="cardDeckHeader"><span class="card-icon">🃏</span> Story Cards (24)<span class="toggle-arrow">▼</span></h3>
     <div class="cards-grid" id="cardsGrid">
       <!-- Cards will be populated by JavaScript -->
     </div>
@@ -804,11 +834,11 @@
 
   <!-- Online Users Panel -->
   <div class="online-users" id="onlineUsers">
-    <h3><span class="dot online"></span> Online</h3>
+    <h3 id="onlineHeader"><span class="dot online"></span> Online<span class="toggle-arrow">▼</span></h3>
     <div class="user-list" id="userListOnline">
       <!-- Online users will be populated by JavaScript -->
     </div>
-    <h3 class="offline-header"><span class="dot offline"></span> Offline</h3>
+    <h3 class="offline-header" id="offlineHeader"><span class="dot offline"></span> Offline<span class="toggle-arrow">▼</span></h3>
     <div class="user-list" id="userListOffline">
       <!-- Offline users will be populated by JavaScript -->
     </div>
@@ -5755,7 +5785,7 @@
     <!-- VERSION INDICATOR (bottom right corner) - bump with each release -->
     <g id="version-indicator" transform="translate(3050, 2360)">
       <rect x="0" y="0" width="140" height="30" rx="5" fill="#000" opacity="0.6"/>
-      <text x="70" y="20" text-anchor="middle" font-family="monospace" font-size="14" fill="#fff" font-weight="bold">v4.2</text>
+      <text x="70" y="20" text-anchor="middle" font-family="monospace" font-size="14" fill="#fff" font-weight="bold">v4.3</text>
     </g>
 
   </svg>
@@ -6832,6 +6862,20 @@
       usersRef.child(appState.userId).remove();
       cursorsRef.child(appState.userId).remove();
     });
+
+    // Toggle collapse/expand for sections
+    function setupToggle(headerId) {
+      const header = document.getElementById(headerId);
+      if (header) {
+        header.addEventListener('click', () => {
+          header.classList.toggle('collapsed');
+        });
+      }
+    }
+
+    setupToggle('cardDeckHeader');
+    setupToggle('onlineHeader');
+    setupToggle('offlineHeader');
 
     // Initialize the app
     initNameGrid();
