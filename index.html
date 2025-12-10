@@ -110,6 +110,7 @@
     .svg-container svg {
       display: block;
       transform-origin: 0 0;
+      will-change: transform;
     }
 
     /* Export modal */
@@ -370,6 +371,7 @@
       padding: 15px;
       max-height: 600px;
       overflow-y: auto;
+      will-change: transform;
     }
     .card-deck h3 {
       margin: 0 0 12px 0;
@@ -619,9 +621,12 @@
     /* Multiplayer Cursors */
     .cursor {
       position: fixed;
+      left: 0;
+      top: 0;
       pointer-events: none;
       z-index: 800;
-      transition: left 0.03s linear, top 0.03s linear, opacity 0.3s;
+      will-change: transform;
+      transition: transform 0.03s linear, opacity 0.3s;
     }
     .cursor.idle {
       opacity: 0.4;
@@ -5707,21 +5712,21 @@
     const container = document.getElementById('svgContainer');
     const svg = document.getElementById('mainSvg');
     const zoomDisplay = document.getElementById('zoomLevel');
+    const cardDeckEl = document.getElementById('cardDeck');
 
-    // Update transform
+    // Card deck anchor point in SVG coordinates
+    const CARD_ANCHOR_X = -360;
+    const CARD_ANCHOR_Y = 80;
+
+    // Update transform (GPU-accelerated with translate3d)
     function updateTransform() {
-      svg.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
+      svg.style.transform = `translate3d(${panX}px, ${panY}px, 0) scale(${scale})`;
 
       // Move card deck with map (anchored to left side, no scaling)
-      const cardDeck = document.getElementById('cardDeck');
-      if (cardDeck) {
-        // Anchor point in SVG coordinates (left side of map)
-        const anchorX = -360;
-        const anchorY = 80;
-        // Calculate screen position based on current pan and scale
-        const screenX = anchorX * scale + panX;
-        const screenY = anchorY * scale + panY;
-        cardDeck.style.transform = `translate(${screenX}px, ${screenY}px)`;
+      if (cardDeckEl) {
+        const screenX = CARD_ANCHOR_X * scale + panX;
+        const screenY = CARD_ANCHOR_Y * scale + panY;
+        cardDeckEl.style.transform = `translate3d(${screenX}px, ${screenY}px, 0)`;
       }
 
       zoomDisplay.textContent = Math.round(scale * 100) + '%';
@@ -6455,32 +6460,51 @@
     }
 
     // Render other users' cursors - converts map coordinates to screen coordinates
+    // Cursor element cache for in-place updates (avoids DOM recreation)
+    const cursorCache = new Map();
+
     function renderCursors() {
-      // Clear old cursors
-      cursorsContainer.innerHTML = '';
+      const activeUserIds = new Set();
+      const now = Date.now();
 
       Object.entries(appState.users).forEach(([id, user]) => {
         if (id === appState.userId) return; // Don't show own cursor
         if (!user.cursor) return;
 
-        // Convert map coordinates to screen coordinates (accounting for current user's zoom/pan)
+        activeUserIds.add(id);
+
+        // Convert map coordinates to screen coordinates (GPU-accelerated)
         const screenX = user.cursor.x * scale + panX;
         const screenY = user.cursor.y * scale + panY;
+        const isIdle = now - user.lastActive > 5000;
 
-        const isIdle = Date.now() - user.lastActive > 5000;
-        const cursorEl = document.createElement('div');
-        cursorEl.className = 'cursor' + (isIdle ? ' idle' : '');
-        cursorEl.style.left = screenX + 'px';
-        cursorEl.style.top = screenY + 'px';
+        let cursorEl = cursorCache.get(id);
 
-        cursorEl.innerHTML = `
-          <svg viewBox="0 0 24 24" fill="${user.color}">
-            <path d="M4 4l16 8-7 2-2 7z" stroke="#fff" stroke-width="1"/>
-          </svg>
-          <div class="cursor-label" style="background: ${user.color}; color: #fff;">${user.name}</div>
-        `;
+        if (!cursorEl) {
+          // Create new cursor element
+          cursorEl = document.createElement('div');
+          cursorEl.className = 'cursor';
+          cursorEl.innerHTML = `
+            <svg viewBox="0 0 24 24" fill="${user.color}">
+              <path d="M4 4l16 8-7 2-2 7z" stroke="#fff" stroke-width="1"/>
+            </svg>
+            <div class="cursor-label" style="background: ${user.color}; color: #fff;">${user.name}</div>
+          `;
+          cursorsContainer.appendChild(cursorEl);
+          cursorCache.set(id, cursorEl);
+        }
 
-        cursorsContainer.appendChild(cursorEl);
+        // Update transform in-place (GPU-accelerated)
+        cursorEl.style.transform = `translate3d(${screenX}px, ${screenY}px, 0)`;
+        cursorEl.classList.toggle('idle', isIdle);
+      });
+
+      // Remove cursors for users that are no longer active
+      cursorCache.forEach((el, id) => {
+        if (!activeUserIds.has(id)) {
+          el.remove();
+          cursorCache.delete(id);
+        }
       });
     }
 
@@ -6523,9 +6547,15 @@
         });
       }
 
-      // Periodic sync and cursor rendering
-      setInterval(() => {
+      // High-frequency cursor rendering using requestAnimationFrame (~60fps)
+      function cursorLoop() {
         renderCursors();
+        requestAnimationFrame(cursorLoop);
+      }
+      requestAnimationFrame(cursorLoop);
+
+      // Low-frequency updates: user list and stale user cleanup (1 second)
+      setInterval(() => {
         renderUsersList();
 
         // Clean up stale users (no activity for 30s)
@@ -6533,9 +6563,15 @@
         Object.entries(appState.users).forEach(([id, user]) => {
           if (id !== appState.userId && now - user.lastActive > 30000) {
             delete appState.users[id];
+            // Also remove from cursor cache
+            const cursorEl = cursorCache.get(id);
+            if (cursorEl) {
+              cursorEl.remove();
+              cursorCache.delete(id);
+            }
           }
         });
-      }, 100);
+      }, 1000);
 
       // Heartbeat
       setInterval(() => {
