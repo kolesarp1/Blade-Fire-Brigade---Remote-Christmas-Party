@@ -326,7 +326,7 @@
     .olena .avatar::before { content: '👩'; font-size: 28px; }
     .valera .avatar { background: linear-gradient(180deg, #f39c12 0%, #d68910 100%); }
     .valera .avatar::after { content: '🍪'; font-size: 14px; bottom: 0px; right: 0px; }
-    .valera .avatar::before { content: '💪'; font-size: 28px; }
+    .valera .avatar::before { content: '🏋️'; font-size: 28px; }
     .vova .avatar { background: linear-gradient(180deg, #34495e 0%, #2c3e50 100%); }
     .vova .avatar::after { content: '🔊'; font-size: 14px; bottom: 0px; right: -2px; }
     .vova .avatar::before { content: '🧑'; font-size: 28px; }
@@ -359,22 +359,27 @@
       cursor: not-allowed;
     }
 
-    /* Card Deck Container - Now part of the map (left side) */
+    /* Card Deck Container - Fixed on left side */
     .card-deck {
-      position: absolute;
-      pointer-events: auto;
-      z-index: 10;
+      position: fixed;
+      left: 20px;
+      top: 80px;
+      z-index: 900;
+      background: rgba(26, 26, 46, 0.95);
+      border-radius: 12px;
+      padding: 15px;
+      max-height: calc(100vh - 100px);
+      overflow-y: auto;
     }
     .card-deck h3 {
       margin: 0 0 12px 0;
-      color: #333;
-      font-size: 16px;
+      color: #fff;
+      font-size: 14px;
       text-transform: uppercase;
       letter-spacing: 1px;
       display: flex;
       align-items: center;
       gap: 8px;
-      text-shadow: 1px 1px 0 #fff;
     }
     .card-deck h3 .card-icon {
       font-size: 20px;
@@ -5700,7 +5705,7 @@
     <!-- VERSION INDICATOR (bottom right corner) - bump with each release -->
     <g id="version-indicator" transform="translate(3050, 2360)">
       <rect x="0" y="0" width="140" height="30" rx="5" fill="#000" opacity="0.6"/>
-      <text x="70" y="20" text-anchor="middle" font-family="monospace" font-size="14" fill="#fff" font-weight="bold">v3.1</text>
+      <text x="70" y="20" text-anchor="middle" font-family="monospace" font-size="14" fill="#fff" font-weight="bold">v3.2</text>
     </g>
 
   </svg>
@@ -6418,7 +6423,7 @@
       });
     }
 
-    // Setup cursor tracking
+    // Setup cursor tracking - converts to map coordinates for sync
     function setupCursorTracking() {
       let lastCursorUpdate = 0;
       const throttleMs = 33; // ~30fps
@@ -6428,9 +6433,14 @@
         if (now - lastCursorUpdate < throttleMs) return;
         lastCursorUpdate = now;
 
+        // Convert screen coordinates to map coordinates (accounting for zoom/pan)
+        // This ensures cursors appear at the same MAP position for all users
+        const mapX = (e.clientX - panX) / scale;
+        const mapY = (e.clientY - panY) / scale;
+
         const cursorData = {
-          x: e.clientX,
-          y: e.clientY
+          x: mapX,
+          y: mapY
         };
 
         // Update local state
@@ -6444,19 +6454,24 @@
       });
     }
 
-    // Render other users' cursors
+    // Render other users' cursors - converts map coordinates to screen coordinates
     function renderCursors() {
       // Clear old cursors
       cursorsContainer.innerHTML = '';
 
       Object.entries(appState.users).forEach(([id, user]) => {
         if (id === appState.userId) return; // Don't show own cursor
+        if (!user.cursor) return;
+
+        // Convert map coordinates to screen coordinates (accounting for current user's zoom/pan)
+        const screenX = user.cursor.x * scale + panX;
+        const screenY = user.cursor.y * scale + panY;
 
         const isIdle = Date.now() - user.lastActive > 5000;
         const cursorEl = document.createElement('div');
         cursorEl.className = 'cursor' + (isIdle ? ' idle' : '');
-        cursorEl.style.left = user.cursor.x + 'px';
-        cursorEl.style.top = user.cursor.y + 'px';
+        cursorEl.style.left = screenX + 'px';
+        cursorEl.style.top = screenY + 'px';
 
         cursorEl.innerHTML = `
           <svg viewBox="0 0 24 24" fill="${user.color}">
@@ -6648,12 +6663,6 @@
     // Hide card deck and online users until user joins
     cardDeck.style.display = 'none';
     document.getElementById('onlineUsers').style.display = 'none';
-
-    // Move card deck inside SVG container (so it scrolls/zooms with map)
-    // Position it in the left area of the map
-    svgContainer.appendChild(cardDeck);
-    cardDeck.style.left = '50px';
-    cardDeck.style.top = '100px';
 
     // Show them after joining
     const originalInitSession = initSession;
