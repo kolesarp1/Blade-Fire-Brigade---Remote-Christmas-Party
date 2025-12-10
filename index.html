@@ -24,6 +24,9 @@
     }
     svg text {
       pointer-events: none;
+      /* Crisp text at all zoom levels */
+      text-rendering: geometricPrecision;
+      -webkit-font-smoothing: antialiased;
     }
 
     /* Control Panel - Collapsible */
@@ -111,6 +114,12 @@
       display: block;
       transform-origin: 0 0;
       will-change: transform;
+      /* Crisp rendering for zoomed SVG */
+      shape-rendering: geometricPrecision;
+      text-rendering: geometricPrecision;
+      image-rendering: -webkit-optimize-contrast;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
 
     /* Export modal */
@@ -618,51 +627,6 @@
       opacity: 0.5;
     }
 
-    /* Follow Host Toggle */
-    .follow-host-toggle {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-top: 12px;
-      padding-top: 10px;
-      border-top: 1px solid rgba(255,255,255,0.2);
-      cursor: pointer;
-      color: #aaa;
-      font-size: 12px;
-      transition: color 0.2s;
-    }
-    .follow-host-toggle:hover {
-      color: #fff;
-    }
-    .follow-host-toggle.active {
-      color: #2ecc71;
-    }
-    .follow-host-toggle .toggle-switch {
-      width: 32px;
-      height: 18px;
-      background: rgba(255,255,255,0.2);
-      border-radius: 9px;
-      position: relative;
-      transition: background 0.2s;
-    }
-    .follow-host-toggle.active .toggle-switch {
-      background: #2ecc71;
-    }
-    .follow-host-toggle .toggle-switch::after {
-      content: '';
-      position: absolute;
-      width: 14px;
-      height: 14px;
-      background: #fff;
-      border-radius: 50%;
-      top: 2px;
-      left: 2px;
-      transition: transform 0.2s;
-    }
-    .follow-host-toggle.active .toggle-switch::after {
-      transform: translateX(14px);
-    }
-
     /* Multiplayer Cursors */
     .cursor {
       position: fixed;
@@ -793,10 +757,6 @@
     <h3><span class="dot"></span> Online</h3>
     <div class="user-list" id="userList">
       <!-- Users will be populated by JavaScript -->
-    </div>
-    <div class="follow-host-toggle" id="followHostToggle" style="display: none;">
-      <div class="toggle-switch"></div>
-      <span>Follow Host</span>
     </div>
   </div>
 
@@ -5741,7 +5701,7 @@
     <!-- VERSION INDICATOR (bottom right corner) - bump with each release -->
     <g id="version-indicator" transform="translate(3050, 2360)">
       <rect x="0" y="0" width="140" height="30" rx="5" fill="#000" opacity="0.6"/>
-      <text x="70" y="20" text-anchor="middle" font-family="monospace" font-size="14" fill="#fff" font-weight="bold">v3.4</text>
+      <text x="70" y="20" text-anchor="middle" font-family="monospace" font-size="14" fill="#fff" font-weight="bold">v3.9</text>
     </g>
 
   </svg>
@@ -6286,8 +6246,7 @@
       users: {},
       cards: {},
       userId: getOrCreateUserId(),
-      selectedName: null,
-      followHost: false
+      selectedName: null
     };
 
     // Initialize cards state (all face-down)
@@ -6307,7 +6266,6 @@
     const connectionStatus = document.getElementById('connectionStatus');
     const connectionText = document.getElementById('connectionText');
     const svgContainer = document.getElementById('svgContainer');
-    const followHostToggle = document.getElementById('followHostToggle');
 
     // Check for secret host parameter in URL (use ?blade_host_key=winterfest2025)
     const urlParams = new URLSearchParams(window.location.search);
@@ -6646,19 +6604,14 @@
         });
       }, 1000);
 
-      // Heartbeat (includes host view for followers)
+      // Heartbeat
       setInterval(() => {
         if (broadcastChannel && appState.users[appState.userId]) {
           appState.users[appState.userId].lastActive = Date.now();
-          const message = {
+          broadcastChannel.postMessage({
             type: 'heartbeat',
             user: appState.users[appState.userId]
-          };
-          // Host broadcasts their view for followers
-          if (appState.isHost) {
-            message.hostView = { panX, panY, scale };
-          }
-          broadcastChannel.postMessage(message);
+          });
         }
       }, 2000);
     }
@@ -6731,13 +6684,6 @@
               lastActive: Date.now()
             };
           }
-          // Apply host view if following
-          if (appState.followHost && data.hostView && data.user && data.user.isHost) {
-            panX = data.hostView.panX;
-            panY = data.hostView.panY;
-            scale = data.hostView.scale;
-            updateTransform();
-          }
           break;
 
         case 'user-leave':
@@ -6791,15 +6737,6 @@
       originalInitSession();
       cardDeck.style.display = 'block';
       document.getElementById('onlineUsers').style.display = 'block';
-
-      // Show Follow Host toggle only for non-hosts
-      if (!appState.isHost) {
-        followHostToggle.style.display = 'flex';
-        followHostToggle.onclick = () => {
-          appState.followHost = !appState.followHost;
-          followHostToggle.classList.toggle('active', appState.followHost);
-        };
-      }
     };
 
     // Check localStorage for saved user and auto-join
