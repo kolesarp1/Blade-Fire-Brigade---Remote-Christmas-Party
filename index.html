@@ -359,17 +359,18 @@
       cursor: not-allowed;
     }
 
-    /* Card Deck Container - Fixed on left side */
+    /* Card Deck Container - Moves with map */
     .card-deck {
-      position: fixed;
+      position: absolute;
       left: 20px;
       top: 80px;
       z-index: 900;
       background: rgba(26, 26, 46, 0.95);
       border-radius: 12px;
       padding: 15px;
-      max-height: calc(100vh - 100px);
+      max-height: 600px;
       overflow-y: auto;
+      transform-origin: 0 0;
     }
     .card-deck h3 {
       margin: 0 0 12px 0;
@@ -634,7 +635,7 @@
     .cursor {
       position: fixed;
       pointer-events: none;
-      z-index: 4000;
+      z-index: 800;
       transition: left 0.03s linear, top 0.03s linear, opacity 0.3s;
     }
     .cursor.idle {
@@ -5705,7 +5706,7 @@
     <!-- VERSION INDICATOR (bottom right corner) - bump with each release -->
     <g id="version-indicator" transform="translate(3050, 2360)">
       <rect x="0" y="0" width="140" height="30" rx="5" fill="#000" opacity="0.6"/>
-      <text x="70" y="20" text-anchor="middle" font-family="monospace" font-size="14" fill="#fff" font-weight="bold">v3.2</text>
+      <text x="70" y="20" text-anchor="middle" font-family="monospace" font-size="14" fill="#fff" font-weight="bold">v3.3</text>
     </g>
 
   </svg>
@@ -5729,6 +5730,11 @@
     // Update transform
     function updateTransform() {
       svg.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
+      // Also transform card deck so it moves with the map
+      const cardDeck = document.getElementById('cardDeck');
+      if (cardDeck) {
+        cardDeck.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
+      }
       zoomDisplay.textContent = Math.round(scale * 100) + '%';
     }
 
@@ -6332,13 +6338,14 @@
           card.classList.add('disabled');
         }
 
+        // Calculate card number within person's set (1 or 2)
+        const cardNum = ((cardData.id - 1) % 2) + 1;
         card.innerHTML = `
           <div class="card-inner">
             <div class="card-face card-back">
               <div class="pattern">✦ ✦ ✦</div>
-              <div class="logo">BLADE 2025</div>
+              <div class="logo">${cardData.person.toUpperCase()} ${cardNum}</div>
               <div class="pattern">✦ ✦ ✦</div>
-              <div class="card-num">${cardData.id}</div>
             </div>
             <div class="card-face card-front">
               <div class="card-name">${cardData.person}</div>
