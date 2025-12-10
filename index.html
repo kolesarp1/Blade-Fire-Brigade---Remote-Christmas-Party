@@ -362,7 +362,7 @@
     /* Card Deck Container - Moves with map */
     .card-deck {
       position: absolute;
-      left: 20px;
+      left: -360px;
       top: 80px;
       z-index: 900;
       background: rgba(26, 26, 46, 0.95);
@@ -560,20 +560,6 @@
       border-left: 3px solid #3498db;
       margin-bottom: 10px;
     }
-    .story-preview-hint {
-      padding: 8px 12px;
-      background: rgba(46, 204, 113, 0.15);
-      border-radius: 6px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      color: #27ae60;
-      font-size: 12px;
-    }
-    .story-preview-hint .hint-icon {
-      font-size: 16px;
-    }
-
     /* Online Users Panel */
     .online-users {
       position: fixed;
@@ -767,17 +753,13 @@
       <button class="story-preview-close" onclick="closeStoryPreview()">×</button>
       <div class="story-preview-header">
         <div>
-          <div class="person-name" id="previewPersonName">SAMI</div>
+          <div class="person-name"><span id="previewPersonIcon">🧑‍🚒</span> <span id="previewPersonName">SAMI</span></div>
           <h3 id="previewCardTitle">The Hot Speech</h3>
         </div>
         <span class="card-number" id="previewCardNumber">#1</span>
       </div>
       <div class="story-preview-story" id="previewCardStory">
         Story text will appear here...
-      </div>
-      <div class="story-preview-hint">
-        <span class="hint-icon">🔍</span>
-        <span id="previewCardHint">Find the scene on the map!</span>
       </div>
     </div>
   </div>
@@ -5706,7 +5688,7 @@
     <!-- VERSION INDICATOR (bottom right corner) - bump with each release -->
     <g id="version-indicator" transform="translate(3050, 2360)">
       <rect x="0" y="0" width="140" height="30" rx="5" fill="#000" opacity="0.6"/>
-      <text x="70" y="20" text-anchor="middle" font-family="monospace" font-size="14" fill="#fff" font-weight="bold">v3.3</text>
+      <text x="70" y="20" text-anchor="middle" font-family="monospace" font-size="14" fill="#fff" font-weight="bold">v3.4</text>
     </g>
 
   </svg>
@@ -6211,18 +6193,18 @@
 
     // Team member names with assigned colors
     const TEAM_MEMBERS = [
-      { name: "Sami", color: "#e74c3c" },
-      { name: "Ints", color: "#3498db" },
-      { name: "Kasturi", color: "#9b59b6" },
-      { name: "Patrik", color: "#2ecc71" },
-      { name: "Artem", color: "#f39c12" },
-      { name: "Kostya", color: "#1abc9c" },
-      { name: "Olena", color: "#e91e63" },
-      { name: "Valera", color: "#ff5722" },
-      { name: "Vova", color: "#00bcd4" },
-      { name: "Dima", color: "#8bc34a" },
-      { name: "Misha", color: "#ff9800" },
-      { name: "Ruslan", color: "#673ab7" }
+      { name: "Sami", color: "#e74c3c", icon: "🧑‍🚒" },
+      { name: "Ints", color: "#3498db", icon: "👨‍💻" },
+      { name: "Kasturi", color: "#9b59b6", icon: "👩‍💼" },
+      { name: "Patrik", color: "#2ecc71", icon: "🧔" },
+      { name: "Artem", color: "#f39c12", icon: "👨‍🔧" },
+      { name: "Kostya", color: "#1abc9c", icon: "👨‍🔬" },
+      { name: "Olena", color: "#e91e63", icon: "👩" },
+      { name: "Valera", color: "#ff5722", icon: "🏋️" },
+      { name: "Vova", color: "#00bcd4", icon: "🧑" },
+      { name: "Dima", color: "#8bc34a", icon: "👨‍💻" },
+      { name: "Misha", color: "#ff9800", icon: "🤠" },
+      { name: "Ruslan", color: "#673ab7", icon: "👨" }
     ];
 
     // App state
@@ -6393,11 +6375,15 @@
       const cardData = CARDS_DATA.find(c => c.id === cardId);
       if (!cardData) return;
 
+      // Find the person's icon
+      const member = TEAM_MEMBERS.find(m => m.name === cardData.person);
+      const icon = member ? member.icon : '👤';
+
+      document.getElementById('previewPersonIcon').textContent = icon;
       document.getElementById('previewPersonName').textContent = cardData.person;
       document.getElementById('previewCardTitle').textContent = cardData.title;
       document.getElementById('previewCardNumber').textContent = `#${cardData.id}`;
       document.getElementById('previewCardStory').textContent = cardData.story;
-      document.getElementById('previewCardHint').textContent = cardData.hint;
 
       storyPreview.classList.add('active');
     }
