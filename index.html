@@ -3,6 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <title>BladeLabs Winter Festival - Full Map</title>
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <script>
+    // Initialize Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyAzVfJss9VekkNVUpqeVix7Xf4lJik5YbI",
+      authDomain: "blade-fire-brigade.firebaseapp.com",
+      projectId: "blade-fire-brigade",
+      storageBucket: "blade-fire-brigade.firebasestorage.app",
+      messagingSenderId: "243917025698",
+      appId: "1:243917025698:web:dbf1dc6de979ecb95a02fb",
+      databaseURL: "https://blade-fire-brigade-default-rtdb.europe-west1.firebasedatabase.app"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+  </script>
   <style>
     * {
       box-sizing: border-box;
@@ -5713,7 +5730,7 @@
     <!-- VERSION INDICATOR (bottom right corner) - bump with each release -->
     <g id="version-indicator" transform="translate(3050, 2360)">
       <rect x="0" y="0" width="140" height="30" rx="5" fill="#000" opacity="0.6"/>
-      <text x="70" y="20" text-anchor="middle" font-family="monospace" font-size="14" fill="#fff" font-weight="bold">v3.11</text>
+      <text x="70" y="20" text-anchor="middle" font-family="monospace" font-size="14" fill="#fff" font-weight="bold">v4.0</text>
     </g>
 
   </svg>
@@ -6595,32 +6612,107 @@
     }
 
     // ========== FIREBASE REAL-TIME SYNC ==========
-    // Using localStorage + BroadcastChannel for local demo (no Firebase setup needed)
-    // To use real Firebase, replace this section with Firebase SDK
+    // Using Firebase Realtime Database for cross-device multiplayer
 
-    let broadcastChannel = null;
+    const roomId = 'winter-festival-2024';
+    const usersRef = database.ref(`rooms/${roomId}/users`);
+    const cardsRef = database.ref(`rooms/${roomId}/cards`);
+    const cursorsRef = database.ref(`rooms/${roomId}/cursors`);
 
     function initFirebaseSync() {
-      // Use BroadcastChannel API for cross-tab communication (simulates real-time)
-      if ('BroadcastChannel' in window) {
-        broadcastChannel = new BroadcastChannel('blade-winter-festival');
+      const myUserRef = usersRef.child(appState.userId);
+      const myCursorRef = cursorsRef.child(appState.userId);
 
-        broadcastChannel.onmessage = (event) => {
-          handleSyncMessage(event.data);
-        };
+      // Set user data and presence
+      myUserRef.set({
+        ...appState.users[appState.userId],
+        lastActive: firebase.database.ServerValue.TIMESTAMP
+      });
 
-        // Announce ourselves
-        broadcastChannel.postMessage({
-          type: 'user-join',
-          user: appState.users[appState.userId]
-        });
+      // Remove user data when disconnecting
+      myUserRef.onDisconnect().remove();
+      myCursorRef.onDisconnect().remove();
 
-        // Request current state
-        broadcastChannel.postMessage({
-          type: 'state-request',
-          userId: appState.userId
-        });
-      }
+      // Listen for other users joining/updating
+      usersRef.on('child_added', (snapshot) => {
+        const user = snapshot.val();
+        if (snapshot.key !== appState.userId) {
+          appState.users[snapshot.key] = { ...user, lastActive: Date.now() };
+          renderUsersList();
+        }
+      });
+
+      usersRef.on('child_changed', (snapshot) => {
+        const user = snapshot.val();
+        if (snapshot.key !== appState.userId) {
+          appState.users[snapshot.key] = { ...user, lastActive: Date.now() };
+          renderUsersList();
+        }
+      });
+
+      usersRef.on('child_removed', (snapshot) => {
+        delete appState.users[snapshot.key];
+        // Remove cursor
+        const cursorEl = cursorCache.get(snapshot.key);
+        if (cursorEl) {
+          cursorEl.remove();
+          cursorCache.delete(snapshot.key);
+        }
+        renderUsersList();
+      });
+
+      // Listen for cursor movements
+      cursorsRef.on('child_added', (snapshot) => {
+        if (snapshot.key !== appState.userId) {
+          const data = snapshot.val();
+          if (appState.users[snapshot.key]) {
+            appState.users[snapshot.key].cursor = data.cursor;
+            appState.users[snapshot.key].lastActive = Date.now();
+          }
+        }
+      });
+
+      cursorsRef.on('child_changed', (snapshot) => {
+        if (snapshot.key !== appState.userId) {
+          const data = snapshot.val();
+          if (appState.users[snapshot.key]) {
+            appState.users[snapshot.key].cursor = data.cursor;
+            appState.users[snapshot.key].lastActive = Date.now();
+          } else if (data.user) {
+            appState.users[snapshot.key] = {
+              ...data.user,
+              cursor: data.cursor,
+              lastActive: Date.now()
+            };
+          }
+        }
+      });
+
+      // Listen for card flips/hides
+      cardsRef.on('child_added', (snapshot) => {
+        const cardId = parseInt(snapshot.key);
+        const cardState = snapshot.val();
+        appState.cards[cardId] = cardState;
+        updateCardUI(cardId, cardState.flipped);
+      });
+
+      cardsRef.on('child_changed', (snapshot) => {
+        const cardId = parseInt(snapshot.key);
+        const cardState = snapshot.val();
+        appState.cards[cardId] = cardState;
+        updateCardUI(cardId, cardState.flipped);
+      });
+
+      // Load initial card state
+      cardsRef.once('value', (snapshot) => {
+        const cards = snapshot.val();
+        if (cards) {
+          Object.entries(cards).forEach(([id, state]) => {
+            appState.cards[parseInt(id)] = state;
+          });
+          renderCards();
+        }
+      });
 
       // High-frequency cursor rendering using requestAnimationFrame (~60fps)
       function cursorLoop() {
@@ -6629,164 +6721,55 @@
       }
       requestAnimationFrame(cursorLoop);
 
-      // Low-frequency updates: user list and stale user cleanup (1 second)
+      // Low-frequency updates: user list (1 second)
       setInterval(() => {
         renderUsersList();
-
-        // Clean up stale users (no activity for 30s)
-        const now = Date.now();
-        Object.entries(appState.users).forEach(([id, user]) => {
-          if (id !== appState.userId && now - user.lastActive > 30000) {
-            delete appState.users[id];
-            // Also remove from cursor cache
-            const cursorEl = cursorCache.get(id);
-            if (cursorEl) {
-              cursorEl.remove();
-              cursorCache.delete(id);
-            }
-          }
-        });
       }, 1000);
 
-      // Heartbeat
+      // Heartbeat to keep presence alive
       setInterval(() => {
-        if (broadcastChannel && appState.users[appState.userId]) {
-          appState.users[appState.userId].lastActive = Date.now();
-          broadcastChannel.postMessage({
-            type: 'heartbeat',
-            user: appState.users[appState.userId]
+        if (appState.users[appState.userId]) {
+          myUserRef.update({
+            lastActive: firebase.database.ServerValue.TIMESTAMP
           });
         }
-      }, 2000);
+      }, 5000);
     }
 
-    function handleSyncMessage(data) {
-      switch (data.type) {
-        case 'user-join':
-          appState.users[data.user.id] = data.user;
-          renderUsersList();
-          // Share our state with new user
-          if (broadcastChannel) {
-            broadcastChannel.postMessage({
-              type: 'state-sync',
-              cards: appState.cards,
-              user: appState.users[appState.userId]
-            });
+    function updateCardUI(cardId, flipped) {
+      const cardEl = document.querySelector(`.card[data-card-id="${cardId}"]`);
+      if (cardEl) {
+        if (flipped) {
+          cardEl.classList.add('flipped');
+          cardEl.classList.remove('disabled');
+        } else {
+          cardEl.classList.remove('flipped');
+          if (!appState.isHost) {
+            cardEl.classList.add('disabled');
           }
-          break;
-
-        case 'state-sync':
-          // Merge cards state (only flipped cards matter)
-          Object.entries(data.cards).forEach(([id, card]) => {
-            if (card.flipped) {
-              appState.cards[id] = card;
-            }
-          });
-          if (data.user) {
-            appState.users[data.user.id] = data.user;
-          }
-          renderCards();
-          break;
-
-        case 'state-request':
-          if (broadcastChannel && data.userId !== appState.userId) {
-            broadcastChannel.postMessage({
-              type: 'state-sync',
-              cards: appState.cards,
-              user: appState.users[appState.userId]
-            });
-          }
-          break;
-
-        case 'card-flip':
-          appState.cards[data.cardId] = { flipped: true };
-          const cardEl = document.querySelector(`.card[data-card-id="${data.cardId}"]`);
-          if (cardEl) {
-            cardEl.classList.add('flipped');
-            cardEl.classList.remove('disabled');
-          }
-          break;
-
-        case 'card-hide':
-          appState.cards[data.cardId] = { flipped: false };
-          const hideCardEl = document.querySelector(`.card[data-card-id="${data.cardId}"]`);
-          if (hideCardEl) {
-            hideCardEl.classList.remove('flipped');
-            if (!appState.isHost) {
-              hideCardEl.classList.add('disabled');
-            }
-          }
-          break;
-
-        case 'cursor-move':
-          if (appState.users[data.userId]) {
-            appState.users[data.userId].cursor = data.cursor;
-            appState.users[data.userId].lastActive = Date.now();
-          } else if (data.user) {
-            appState.users[data.userId] = {
-              ...data.user,
-              cursor: data.cursor,
-              lastActive: Date.now()
-            };
-          }
-          break;
-
-        case 'heartbeat':
-          if (data.user) {
-            appState.users[data.user.id] = {
-              ...appState.users[data.user.id],
-              ...data.user,
-              lastActive: Date.now()
-            };
-          }
-          break;
-
-        case 'user-leave':
-          delete appState.users[data.userId];
-          renderUsersList();
-          break;
+        }
       }
     }
 
     function broadcastCursor(cursor) {
-      if (broadcastChannel) {
-        broadcastChannel.postMessage({
-          type: 'cursor-move',
-          userId: appState.userId,
-          cursor: cursor,
-          user: appState.users[appState.userId]
-        });
-      }
+      cursorsRef.child(appState.userId).set({
+        cursor: cursor,
+        user: appState.users[appState.userId]
+      });
     }
 
     function broadcastCardFlip(cardId) {
-      if (broadcastChannel) {
-        broadcastChannel.postMessage({
-          type: 'card-flip',
-          cardId: cardId,
-          userId: appState.userId
-        });
-      }
+      cardsRef.child(cardId).set({ flipped: true });
     }
 
     function broadcastCardHide(cardId) {
-      if (broadcastChannel) {
-        broadcastChannel.postMessage({
-          type: 'card-hide',
-          cardId: cardId,
-          userId: appState.userId
-        });
-      }
+      cardsRef.child(cardId).set({ flipped: false });
     }
 
     // Clean up on page unload
     window.addEventListener('beforeunload', () => {
-      if (broadcastChannel) {
-        broadcastChannel.postMessage({
-          type: 'user-leave',
-          userId: appState.userId
-        });
-      }
+      usersRef.child(appState.userId).remove();
+      cursorsRef.child(appState.userId).remove();
     });
 
     // Initialize the app
