@@ -359,16 +359,16 @@
       cursor: not-allowed;
     }
 
-    /* Card Deck Container - Fixed on screen */
+    /* Card Deck Container - Anchored to map, moves with pan but doesn't scale */
     .card-deck {
-      position: fixed;
-      left: 20px;
-      top: 80px;
+      position: absolute;
+      left: 0;
+      top: 0;
       z-index: 900;
       background: rgba(26, 26, 46, 0.95);
       border-radius: 12px;
       padding: 15px;
-      max-height: calc(100vh - 100px);
+      max-height: 600px;
       overflow-y: auto;
     }
     .card-deck h3 {
@@ -5711,6 +5711,19 @@
     // Update transform
     function updateTransform() {
       svg.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
+
+      // Move card deck with map (anchored to left side, no scaling)
+      const cardDeck = document.getElementById('cardDeck');
+      if (cardDeck) {
+        // Anchor point in SVG coordinates (left side of map)
+        const anchorX = -360;
+        const anchorY = 80;
+        // Calculate screen position based on current pan and scale
+        const screenX = anchorX * scale + panX;
+        const screenY = anchorY * scale + panY;
+        cardDeck.style.transform = `translate(${screenX}px, ${screenY}px)`;
+      }
+
       zoomDisplay.textContent = Math.round(scale * 100) + '%';
     }
 
