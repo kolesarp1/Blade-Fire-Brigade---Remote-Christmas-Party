@@ -618,6 +618,51 @@
       opacity: 0.5;
     }
 
+    /* Follow Host Toggle */
+    .follow-host-toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255,255,255,0.2);
+      cursor: pointer;
+      color: #aaa;
+      font-size: 12px;
+      transition: color 0.2s;
+    }
+    .follow-host-toggle:hover {
+      color: #fff;
+    }
+    .follow-host-toggle.active {
+      color: #2ecc71;
+    }
+    .follow-host-toggle .toggle-switch {
+      width: 32px;
+      height: 18px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 9px;
+      position: relative;
+      transition: background 0.2s;
+    }
+    .follow-host-toggle.active .toggle-switch {
+      background: #2ecc71;
+    }
+    .follow-host-toggle .toggle-switch::after {
+      content: '';
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      background: #fff;
+      border-radius: 50%;
+      top: 2px;
+      left: 2px;
+      transition: transform 0.2s;
+    }
+    .follow-host-toggle.active .toggle-switch::after {
+      transform: translateX(14px);
+    }
+
     /* Multiplayer Cursors */
     .cursor {
       position: fixed;
@@ -748,6 +793,10 @@
     <h3><span class="dot"></span> Online</h3>
     <div class="user-list" id="userList">
       <!-- Users will be populated by JavaScript -->
+    </div>
+    <div class="follow-host-toggle" id="followHostToggle" style="display: none;">
+      <div class="toggle-switch"></div>
+      <span>Follow Host</span>
     </div>
   </div>
 
@@ -6219,14 +6268,26 @@
       { name: "Ruslan", color: "#673ab7", icon: "👨" }
     ];
 
+    // Persistent userId (survives page refresh)
+    const STORAGE_KEY = 'blade-winter-festival';
+    function getOrCreateUserId() {
+      let userId = localStorage.getItem(STORAGE_KEY + '-userId');
+      if (!userId) {
+        userId = 'user-' + Math.random().toString(36).substr(2, 9);
+        localStorage.setItem(STORAGE_KEY + '-userId', userId);
+      }
+      return userId;
+    }
+
     // App state
     const appState = {
       currentUser: null,
       isHost: false,
       users: {},
       cards: {},
-      userId: 'user-' + Math.random().toString(36).substr(2, 9),
-      selectedName: null
+      userId: getOrCreateUserId(),
+      selectedName: null,
+      followHost: false
     };
 
     // Initialize cards state (all face-down)
@@ -6246,6 +6307,7 @@
     const connectionStatus = document.getElementById('connectionStatus');
     const connectionText = document.getElementById('connectionText');
     const svgContainer = document.getElementById('svgContainer');
+    const followHostToggle = document.getElementById('followHostToggle');
 
     // Check for secret host parameter in URL (use ?blade_host_key=winterfest2025)
     const urlParams = new URLSearchParams(window.location.search);
@@ -6275,24 +6337,35 @@
       joinBtn.disabled = false;
     }
 
-    // Join the session
-    joinBtn.onclick = function() {
-      if (!appState.selectedName) return;
+    // Join the session with a specific name
+    function joinWithName(name) {
+      const member = TEAM_MEMBERS.find(m => m.name === name);
+      if (!member) return false;
 
-      const member = TEAM_MEMBERS.find(m => m.name === appState.selectedName);
+      appState.selectedName = name;
       appState.currentUser = {
         id: appState.userId,
-        name: appState.selectedName,
+        name: name,
         color: member.color,
         isHost: isHostFromUrl
       };
       appState.isHost = isHostFromUrl;
+
+      // Save to localStorage
+      localStorage.setItem(STORAGE_KEY + '-selectedName', name);
 
       // Hide join modal
       joinModal.classList.add('hidden');
 
       // Initialize the session
       initSession();
+      return true;
+    }
+
+    // Join the session via button click
+    joinBtn.onclick = function() {
+      if (!appState.selectedName) return;
+      joinWithName(appState.selectedName);
     };
 
     // Initialize the session after joining
@@ -6573,14 +6646,19 @@
         });
       }, 1000);
 
-      // Heartbeat
+      // Heartbeat (includes host view for followers)
       setInterval(() => {
         if (broadcastChannel && appState.users[appState.userId]) {
           appState.users[appState.userId].lastActive = Date.now();
-          broadcastChannel.postMessage({
+          const message = {
             type: 'heartbeat',
             user: appState.users[appState.userId]
-          });
+          };
+          // Host broadcasts their view for followers
+          if (appState.isHost) {
+            message.hostView = { panX, panY, scale };
+          }
+          broadcastChannel.postMessage(message);
         }
       }, 2000);
     }
@@ -6653,6 +6731,13 @@
               lastActive: Date.now()
             };
           }
+          // Apply host view if following
+          if (appState.followHost && data.hostView && data.user && data.user.isHost) {
+            panX = data.hostView.panX;
+            panY = data.hostView.panY;
+            scale = data.hostView.scale;
+            updateTransform();
+          }
           break;
 
         case 'user-leave':
@@ -6706,7 +6791,23 @@
       originalInitSession();
       cardDeck.style.display = 'block';
       document.getElementById('onlineUsers').style.display = 'block';
+
+      // Show Follow Host toggle only for non-hosts
+      if (!appState.isHost) {
+        followHostToggle.style.display = 'flex';
+        followHostToggle.onclick = () => {
+          appState.followHost = !appState.followHost;
+          followHostToggle.classList.toggle('active', appState.followHost);
+        };
+      }
     };
+
+    // Check localStorage for saved user and auto-join
+    const savedName = localStorage.getItem(STORAGE_KEY + '-selectedName');
+    if (savedName && TEAM_MEMBERS.find(m => m.name === savedName)) {
+      // Auto-join with saved name
+      joinWithName(savedName);
+    }
   </script>
 </body>
 </html>
