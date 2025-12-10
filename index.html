@@ -359,18 +359,17 @@
       cursor: not-allowed;
     }
 
-    /* Card Deck Container - Moves with map */
+    /* Card Deck Container - Fixed on screen */
     .card-deck {
-      position: absolute;
-      left: -360px;
+      position: fixed;
+      left: 20px;
       top: 80px;
       z-index: 900;
       background: rgba(26, 26, 46, 0.95);
       border-radius: 12px;
       padding: 15px;
-      max-height: 600px;
+      max-height: calc(100vh - 100px);
       overflow-y: auto;
-      transform-origin: 0 0;
     }
     .card-deck h3 {
       margin: 0 0 12px 0;
@@ -5712,11 +5711,6 @@
     // Update transform
     function updateTransform() {
       svg.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
-      // Also transform card deck so it moves with the map
-      const cardDeck = document.getElementById('cardDeck');
-      if (cardDeck) {
-        cardDeck.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
-      }
       zoomDisplay.textContent = Math.round(scale * 100) + '%';
     }
 
