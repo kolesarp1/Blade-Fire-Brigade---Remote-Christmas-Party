@@ -706,6 +706,23 @@
     .user-item.idle {
       opacity: 0.7;
     }
+    .switch-user-btn {
+      display: block;
+      margin-top: 12px;
+      padding: 6px 10px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 6px;
+      color: #aaa;
+      font-size: 11px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .switch-user-btn:hover {
+      background: rgba(255,255,255,0.2);
+      color: #fff;
+    }
 
     /* Multiplayer Cursors */
     .cursor {
@@ -842,6 +859,7 @@
     <div class="user-list" id="userListOffline">
       <!-- Offline users will be populated by JavaScript -->
     </div>
+    <button class="switch-user-btn" id="switchUserBtn">Switch Character</button>
   </div>
 
   <!-- Story Preview Panel (Bottom Left) -->
@@ -5785,7 +5803,7 @@
     <!-- VERSION INDICATOR (bottom right corner) - bump with each release -->
     <g id="version-indicator" transform="translate(3050, 2360)">
       <rect x="0" y="0" width="140" height="30" rx="5" fill="#000" opacity="0.6"/>
-      <text x="70" y="20" text-anchor="middle" font-family="monospace" font-size="14" fill="#fff" font-weight="bold">v4.3</text>
+      <text x="70" y="20" text-anchor="middle" font-family="monospace" font-size="14" fill="#fff" font-weight="bold">v4.4</text>
     </g>
 
   </svg>
@@ -6876,6 +6894,35 @@
     setupToggle('cardDeckHeader');
     setupToggle('onlineHeader');
     setupToggle('offlineHeader');
+
+    // Switch character function
+    function switchCharacter() {
+      // Remove current user from Firebase
+      if (appState.userId) {
+        usersRef.child(appState.userId).remove();
+        cursorsRef.child(appState.userId).remove();
+      }
+
+      // Clear localStorage selection
+      localStorage.removeItem(STORAGE_KEY + '-selectedName');
+
+      // Reset app state
+      delete appState.users[appState.userId];
+      appState.currentUser = null;
+      appState.selectedName = null;
+
+      // Hide panels and show join modal
+      cardDeck.style.display = 'none';
+      document.getElementById('onlineUsers').style.display = 'none';
+      joinModal.classList.remove('hidden');
+
+      // Reset name grid selection
+      document.querySelectorAll('.name-btn').forEach(b => b.classList.remove('selected'));
+      joinBtn.disabled = true;
+    }
+
+    // Setup switch button
+    document.getElementById('switchUserBtn').addEventListener('click', switchCharacter);
 
     // Initialize the app
     initNameGrid();
