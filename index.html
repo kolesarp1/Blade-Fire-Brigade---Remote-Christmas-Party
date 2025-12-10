@@ -26,7 +26,7 @@
       pointer-events: none;
     }
 
-    /* Control Panel */
+    /* Control Panel - Collapsible */
     .controls {
       position: fixed;
       top: 20px;
@@ -34,61 +34,67 @@
       z-index: 1000;
       display: flex;
       flex-direction: column;
-      gap: 10px;
-    }
-    .control-group {
-      background: rgba(0, 0, 0, 0.8);
-      border-radius: 8px;
-      padding: 10px;
-      display: flex;
-      flex-direction: column;
       gap: 8px;
     }
-    .control-group h3 {
-      margin: 0 0 5px 0;
-      color: #fff;
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-    .btn-row {
+    .control-btn {
+      width: 44px;
+      height: 44px;
+      background: rgba(0, 0, 0, 0.8);
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 20px;
       display: flex;
-      gap: 5px;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s;
+      position: relative;
     }
-    .btn {
+    .control-btn:hover {
+      background: rgba(0, 0, 0, 0.95);
+      width: auto;
+      padding: 0 15px;
+    }
+    .control-btn .expand-content {
+      display: none;
+      margin-left: 10px;
+      white-space: nowrap;
+    }
+    .control-btn:hover .expand-content {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .control-btn .btn-mini {
       background: #4a4a6a;
       border: none;
       color: #fff;
-      padding: 10px 15px;
+      padding: 6px 10px;
       border-radius: 5px;
       cursor: pointer;
-      font-size: 16px;
+      font-size: 14px;
       font-weight: bold;
-      transition: background 0.2s;
     }
-    .btn:hover {
+    .control-btn .btn-mini:hover {
       background: #6a6a8a;
     }
-    .btn:active {
-      background: #3a3a5a;
-    }
-    .btn-large {
-      padding: 12px 20px;
-      font-size: 14px;
-    }
-    .btn-export {
-      background: #2d7a2d;
-    }
-    .btn-export:hover {
-      background: #3d9a3d;
-    }
-    .zoom-display {
+    .control-btn .zoom-val {
       color: #fff;
-      font-size: 14px;
+      font-size: 12px;
+      min-width: 40px;
       text-align: center;
-      padding: 5px;
-      background: rgba(255,255,255,0.1);
-      border-radius: 4px;
+    }
+    .control-btn .btn-export-mini {
+      background: #2d7a2d;
+      color: #fff;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    .control-btn .btn-export-mini:hover {
+      background: #3d9a3d;
     }
 
     /* SVG Container */
@@ -236,7 +242,7 @@
       border-radius: 16px;
       text-align: center;
       color: #fff;
-      max-width: 400px;
+      max-width: 600px;
       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
       border: 2px solid #4a4a8a;
     }
@@ -251,23 +257,28 @@
     }
     .name-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin-bottom: 20px;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 25px;
     }
     .name-btn {
       background: #3a3a6a;
-      border: 2px solid transparent;
+      border: 3px solid transparent;
       color: #fff;
-      padding: 12px 8px;
-      border-radius: 8px;
+      padding: 12px 8px 10px;
+      border-radius: 12px;
       cursor: pointer;
-      font-size: 14px;
+      font-size: 12px;
+      font-weight: bold;
       transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
     }
     .name-btn:hover {
       background: #4a4a8a;
-      border-color: #6a6aaa;
+      transform: translateY(-2px);
     }
     .name-btn.taken {
       opacity: 0.4;
@@ -276,19 +287,58 @@
     .name-btn.selected {
       background: #5a5aaa;
       border-color: #8a8aff;
+      transform: translateY(-2px);
     }
-    .host-toggle {
+    .name-btn .avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 10px;
-      margin: 20px 0;
-      color: #aaa;
+      position: relative;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     }
-    .host-toggle input {
-      width: 18px;
-      height: 18px;
+    .name-btn .avatar::before,
+    .name-btn .avatar::after {
+      position: absolute;
     }
+    /* Avatar styles for each person */
+    .sami .avatar { background: linear-gradient(180deg, #c41e3a 0%, #8b0000 100%); }
+    .sami .avatar::before { content: '🧑‍🚒'; font-size: 28px; }
+    .ints .avatar { background: linear-gradient(180deg, #4a90d9 0%, #2c5aa0 100%); }
+    .ints .avatar::after { content: '🦆'; font-size: 16px; bottom: 0px; right: 0px; }
+    .ints .avatar::before { content: '👨‍💻'; font-size: 28px; }
+    .kasturi .avatar { background: linear-gradient(180deg, #9b59b6 0%, #6c3483 100%); }
+    .kasturi .avatar::after { content: '📋'; font-size: 14px; bottom: 0px; right: 0px; }
+    .kasturi .avatar::before { content: '👩‍💼'; font-size: 28px; }
+    .patrik .avatar { background: linear-gradient(180deg, #1a1a2e 0%, #0d0d1a 100%); }
+    .patrik .avatar::after { content: '🎧'; font-size: 14px; top: 0px; }
+    .patrik .avatar::before { content: '🧔'; font-size: 28px; }
+    .artem .avatar { background: linear-gradient(180deg, #27ae60 0%, #1e8449 100%); }
+    .artem .avatar::after { content: '🚁'; font-size: 14px; top: 0px; right: 0px; }
+    .artem .avatar::before { content: '👨‍🔧'; font-size: 28px; }
+    .kostya .avatar { background: linear-gradient(180deg, #3498db 0%, #2471a3 100%); }
+    .kostya .avatar::after { content: '🤖'; font-size: 14px; bottom: 0px; right: 0px; }
+    .kostya .avatar::before { content: '👨‍🔬'; font-size: 28px; }
+    .olena .avatar { background: linear-gradient(180deg, #e74c3c 0%, #c0392b 100%); }
+    .olena .avatar::after { content: '👑'; font-size: 14px; top: -2px; }
+    .olena .avatar::before { content: '👩'; font-size: 28px; }
+    .valera .avatar { background: linear-gradient(180deg, #f39c12 0%, #d68910 100%); }
+    .valera .avatar::after { content: '🍪'; font-size: 14px; bottom: 0px; right: 0px; }
+    .valera .avatar::before { content: '💪'; font-size: 28px; }
+    .vova .avatar { background: linear-gradient(180deg, #34495e 0%, #2c3e50 100%); }
+    .vova .avatar::after { content: '🔊'; font-size: 14px; bottom: 0px; right: -2px; }
+    .vova .avatar::before { content: '🧑'; font-size: 28px; }
+    .dima .avatar { background: linear-gradient(180deg, #95a5a6 0%, #7f8c8d 100%); }
+    .dima .avatar::after { content: '❄️'; font-size: 14px; top: 0px; right: 0px; }
+    .dima .avatar::before { content: '👨‍💻'; font-size: 28px; }
+    .misha .avatar { background: linear-gradient(180deg, #e67e22 0%, #d35400 100%); }
+    .misha .avatar::after { content: '🔥'; font-size: 14px; top: -2px; right: -2px; }
+    .misha .avatar::before { content: '🤠'; font-size: 28px; }
+    .ruslan .avatar { background: linear-gradient(180deg, #6d4c41 0%, #4e342e 100%); }
+    .ruslan .avatar::after { content: '☕'; font-size: 16px; bottom: 0px; right: -2px; }
+    .ruslan .avatar::before { content: '👨'; font-size: 28px; }
     .join-btn {
       background: linear-gradient(135deg, #4CAF50, #45a049);
       border: none;
@@ -309,34 +359,30 @@
       cursor: not-allowed;
     }
 
-    /* Card Deck Container */
+    /* Card Deck Container - Now part of the map (left side) */
     .card-deck {
-      position: fixed;
-      top: 20px;
-      left: 200px;
-      z-index: 900;
-      background: rgba(0, 0, 0, 0.75);
-      border-radius: 12px;
-      padding: 15px;
-      max-width: 520px;
+      position: absolute;
+      pointer-events: auto;
+      z-index: 10;
     }
     .card-deck h3 {
       margin: 0 0 12px 0;
-      color: #fff;
-      font-size: 14px;
+      color: #333;
+      font-size: 16px;
       text-transform: uppercase;
       letter-spacing: 1px;
       display: flex;
       align-items: center;
       gap: 8px;
+      text-shadow: 1px 1px 0 #fff;
     }
     .card-deck h3 .card-icon {
-      font-size: 18px;
+      font-size: 20px;
     }
     .cards-grid {
       display: grid;
-      grid-template-columns: repeat(8, 1fr);
-      gap: 6px;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 8px;
     }
 
     /* Individual Card */
@@ -427,99 +473,99 @@
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
     }
 
-    /* Card Enlargement Modal */
-    .card-modal {
+    /* Story Preview Panel - Bottom Left */
+    .story-preview {
       display: none;
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.85);
-      z-index: 3000;
-      justify-content: center;
-      align-items: center;
+      bottom: 20px;
+      left: 20px;
+      z-index: 2000;
+      max-width: 400px;
+      width: calc(100% - 40px);
     }
-    .card-modal.active {
-      display: flex;
+    .story-preview.active {
+      display: block;
     }
-    .card-modal-content {
-      background: linear-gradient(135deg, #fffef5 0%, #f5f0e0 100%);
-      border-radius: 16px;
-      padding: 30px;
-      max-width: 500px;
-      width: 90%;
-      max-height: 85vh;
-      overflow-y: auto;
+    .story-preview-content {
+      background: linear-gradient(135deg, rgba(255,254,245,0.95) 0%, rgba(245,240,224,0.95) 100%);
+      border-radius: 12px;
+      padding: 16px 20px;
       color: #333;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-      border: 3px solid #d4c4a0;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      border: 2px solid #d4c4a0;
       position: relative;
+      backdrop-filter: blur(10px);
     }
-    .card-modal-close {
+    .story-preview-close {
       position: absolute;
-      top: 15px;
-      right: 15px;
+      top: 10px;
+      right: 10px;
       background: #e74c3c;
       border: none;
       color: #fff;
-      width: 32px;
-      height: 32px;
+      width: 26px;
+      height: 26px;
       border-radius: 50%;
       cursor: pointer;
-      font-size: 18px;
+      font-size: 14px;
       display: flex;
       align-items: center;
       justify-content: center;
+      line-height: 1;
     }
-    .card-modal-close:hover {
+    .story-preview-close:hover {
       background: #c0392b;
     }
-    .card-modal-header {
-      text-align: center;
-      margin-bottom: 20px;
+    .story-preview-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+      padding-right: 30px;
     }
-    .card-modal-header .person-name {
-      font-size: 14px;
+    .story-preview-header .person-name {
+      font-size: 11px;
       color: #888;
       text-transform: uppercase;
-      letter-spacing: 2px;
+      letter-spacing: 1px;
     }
-    .card-modal-header h2 {
-      margin: 10px 0;
-      font-size: 24px;
+    .story-preview-header h3 {
+      margin: 0;
+      font-size: 18px;
       color: #2c3e50;
+      line-height: 1.2;
     }
-    .card-modal-header .card-number {
+    .story-preview-header .card-number {
       display: inline-block;
       background: #3498db;
       color: #fff;
-      padding: 4px 12px;
-      border-radius: 12px;
-      font-size: 12px;
-    }
-    .card-modal-story {
-      font-size: 16px;
-      line-height: 1.7;
-      color: #444;
-      padding: 20px;
-      background: rgba(255, 255, 255, 0.6);
+      padding: 2px 8px;
       border-radius: 10px;
-      border-left: 4px solid #3498db;
+      font-size: 10px;
+      font-weight: bold;
     }
-    .card-modal-hint {
-      margin-top: 20px;
+    .story-preview-story {
+      font-size: 14px;
+      line-height: 1.6;
+      color: #444;
       padding: 12px;
-      background: rgba(46, 204, 113, 0.15);
+      background: rgba(255, 255, 255, 0.6);
       border-radius: 8px;
+      border-left: 3px solid #3498db;
+      margin-bottom: 10px;
+    }
+    .story-preview-hint {
+      padding: 8px 12px;
+      background: rgba(46, 204, 113, 0.15);
+      border-radius: 6px;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
       color: #27ae60;
-      font-size: 14px;
+      font-size: 12px;
     }
-    .card-modal-hint .hint-icon {
-      font-size: 20px;
+    .story-preview-hint .hint-icon {
+      font-size: 16px;
     }
 
     /* Online Users Panel */
@@ -640,28 +686,23 @@
   </style>
 </head>
 <body>
-  <!-- Control Panel -->
+  <!-- Control Panel - Collapsible -->
   <div class="controls">
-    <div class="control-group">
-      <h3>Zoom</h3>
-      <div class="btn-row">
-        <button class="btn" onclick="zoomIn()" title="Zoom In">+</button>
-        <button class="btn" onclick="zoomOut()" title="Zoom Out">−</button>
-        <button class="btn" onclick="resetView()" title="Reset View">⟲</button>
+    <div class="control-btn">
+      🔍
+      <div class="expand-content">
+        <button class="btn-mini" onclick="zoomIn()">+</button>
+        <button class="btn-mini" onclick="zoomOut()">−</button>
+        <button class="btn-mini" onclick="resetView()">⟲</button>
+        <span class="zoom-val" id="zoomLevel">100%</span>
       </div>
-      <div class="zoom-display" id="zoomLevel">100%</div>
     </div>
-    <div class="control-group">
-      <h3>Export</h3>
-      <button class="btn btn-large btn-export" onclick="showExportModal()">
-        📥 Export PNG
-      </button>
+    <div class="control-btn">
+      📥
+      <div class="expand-content">
+        <button class="btn-export-mini" onclick="showExportModal()">Export PNG</button>
+      </div>
     </div>
-  </div>
-
-  <!-- Instructions -->
-  <div class="instructions">
-    <kbd>Scroll</kbd> to zoom • <kbd>Drag</kbd> to pan • <kbd>Double-click</kbd> to zoom in
   </div>
 
   <!-- Export Modal -->
@@ -690,13 +731,9 @@
   <div class="join-modal" id="joinModal">
     <div class="join-content">
       <h2>🎄 BladeLabs Winter Festival</h2>
-      <p class="subtitle">Select your name to join the party!</p>
+      <p class="subtitle">Select your character to join the party!</p>
       <div class="name-grid" id="nameGrid">
         <!-- Names will be populated by JavaScript -->
-      </div>
-      <div class="host-toggle">
-        <input type="checkbox" id="hostCheckbox">
-        <label for="hostCheckbox">Join as Host (can flip cards)</label>
       </div>
       <button class="join-btn" id="joinBtn" disabled>Join Festival</button>
     </div>
@@ -718,21 +755,23 @@
     </div>
   </div>
 
-  <!-- Card Enlargement Modal -->
-  <div class="card-modal" id="cardModal">
-    <div class="card-modal-content">
-      <button class="card-modal-close" onclick="closeCardModal()">×</button>
-      <div class="card-modal-header">
-        <div class="person-name" id="modalPersonName">SAMI</div>
-        <h2 id="modalCardTitle">The Hot Speech</h2>
-        <span class="card-number" id="modalCardNumber">Card #1</span>
+  <!-- Story Preview Panel (Bottom Left) -->
+  <div class="story-preview" id="storyPreview">
+    <div class="story-preview-content">
+      <button class="story-preview-close" onclick="closeStoryPreview()">×</button>
+      <div class="story-preview-header">
+        <div>
+          <div class="person-name" id="previewPersonName">SAMI</div>
+          <h3 id="previewCardTitle">The Hot Speech</h3>
+        </div>
+        <span class="card-number" id="previewCardNumber">#1</span>
       </div>
-      <div class="card-modal-story" id="modalCardStory">
+      <div class="story-preview-story" id="previewCardStory">
         Story text will appear here...
       </div>
-      <div class="card-modal-hint">
+      <div class="story-preview-hint">
         <span class="hint-icon">🔍</span>
-        <span id="modalCardHint">Find the scene on the map!</span>
+        <span id="previewCardHint">Find the scene on the map!</span>
       </div>
     </div>
   </div>
@@ -5661,7 +5700,7 @@
     <!-- VERSION INDICATOR (bottom right corner) - bump with each release -->
     <g id="version-indicator" transform="translate(3050, 2360)">
       <rect x="0" y="0" width="140" height="30" rx="5" fill="#000" opacity="0.6"/>
-      <text x="70" y="20" text-anchor="middle" font-family="monospace" font-size="14" fill="#fff" font-weight="bold">v3.0</text>
+      <text x="70" y="20" text-anchor="middle" font-family="monospace" font-size="14" fill="#fff" font-weight="bold">v3.1</text>
     </g>
 
   </svg>
@@ -6194,29 +6233,30 @@
     const joinModal = document.getElementById('joinModal');
     const nameGrid = document.getElementById('nameGrid');
     const joinBtn = document.getElementById('joinBtn');
-    const hostCheckbox = document.getElementById('hostCheckbox');
     const cardDeck = document.getElementById('cardDeck');
     const cardsGrid = document.getElementById('cardsGrid');
-    const cardModal = document.getElementById('cardModal');
+    const storyPreview = document.getElementById('storyPreview');
     const userList = document.getElementById('userList');
     const cursorsContainer = document.getElementById('cursorsContainer');
     const connectionStatus = document.getElementById('connectionStatus');
     const connectionText = document.getElementById('connectionText');
+    const svgContainer = document.getElementById('svgContainer');
 
-    // Check for host parameter in URL
+    // Check for secret host parameter in URL (use ?blade_host_key=winterfest2025)
     const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('host') === 'true' || urlParams.get('role') === 'host') {
-      hostCheckbox.checked = true;
-    }
+    const HOST_SECRET = 'winterfest2025';
+    const isHostFromUrl = urlParams.get('blade_host_key') === HOST_SECRET;
 
-    // Initialize name selection grid
+    // Initialize name selection grid with avatars
     function initNameGrid() {
       nameGrid.innerHTML = '';
       TEAM_MEMBERS.forEach(member => {
         const btn = document.createElement('button');
-        btn.className = 'name-btn';
-        btn.textContent = member.name;
-        btn.style.borderColor = member.color;
+        btn.className = 'name-btn ' + member.name.toLowerCase();
+        btn.innerHTML = `
+          <div class="avatar"></div>
+          <span>${member.name}</span>
+        `;
         btn.onclick = () => selectName(member.name, btn);
         nameGrid.appendChild(btn);
       });
@@ -6239,9 +6279,9 @@
         id: appState.userId,
         name: appState.selectedName,
         color: member.color,
-        isHost: hostCheckbox.checked
+        isHost: isHostFromUrl
       };
-      appState.isHost = hostCheckbox.checked;
+      appState.isHost = isHostFromUrl;
 
       // Hide join modal
       joinModal.classList.add('hidden');
@@ -6320,7 +6360,7 @@
       }
     }
 
-    // Flip a card (host only)
+    // Flip a card (host only) - does NOT auto-open
     function flipCard(cardId) {
       appState.cards[cardId] = { flipped: true };
 
@@ -6333,43 +6373,32 @@
 
       // Sync to other users
       broadcastCardFlip(cardId);
-
-      // Open the card modal after flip animation
-      setTimeout(() => {
-        openCardModal(cardId);
-      }, 600);
+      // Note: Host must click the flipped card again to view the story
     }
 
-    // Open card modal
+    // Open story preview (bottom-left panel instead of modal)
     function openCardModal(cardId) {
       const cardData = CARDS_DATA.find(c => c.id === cardId);
       if (!cardData) return;
 
-      document.getElementById('modalPersonName').textContent = cardData.person;
-      document.getElementById('modalCardTitle').textContent = cardData.title;
-      document.getElementById('modalCardNumber').textContent = `Card #${cardData.id}`;
-      document.getElementById('modalCardStory').textContent = cardData.story;
-      document.getElementById('modalCardHint').textContent = cardData.hint;
+      document.getElementById('previewPersonName').textContent = cardData.person;
+      document.getElementById('previewCardTitle').textContent = cardData.title;
+      document.getElementById('previewCardNumber').textContent = `#${cardData.id}`;
+      document.getElementById('previewCardStory').textContent = cardData.story;
+      document.getElementById('previewCardHint').textContent = cardData.hint;
 
-      cardModal.classList.add('active');
+      storyPreview.classList.add('active');
     }
 
-    // Close card modal
-    function closeCardModal() {
-      cardModal.classList.remove('active');
+    // Close story preview
+    function closeStoryPreview() {
+      storyPreview.classList.remove('active');
     }
 
-    // Close modal on outside click
-    cardModal.onclick = function(e) {
-      if (e.target === cardModal) {
-        closeCardModal();
-      }
-    };
-
-    // Close modal on ESC
+    // Close preview on ESC
     document.addEventListener('keydown', function(e) {
       if (e.key === 'Escape') {
-        closeCardModal();
+        closeStoryPreview();
       }
     });
 
@@ -6619,6 +6648,12 @@
     // Hide card deck and online users until user joins
     cardDeck.style.display = 'none';
     document.getElementById('onlineUsers').style.display = 'none';
+
+    // Move card deck inside SVG container (so it scrolls/zooms with map)
+    // Position it in the left area of the map
+    svgContainer.appendChild(cardDeck);
+    cardDeck.style.left = '50px';
+    cardDeck.style.top = '100px';
 
     // Show them after joining
     const originalInitSession = initSession;
