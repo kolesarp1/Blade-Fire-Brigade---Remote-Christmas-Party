@@ -960,6 +960,12 @@
     </div>
     <button class="switch-user-btn" id="switchUserBtn">Switch Character</button>
     <button class="hide-cursors-btn" id="hideCursorsBtn">Hide All Cursors</button>
+    <button class="hide-cursors-btn" id="showCoordsBtn">Show Coords</button>
+  </div>
+
+  <!-- Coordinate Display -->
+  <div id="coordsDisplay" style="display: none; position: fixed; top: 10px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.85); color: #0f0; font-family: monospace; font-size: 18px; padding: 10px 20px; border-radius: 8px; z-index: 10000; pointer-events: none; border: 2px solid #0f0;">
+    X: 0, Y: 0
   </div>
 
   <!-- Story Preview Panel (Bottom Left) -->
@@ -7463,10 +7469,10 @@
     </g>
 
     <!-- ============================================ -->
-    <!-- ERIK SCENE (Center) - AI Alarm Clock Dream Coder -->
-    <!-- Near the tree above the stands -->
+    <!-- ERIK SCENE - AI Alarm Clock Dream Coder -->
+    <!-- Right side, below the road -->
     <!-- ============================================ -->
-    <g id="erik-scene" transform="translate(1550, 1850)">
+    <g id="erik-scene" transform="translate(2100, 1950)">
       <!-- Bed/Sleeping area -->
       <g id="erik-bed">
         <!-- Bed shadow -->
@@ -8837,6 +8843,35 @@
       hideCursorsBtn.classList.toggle('active', appState.hideAllCursors);
       hideCursorsBtn.textContent = appState.hideAllCursors ? 'Show All Cursors' : 'Hide All Cursors';
       renderCursors();
+    });
+
+    // Setup show coordinates button
+    const showCoordsBtn = document.getElementById('showCoordsBtn');
+    const coordsDisplay = document.getElementById('coordsDisplay');
+    let showingCoords = false;
+
+    showCoordsBtn.addEventListener('click', function() {
+      showingCoords = !showingCoords;
+      coordsDisplay.style.display = showingCoords ? 'block' : 'none';
+      showCoordsBtn.classList.toggle('active', showingCoords);
+      showCoordsBtn.textContent = showingCoords ? 'Hide Coords' : 'Show Coords';
+    });
+
+    // Track mouse position on SVG and display coordinates
+    svgContainer.addEventListener('mousemove', function(e) {
+      if (!showingCoords) return;
+
+      const rect = svg.getBoundingClientRect();
+      const viewBox = svg.viewBox.baseVal;
+
+      // Convert screen coordinates to SVG viewBox coordinates
+      const scaleX = viewBox.width / rect.width;
+      const scaleY = viewBox.height / rect.height;
+
+      const svgX = Math.round((e.clientX - rect.left) * scaleX);
+      const svgY = Math.round((e.clientY - rect.top) * scaleY);
+
+      coordsDisplay.textContent = `X: ${svgX}, Y: ${svgY}`;
     });
 
     // Initialize the app
