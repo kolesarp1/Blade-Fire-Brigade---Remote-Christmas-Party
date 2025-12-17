@@ -614,6 +614,63 @@
       border-left: 3px solid #3498db;
       margin-bottom: 10px;
     }
+
+    /* Personal Card Preview - Bottom Right (for individual viewing) */
+    .personal-preview {
+      display: none;
+      position: fixed;
+      bottom: 20px;
+      right: 220px;
+      z-index: 1999;
+      max-width: 350px;
+      width: calc(100% - 260px);
+    }
+    .personal-preview.active {
+      display: block;
+    }
+    .personal-preview-content {
+      background: linear-gradient(135deg, rgba(230,240,255,0.95) 0%, rgba(200,220,245,0.95) 100%);
+      border-radius: 12px;
+      padding: 14px 18px;
+      color: #333;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      border: 2px solid #7aa3cc;
+      position: relative;
+      backdrop-filter: blur(10px);
+    }
+    .personal-preview-label {
+      position: absolute;
+      top: -10px;
+      left: 12px;
+      background: #5588bb;
+      color: #fff;
+      font-size: 9px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .personal-preview-close {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: #5588bb;
+      border: none;
+      color: #fff;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+    }
+    .personal-preview-close:hover {
+      background: #3366aa;
+    }
+
     /* Online Users Panel */
     .online-users {
       position: fixed;
@@ -722,6 +779,45 @@
     .switch-user-btn:hover {
       background: rgba(255,255,255,0.2);
       color: #fff;
+    }
+    .hide-cursors-btn {
+      display: block;
+      margin-top: 8px;
+      padding: 6px 10px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 6px;
+      color: #aaa;
+      font-size: 11px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .hide-cursors-btn:hover {
+      background: rgba(255,255,255,0.2);
+      color: #fff;
+    }
+    .hide-cursors-btn.active {
+      background: rgba(255,100,100,0.3);
+      border-color: rgba(255,100,100,0.5);
+      color: #ff6666;
+    }
+    .user-item {
+      cursor: pointer;
+      position: relative;
+    }
+    .user-item .hide-cursor-icon {
+      margin-left: auto;
+      font-size: 10px;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .user-item:hover .hide-cursor-icon {
+      opacity: 0.5;
+    }
+    .user-item.cursor-hidden .hide-cursor-icon {
+      opacity: 1;
+      color: #ff6666;
     }
 
     /* Multiplayer Cursors */
@@ -860,6 +956,7 @@
       <!-- Offline users will be populated by JavaScript -->
     </div>
     <button class="switch-user-btn" id="switchUserBtn">Switch Character</button>
+    <button class="hide-cursors-btn" id="hideCursorsBtn">Hide All Cursors</button>
   </div>
 
   <!-- Story Preview Panel (Bottom Left) -->
@@ -874,6 +971,24 @@
         <span class="card-number" id="previewCardNumber">#1</span>
       </div>
       <div class="story-preview-story" id="previewCardStory">
+        Story text will appear here...
+      </div>
+    </div>
+  </div>
+
+  <!-- Personal Card Preview Panel (Bottom Right - individual viewing) -->
+  <div class="personal-preview" id="personalPreview">
+    <div class="personal-preview-content">
+      <div class="personal-preview-label">Your View</div>
+      <button class="personal-preview-close" onclick="closePersonalPreview()">×</button>
+      <div class="story-preview-header">
+        <div>
+          <div class="person-name"><span id="personalPersonIcon">🧑‍🚒</span> <span id="personalPersonName">SAMI</span></div>
+          <h3 id="personalCardTitle">The Hot Speech</h3>
+        </div>
+        <span class="card-number" id="personalCardNumber">#1</span>
+      </div>
+      <div class="story-preview-story" id="personalCardStory">
         Story text will appear here...
       </div>
     </div>
@@ -3706,15 +3821,438 @@
             <circle cx="0" cy="0" r="2" fill="#ffcc00"/>
           </g>
         </g>
-        <!-- Music notes -->
+
+        <!-- EXTENDED CONGA LINE: 10 kids, 10 snowmen, 10 penguins (shuffled) -->
+        <!-- Kid 1 -->
+        <g transform="translate(265, 45)">
+          <ellipse cx="0" cy="15" rx="5" ry="3" fill="#000" opacity="0.15"/>
+          <ellipse cx="0" cy="8" rx="5" ry="8" fill="#ff5588" stroke="#333" stroke-width="0.6"/>
+          <circle cx="0" cy="-4" r="5" fill="#ffd5b4" stroke="#333" stroke-width="0.4"/>
+        </g>
+        <!-- Penguin 1 -->
+        <g transform="translate(290, 50)">
+          <ellipse cx="0" cy="15" rx="6" ry="3" fill="#000" opacity="0.15"/>
+          <ellipse cx="0" cy="8" rx="7" ry="10" fill="#1a1a2e" stroke="#333" stroke-width="0.8"/>
+          <ellipse cx="0" cy="8" rx="4" ry="7" fill="#fff"/>
+          <circle cx="0" cy="-3" r="5" fill="#1a1a2e" stroke="#333" stroke-width="0.6"/>
+          <circle cx="-2" cy="-4" r="1.2" fill="#fff"/>
+          <circle cx="2" cy="-4" r="1.2" fill="#fff"/>
+          <circle cx="-2" cy="-4" r="0.5" fill="#333"/>
+          <circle cx="2" cy="-4" r="0.5" fill="#333"/>
+          <polygon points="0,0 2,3 -2,3" fill="#ff8c00"/>
+        </g>
+        <!-- Snowman 1 -->
+        <g transform="translate(320, 55)">
+          <ellipse cx="0" cy="18" rx="8" ry="4" fill="#000" opacity="0.15"/>
+          <circle cx="0" cy="12" r="8" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+          <circle cx="0" cy="0" r="6" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+          <circle cx="0" cy="-10" r="5" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+          <circle cx="-2" cy="-11" r="1" fill="#333"/>
+          <circle cx="2" cy="-11" r="1" fill="#333"/>
+          <polygon points="0,-9 5,-8 0,-7" fill="#ff6600"/>
+          <rect x="-4" y="-16" width="8" height="4" fill="#ff0000"/>
+        </g>
+        <!-- Kid 2 -->
+        <g transform="translate(350, 60)">
+          <ellipse cx="0" cy="15" rx="5" ry="3" fill="#000" opacity="0.15"/>
+          <ellipse cx="0" cy="8" rx="5" ry="8" fill="#44ccff" stroke="#333" stroke-width="0.6"/>
+          <circle cx="0" cy="-4" r="5" fill="#ffd5b4" stroke="#333" stroke-width="0.4"/>
+        </g>
+        <!-- Snowman 2 -->
+        <g transform="translate(375, 65)">
+          <ellipse cx="0" cy="18" rx="8" ry="4" fill="#000" opacity="0.15"/>
+          <circle cx="0" cy="12" r="8" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+          <circle cx="0" cy="0" r="6" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+          <circle cx="0" cy="-10" r="5" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+          <circle cx="-2" cy="-11" r="1" fill="#333"/>
+          <circle cx="2" cy="-11" r="1" fill="#333"/>
+          <polygon points="0,-9 5,-8 0,-7" fill="#ff6600"/>
+          <rect x="-4" y="-16" width="8" height="4" fill="#00cc00"/>
+        </g>
+        <!-- Penguin 2 -->
+        <g transform="translate(405, 70)">
+          <ellipse cx="0" cy="15" rx="6" ry="3" fill="#000" opacity="0.15"/>
+          <ellipse cx="0" cy="8" rx="7" ry="10" fill="#1a1a2e" stroke="#333" stroke-width="0.8"/>
+          <ellipse cx="0" cy="8" rx="4" ry="7" fill="#fff"/>
+          <circle cx="0" cy="-3" r="5" fill="#1a1a2e" stroke="#333" stroke-width="0.6"/>
+          <circle cx="-2" cy="-4" r="1.2" fill="#fff"/>
+          <circle cx="2" cy="-4" r="1.2" fill="#fff"/>
+          <circle cx="-2" cy="-4" r="0.5" fill="#333"/>
+          <circle cx="2" cy="-4" r="0.5" fill="#333"/>
+          <polygon points="0,0 2,3 -2,3" fill="#ff8c00"/>
+        </g>
+        <!-- Snowman 3 -->
+        <g transform="translate(435, 75)">
+          <ellipse cx="0" cy="18" rx="8" ry="4" fill="#000" opacity="0.15"/>
+          <circle cx="0" cy="12" r="8" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+          <circle cx="0" cy="0" r="6" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+          <circle cx="0" cy="-10" r="5" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+          <circle cx="-2" cy="-11" r="1" fill="#333"/>
+          <circle cx="2" cy="-11" r="1" fill="#333"/>
+          <polygon points="0,-9 5,-8 0,-7" fill="#ff6600"/>
+          <rect x="-4" y="-16" width="8" height="4" fill="#0066ff"/>
+        </g>
+        <!-- Kid 3 -->
+        <g transform="translate(465, 80)">
+          <ellipse cx="0" cy="15" rx="5" ry="3" fill="#000" opacity="0.15"/>
+          <ellipse cx="0" cy="8" rx="5" ry="8" fill="#ffcc00" stroke="#333" stroke-width="0.6"/>
+          <circle cx="0" cy="-4" r="5" fill="#ffd5b4" stroke="#333" stroke-width="0.4"/>
+        </g>
+        <!-- Penguin 3 -->
+        <g transform="translate(490, 85)">
+          <ellipse cx="0" cy="15" rx="6" ry="3" fill="#000" opacity="0.15"/>
+          <ellipse cx="0" cy="8" rx="7" ry="10" fill="#1a1a2e" stroke="#333" stroke-width="0.8"/>
+          <ellipse cx="0" cy="8" rx="4" ry="7" fill="#fff"/>
+          <circle cx="0" cy="-3" r="5" fill="#1a1a2e" stroke="#333" stroke-width="0.6"/>
+          <circle cx="-2" cy="-4" r="1.2" fill="#fff"/>
+          <circle cx="2" cy="-4" r="1.2" fill="#fff"/>
+          <circle cx="-2" cy="-4" r="0.5" fill="#333"/>
+          <circle cx="2" cy="-4" r="0.5" fill="#333"/>
+          <polygon points="0,0 2,3 -2,3" fill="#ff8c00"/>
+        </g>
+        <!-- Kid 4 -->
+        <g transform="translate(520, 90)">
+          <ellipse cx="0" cy="15" rx="5" ry="3" fill="#000" opacity="0.15"/>
+          <ellipse cx="0" cy="8" rx="5" ry="8" fill="#cc44ff" stroke="#333" stroke-width="0.6"/>
+          <circle cx="0" cy="-4" r="5" fill="#ffd5b4" stroke="#333" stroke-width="0.4"/>
+        </g>
+        <!-- Snowman 4 -->
+        <g transform="translate(545, 95)">
+          <ellipse cx="0" cy="18" rx="8" ry="4" fill="#000" opacity="0.15"/>
+          <circle cx="0" cy="12" r="8" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+          <circle cx="0" cy="0" r="6" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+          <circle cx="0" cy="-10" r="5" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+          <circle cx="-2" cy="-11" r="1" fill="#333"/>
+          <circle cx="2" cy="-11" r="1" fill="#333"/>
+          <polygon points="0,-9 5,-8 0,-7" fill="#ff6600"/>
+          <rect x="-4" y="-16" width="8" height="4" fill="#ff00ff"/>
+        </g>
+        <!-- Penguin 4 -->
+        <g transform="translate(575, 100)">
+          <ellipse cx="0" cy="15" rx="6" ry="3" fill="#000" opacity="0.15"/>
+          <ellipse cx="0" cy="8" rx="7" ry="10" fill="#1a1a2e" stroke="#333" stroke-width="0.8"/>
+          <ellipse cx="0" cy="8" rx="4" ry="7" fill="#fff"/>
+          <circle cx="0" cy="-3" r="5" fill="#1a1a2e" stroke="#333" stroke-width="0.6"/>
+          <circle cx="-2" cy="-4" r="1.2" fill="#fff"/>
+          <circle cx="2" cy="-4" r="1.2" fill="#fff"/>
+          <circle cx="-2" cy="-4" r="0.5" fill="#333"/>
+          <circle cx="2" cy="-4" r="0.5" fill="#333"/>
+          <polygon points="0,0 2,3 -2,3" fill="#ff8c00"/>
+        </g>
+        <!-- Kid 5 -->
+        <g transform="translate(605, 105)">
+          <ellipse cx="0" cy="15" rx="5" ry="3" fill="#000" opacity="0.15"/>
+          <ellipse cx="0" cy="8" rx="5" ry="8" fill="#44ff88" stroke="#333" stroke-width="0.6"/>
+          <circle cx="0" cy="-4" r="5" fill="#ffd5b4" stroke="#333" stroke-width="0.4"/>
+        </g>
+        <!-- Snowman 5 -->
+        <g transform="translate(630, 110)">
+          <ellipse cx="0" cy="18" rx="8" ry="4" fill="#000" opacity="0.15"/>
+          <circle cx="0" cy="12" r="8" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+          <circle cx="0" cy="0" r="6" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+          <circle cx="0" cy="-10" r="5" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+          <circle cx="-2" cy="-11" r="1" fill="#333"/>
+          <circle cx="2" cy="-11" r="1" fill="#333"/>
+          <polygon points="0,-9 5,-8 0,-7" fill="#ff6600"/>
+          <rect x="-4" y="-16" width="8" height="4" fill="#ff8800"/>
+        </g>
+        <!-- Penguin 5 -->
+        <g transform="translate(660, 115)">
+          <ellipse cx="0" cy="15" rx="6" ry="3" fill="#000" opacity="0.15"/>
+          <ellipse cx="0" cy="8" rx="7" ry="10" fill="#1a1a2e" stroke="#333" stroke-width="0.8"/>
+          <ellipse cx="0" cy="8" rx="4" ry="7" fill="#fff"/>
+          <circle cx="0" cy="-3" r="5" fill="#1a1a2e" stroke="#333" stroke-width="0.6"/>
+          <circle cx="-2" cy="-4" r="1.2" fill="#fff"/>
+          <circle cx="2" cy="-4" r="1.2" fill="#fff"/>
+          <circle cx="-2" cy="-4" r="0.5" fill="#333"/>
+          <circle cx="2" cy="-4" r="0.5" fill="#333"/>
+          <polygon points="0,0 2,3 -2,3" fill="#ff8c00"/>
+        </g>
+        <!-- Snowman 6 -->
+        <g transform="translate(690, 120)">
+          <ellipse cx="0" cy="18" rx="8" ry="4" fill="#000" opacity="0.15"/>
+          <circle cx="0" cy="12" r="8" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+          <circle cx="0" cy="0" r="6" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+          <circle cx="0" cy="-10" r="5" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+          <circle cx="-2" cy="-11" r="1" fill="#333"/>
+          <circle cx="2" cy="-11" r="1" fill="#333"/>
+          <polygon points="0,-9 5,-8 0,-7" fill="#ff6600"/>
+          <rect x="-4" y="-16" width="8" height="4" fill="#00ffff"/>
+        </g>
+        <!-- Kid 6 -->
+        <g transform="translate(720, 125)">
+          <ellipse cx="0" cy="15" rx="5" ry="3" fill="#000" opacity="0.15"/>
+          <ellipse cx="0" cy="8" rx="5" ry="8" fill="#ff4444" stroke="#333" stroke-width="0.6"/>
+          <circle cx="0" cy="-4" r="5" fill="#ffd5b4" stroke="#333" stroke-width="0.4"/>
+        </g>
+        <!-- Penguin 6 -->
+        <g transform="translate(745, 130)">
+          <ellipse cx="0" cy="15" rx="6" ry="3" fill="#000" opacity="0.15"/>
+          <ellipse cx="0" cy="8" rx="7" ry="10" fill="#1a1a2e" stroke="#333" stroke-width="0.8"/>
+          <ellipse cx="0" cy="8" rx="4" ry="7" fill="#fff"/>
+          <circle cx="0" cy="-3" r="5" fill="#1a1a2e" stroke="#333" stroke-width="0.6"/>
+          <circle cx="-2" cy="-4" r="1.2" fill="#fff"/>
+          <circle cx="2" cy="-4" r="1.2" fill="#fff"/>
+          <circle cx="-2" cy="-4" r="0.5" fill="#333"/>
+          <circle cx="2" cy="-4" r="0.5" fill="#333"/>
+          <polygon points="0,0 2,3 -2,3" fill="#ff8c00"/>
+        </g>
+        <!-- Kid 7 -->
+        <g transform="translate(775, 135)">
+          <ellipse cx="0" cy="15" rx="5" ry="3" fill="#000" opacity="0.15"/>
+          <ellipse cx="0" cy="8" rx="5" ry="8" fill="#8888ff" stroke="#333" stroke-width="0.6"/>
+          <circle cx="0" cy="-4" r="5" fill="#ffd5b4" stroke="#333" stroke-width="0.4"/>
+        </g>
+        <!-- Snowman 7 -->
+        <g transform="translate(800, 140)">
+          <ellipse cx="0" cy="18" rx="8" ry="4" fill="#000" opacity="0.15"/>
+          <circle cx="0" cy="12" r="8" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+          <circle cx="0" cy="0" r="6" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+          <circle cx="0" cy="-10" r="5" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+          <circle cx="-2" cy="-11" r="1" fill="#333"/>
+          <circle cx="2" cy="-11" r="1" fill="#333"/>
+          <polygon points="0,-9 5,-8 0,-7" fill="#ff6600"/>
+          <rect x="-4" y="-16" width="8" height="4" fill="#884488"/>
+        </g>
+        <!-- Penguin 7 -->
+        <g transform="translate(830, 145)">
+          <ellipse cx="0" cy="15" rx="6" ry="3" fill="#000" opacity="0.15"/>
+          <ellipse cx="0" cy="8" rx="7" ry="10" fill="#1a1a2e" stroke="#333" stroke-width="0.8"/>
+          <ellipse cx="0" cy="8" rx="4" ry="7" fill="#fff"/>
+          <circle cx="0" cy="-3" r="5" fill="#1a1a2e" stroke="#333" stroke-width="0.6"/>
+          <circle cx="-2" cy="-4" r="1.2" fill="#fff"/>
+          <circle cx="2" cy="-4" r="1.2" fill="#fff"/>
+          <circle cx="-2" cy="-4" r="0.5" fill="#333"/>
+          <circle cx="2" cy="-4" r="0.5" fill="#333"/>
+          <polygon points="0,0 2,3 -2,3" fill="#ff8c00"/>
+        </g>
+        <!-- Snowman 8 -->
+        <g transform="translate(860, 150)">
+          <ellipse cx="0" cy="18" rx="8" ry="4" fill="#000" opacity="0.15"/>
+          <circle cx="0" cy="12" r="8" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+          <circle cx="0" cy="0" r="6" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+          <circle cx="0" cy="-10" r="5" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+          <circle cx="-2" cy="-11" r="1" fill="#333"/>
+          <circle cx="2" cy="-11" r="1" fill="#333"/>
+          <polygon points="0,-9 5,-8 0,-7" fill="#ff6600"/>
+          <rect x="-4" y="-16" width="8" height="4" fill="#448844"/>
+        </g>
+        <!-- Kid 8 -->
+        <g transform="translate(890, 155)">
+          <ellipse cx="0" cy="15" rx="5" ry="3" fill="#000" opacity="0.15"/>
+          <ellipse cx="0" cy="8" rx="5" ry="8" fill="#ff88cc" stroke="#333" stroke-width="0.6"/>
+          <circle cx="0" cy="-4" r="5" fill="#ffd5b4" stroke="#333" stroke-width="0.4"/>
+        </g>
+        <!-- Penguin 8 -->
+        <g transform="translate(915, 160)">
+          <ellipse cx="0" cy="15" rx="6" ry="3" fill="#000" opacity="0.15"/>
+          <ellipse cx="0" cy="8" rx="7" ry="10" fill="#1a1a2e" stroke="#333" stroke-width="0.8"/>
+          <ellipse cx="0" cy="8" rx="4" ry="7" fill="#fff"/>
+          <circle cx="0" cy="-3" r="5" fill="#1a1a2e" stroke="#333" stroke-width="0.6"/>
+          <circle cx="-2" cy="-4" r="1.2" fill="#fff"/>
+          <circle cx="2" cy="-4" r="1.2" fill="#fff"/>
+          <circle cx="-2" cy="-4" r="0.5" fill="#333"/>
+          <circle cx="2" cy="-4" r="0.5" fill="#333"/>
+          <polygon points="0,0 2,3 -2,3" fill="#ff8c00"/>
+        </g>
+        <!-- Kid 9 -->
+        <g transform="translate(945, 165)">
+          <ellipse cx="0" cy="15" rx="5" ry="3" fill="#000" opacity="0.15"/>
+          <ellipse cx="0" cy="8" rx="5" ry="8" fill="#88ccff" stroke="#333" stroke-width="0.6"/>
+          <circle cx="0" cy="-4" r="5" fill="#ffd5b4" stroke="#333" stroke-width="0.4"/>
+        </g>
+        <!-- Snowman 9 -->
+        <g transform="translate(970, 170)">
+          <ellipse cx="0" cy="18" rx="8" ry="4" fill="#000" opacity="0.15"/>
+          <circle cx="0" cy="12" r="8" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+          <circle cx="0" cy="0" r="6" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+          <circle cx="0" cy="-10" r="5" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+          <circle cx="-2" cy="-11" r="1" fill="#333"/>
+          <circle cx="2" cy="-11" r="1" fill="#333"/>
+          <polygon points="0,-9 5,-8 0,-7" fill="#ff6600"/>
+          <rect x="-4" y="-16" width="8" height="4" fill="#cc4444"/>
+        </g>
+        <!-- Penguin 9 -->
+        <g transform="translate(1000, 175)">
+          <ellipse cx="0" cy="15" rx="6" ry="3" fill="#000" opacity="0.15"/>
+          <ellipse cx="0" cy="8" rx="7" ry="10" fill="#1a1a2e" stroke="#333" stroke-width="0.8"/>
+          <ellipse cx="0" cy="8" rx="4" ry="7" fill="#fff"/>
+          <circle cx="0" cy="-3" r="5" fill="#1a1a2e" stroke="#333" stroke-width="0.6"/>
+          <circle cx="-2" cy="-4" r="1.2" fill="#fff"/>
+          <circle cx="2" cy="-4" r="1.2" fill="#fff"/>
+          <circle cx="-2" cy="-4" r="0.5" fill="#333"/>
+          <circle cx="2" cy="-4" r="0.5" fill="#333"/>
+          <polygon points="0,0 2,3 -2,3" fill="#ff8c00"/>
+        </g>
+        <!-- Snowman 10 -->
+        <g transform="translate(1030, 180)">
+          <ellipse cx="0" cy="18" rx="8" ry="4" fill="#000" opacity="0.15"/>
+          <circle cx="0" cy="12" r="8" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+          <circle cx="0" cy="0" r="6" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+          <circle cx="0" cy="-10" r="5" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+          <circle cx="-2" cy="-11" r="1" fill="#333"/>
+          <circle cx="2" cy="-11" r="1" fill="#333"/>
+          <polygon points="0,-9 5,-8 0,-7" fill="#ff6600"/>
+          <rect x="-4" y="-16" width="8" height="4" fill="#4488cc"/>
+        </g>
+        <!-- Kid 10 -->
+        <g transform="translate(1060, 185)">
+          <ellipse cx="0" cy="15" rx="5" ry="3" fill="#000" opacity="0.15"/>
+          <ellipse cx="0" cy="8" rx="5" ry="8" fill="#ffaa44" stroke="#333" stroke-width="0.6"/>
+          <circle cx="0" cy="-4" r="5" fill="#ffd5b4" stroke="#333" stroke-width="0.4"/>
+        </g>
+        <!-- Penguin 10 -->
+        <g transform="translate(1085, 190)">
+          <ellipse cx="0" cy="15" rx="6" ry="3" fill="#000" opacity="0.15"/>
+          <ellipse cx="0" cy="8" rx="7" ry="10" fill="#1a1a2e" stroke="#333" stroke-width="0.8"/>
+          <ellipse cx="0" cy="8" rx="4" ry="7" fill="#fff"/>
+          <circle cx="0" cy="-3" r="5" fill="#1a1a2e" stroke="#333" stroke-width="0.6"/>
+          <circle cx="-2" cy="-4" r="1.2" fill="#fff"/>
+          <circle cx="2" cy="-4" r="1.2" fill="#fff"/>
+          <circle cx="-2" cy="-4" r="0.5" fill="#333"/>
+          <circle cx="2" cy="-4" r="0.5" fill="#333"/>
+          <polygon points="0,0 2,3 -2,3" fill="#ff8c00"/>
+        </g>
+
+        <!-- Music notes (extended for longer conga line) -->
         <text x="-10" y="-15" font-size="14">♪</text>
         <text x="40" y="-10" font-size="12">♫</text>
         <text x="90" y="-5" font-size="14">♪</text>
         <text x="140" y="0" font-size="12">♫</text>
         <text x="190" y="5" font-size="14">♪</text>
-        <text x="220" y="10" font-size="12">♫</text>
         <text x="250" y="15" font-size="14">♪</text>
+        <text x="320" y="30" font-size="12">♫</text>
+        <text x="400" y="50" font-size="14">♪</text>
+        <text x="480" y="65" font-size="12">♫</text>
+        <text x="560" y="80" font-size="14">♪</text>
+        <text x="640" y="95" font-size="12">♫</text>
+        <text x="720" y="110" font-size="14">♪</text>
+        <text x="800" y="125" font-size="12">♫</text>
+        <text x="880" y="140" font-size="14">♪</text>
+        <text x="960" y="155" font-size="12">♫</text>
+        <text x="1040" y="170" font-size="14">♪</text>
+        <text x="1100" y="180" font-size="12">♫</text>
       </g>
+    </g>
+
+    <!-- ============================================ -->
+    <!-- RAINBOW TRAIL from Olena circling the winter wonderland -->
+    <!-- ============================================ -->
+    <g id="rainbow-trail" opacity="0.7">
+      <!-- Rainbow trail starts from Olena's cape (at conga scene position 2500, 950) -->
+      <!-- and circles around the winter wonderland through empty areas -->
+      <!-- Layer 1 - Red -->
+      <path d="M 2470,950
+               Q 2600,800 2800,700
+               Q 3000,550 3100,400
+               Q 3100,200 2800,150
+               Q 2400,80 1800,100
+               Q 1200,80 600,150
+               Q 200,250 150,500
+               Q 100,800 150,1200
+               Q 180,1600 250,1900
+               Q 400,2200 800,2300
+               Q 1400,2350 2000,2300
+               Q 2600,2200 2900,1900
+               Q 3050,1600 3100,1200
+               Q 3080,900 2900,700"
+            stroke="#ff0000" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <!-- Layer 2 - Orange -->
+      <path d="M 2470,955
+               Q 2600,805 2795,705
+               Q 2995,555 3095,405
+               Q 3095,205 2795,155
+               Q 2395,85 1800,105
+               Q 1200,85 605,155
+               Q 205,255 155,505
+               Q 105,805 155,1200
+               Q 185,1600 255,1895
+               Q 405,2195 805,2295
+               Q 1400,2345 2000,2295
+               Q 2595,2195 2895,1895
+               Q 3045,1595 3095,1200
+               Q 3075,905 2895,705"
+            stroke="#ff8800" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <!-- Layer 3 - Yellow -->
+      <path d="M 2470,960
+               Q 2600,810 2790,710
+               Q 2990,560 3090,410
+               Q 3090,210 2790,160
+               Q 2390,90 1800,110
+               Q 1200,90 610,160
+               Q 210,260 160,510
+               Q 110,810 160,1200
+               Q 190,1600 260,1890
+               Q 410,2190 810,2290
+               Q 1400,2340 2000,2290
+               Q 2590,2190 2890,1890
+               Q 3040,1590 3090,1200
+               Q 3070,910 2890,710"
+            stroke="#ffff00" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <!-- Layer 4 - Green -->
+      <path d="M 2470,965
+               Q 2600,815 2785,715
+               Q 2985,565 3085,415
+               Q 3085,215 2785,165
+               Q 2385,95 1800,115
+               Q 1200,95 615,165
+               Q 215,265 165,515
+               Q 115,815 165,1200
+               Q 195,1600 265,1885
+               Q 415,2185 815,2285
+               Q 1400,2335 2000,2285
+               Q 2585,2185 2885,1885
+               Q 3035,1585 3085,1200
+               Q 3065,915 2885,715"
+            stroke="#00ff00" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <!-- Layer 5 - Cyan -->
+      <path d="M 2470,970
+               Q 2600,820 2780,720
+               Q 2980,570 3080,420
+               Q 3080,220 2780,170
+               Q 2380,100 1800,120
+               Q 1200,100 620,170
+               Q 220,270 170,520
+               Q 120,820 170,1200
+               Q 200,1600 270,1880
+               Q 420,2180 820,2280
+               Q 1400,2330 2000,2280
+               Q 2580,2180 2880,1880
+               Q 3030,1580 3080,1200
+               Q 3060,920 2880,720"
+            stroke="#00ffff" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <!-- Layer 6 - Blue -->
+      <path d="M 2470,975
+               Q 2600,825 2775,725
+               Q 2975,575 3075,425
+               Q 3075,225 2775,175
+               Q 2375,105 1800,125
+               Q 1200,105 625,175
+               Q 225,275 175,525
+               Q 125,825 175,1200
+               Q 205,1600 275,1875
+               Q 425,2175 825,2275
+               Q 1400,2325 2000,2275
+               Q 2575,2175 2875,1875
+               Q 3025,1575 3075,1200
+               Q 3055,925 2875,725"
+            stroke="#0088ff" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <!-- Layer 7 - Purple -->
+      <path d="M 2470,980
+               Q 2600,830 2770,730
+               Q 2970,580 3070,430
+               Q 3070,230 2770,180
+               Q 2370,110 1800,130
+               Q 1200,110 630,180
+               Q 230,280 180,530
+               Q 130,830 180,1200
+               Q 210,1600 280,1870
+               Q 430,2170 830,2270
+               Q 1400,2320 2000,2270
+               Q 2570,2170 2870,1870
+               Q 3020,1570 3070,1200
+               Q 3050,930 2870,730"
+            stroke="#ff00ff" stroke-width="4" fill="none" stroke-linecap="round"/>
     </g>
 
     <!-- ============================================ -->
@@ -6428,7 +6966,7 @@
     <!-- VERSION INDICATOR (bottom right corner) - bump with each release -->
     <g id="version-indicator" transform="translate(3050, 2360)">
       <rect x="0" y="0" width="140" height="30" rx="5" fill="#000" opacity="0.6"/>
-      <text x="70" y="20" text-anchor="middle" font-family="monospace" font-size="14" fill="#fff" font-weight="bold">v4.4</text>
+      <text x="70" y="20" text-anchor="middle" font-family="monospace" font-size="14" fill="#fff" font-weight="bold">v4.5</text>
     </g>
 
   </svg>
@@ -6976,7 +7514,9 @@
       users: {},
       cards: {},
       userId: getOrCreateUserId(),
-      selectedName: null
+      selectedName: null,
+      hideAllCursors: false,
+      hiddenCursors: new Set() // Set of user names to hide cursors for
     };
 
     // Initialize cards state (all face-down)
@@ -6991,12 +7531,14 @@
     const cardDeck = document.getElementById('cardDeck');
     const cardsGrid = document.getElementById('cardsGrid');
     const storyPreview = document.getElementById('storyPreview');
+    const personalPreview = document.getElementById('personalPreview');
     const userListOnline = document.getElementById('userListOnline');
     const userListOffline = document.getElementById('userListOffline');
     const cursorsContainer = document.getElementById('cursorsContainer');
     const connectionStatus = document.getElementById('connectionStatus');
     const connectionText = document.getElementById('connectionText');
     const svgContainer = document.getElementById('svgContainer');
+    const hideCursorsBtn = document.getElementById('hideCursorsBtn');
 
     // Check for secret host parameter in URL (use ?blade_host_key=winterfest2025)
     const urlParams = new URLSearchParams(window.location.search);
@@ -7130,8 +7672,13 @@
       const isFlipped = appState.cards[cardId]?.flipped;
 
       if (isFlipped) {
-        // Anyone can view a flipped card
-        openCardModal(cardId);
+        if (appState.isHost) {
+          // Host opens synced preview for everyone
+          openCardModal(cardId);
+        } else {
+          // Non-host opens personal preview (not synced)
+          openPersonalPreview(cardId);
+        }
       } else if (appState.isHost) {
         // Only host can flip cards
         flipCard(cardId);
@@ -7205,10 +7752,34 @@
       }
     }
 
-    // Close preview on ESC - broadcasts to all users
+    // Open personal preview (not synced - for individual viewing)
+    function openPersonalPreview(cardId) {
+      const cardData = CARDS_DATA.find(c => c.id === cardId);
+      if (!cardData) return;
+
+      // Find the person's icon
+      const member = TEAM_MEMBERS.find(m => m.name === cardData.person);
+      const icon = member ? member.icon : '👤';
+
+      document.getElementById('personalPersonIcon').textContent = icon;
+      document.getElementById('personalPersonName').textContent = cardData.person;
+      document.getElementById('personalCardTitle').textContent = cardData.title;
+      document.getElementById('personalCardNumber').textContent = `#${cardData.id}`;
+      document.getElementById('personalCardStory').textContent = cardData.story;
+
+      personalPreview.classList.add('active');
+    }
+
+    // Close personal preview (not synced)
+    function closePersonalPreview() {
+      personalPreview.classList.remove('active');
+    }
+
+    // Close preview on ESC - broadcasts to all users (and closes personal preview)
     document.addEventListener('keydown', function(e) {
       if (e.key === 'Escape') {
         closeStoryPreview(true);
+        closePersonalPreview();
       }
     });
 
@@ -7227,21 +7798,38 @@
         const isOnline = onlineNames.has(member.name);
         const user = isOnline ? Object.values(appState.users).find(u => u.name === member.name) : null;
         const isIdle = user ? (Date.now() - user.lastActive > 5000) : false;
+        const isHidden = appState.hiddenCursors.has(member.name);
 
         const item = document.createElement('div');
-        item.className = 'user-item' + (isOnline ? (isIdle ? ' idle' : '') : ' offline');
+        item.className = 'user-item' + (isOnline ? (isIdle ? ' idle' : '') : ' offline') + (isHidden ? ' cursor-hidden' : '');
         item.innerHTML = `
           <span class="user-dot" style="background: ${member.color}"></span>
           <span>${member.name}</span>
           ${user?.isHost ? '<span class="host-badge">👑</span>' : ''}
+          ${isOnline ? '<span class="hide-cursor-icon" title="Click to toggle cursor visibility">👁</span>' : ''}
         `;
 
+        // Add click handler for online users to toggle cursor visibility
         if (isOnline) {
+          item.addEventListener('click', () => {
+            toggleUserCursor(member.name);
+          });
           userListOnline.appendChild(item);
         } else {
           userListOffline.appendChild(item);
         }
       });
+    }
+
+    // Toggle cursor visibility for a specific user
+    function toggleUserCursor(userName) {
+      if (appState.hiddenCursors.has(userName)) {
+        appState.hiddenCursors.delete(userName);
+      } else {
+        appState.hiddenCursors.add(userName);
+      }
+      renderUsersList();
+      renderCursors();
     }
 
     // Setup cursor tracking - converts to SVG viewBox coordinates for sync
@@ -7300,6 +7888,19 @@
       Object.entries(appState.users).forEach(([id, user]) => {
         if (id === appState.userId) return; // Don't show own cursor
         if (!user.cursor) return;
+
+        // Check if all cursors are hidden or this specific user's cursor is hidden
+        const shouldHide = appState.hideAllCursors || appState.hiddenCursors.has(user.name);
+
+        if (shouldHide) {
+          // Remove cursor if it exists
+          const existingCursor = cursorCache.get(id);
+          if (existingCursor) {
+            existingCursor.remove();
+            cursorCache.delete(id);
+          }
+          return;
+        }
 
         activeUserIds.add(id);
 
@@ -7582,6 +8183,14 @@
 
     // Setup switch button
     document.getElementById('switchUserBtn').addEventListener('click', switchCharacter);
+
+    // Setup hide all cursors button
+    hideCursorsBtn.addEventListener('click', function() {
+      appState.hideAllCursors = !appState.hideAllCursors;
+      hideCursorsBtn.classList.toggle('active', appState.hideAllCursors);
+      hideCursorsBtn.textContent = appState.hideAllCursors ? 'Show All Cursors' : 'Hide All Cursors';
+      renderCursors();
+    });
 
     // Initialize the app
     initNameGrid();
