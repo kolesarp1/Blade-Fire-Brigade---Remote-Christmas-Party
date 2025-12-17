@@ -1,0 +1,21 @@
+{
+  "name": "blade-fire-brigade-winter-festival",
+  "version": "4.4.0",
+  "description": "BladeLabs Winter Festival - Interactive Christmas Party",
+  "scripts": {
+    "test": "node tests/performance/concurrent-users.test.js",
+    "test:performance": "node tests/performance/concurrent-users.test.js"
+  },
+  "keywords": [
+    "christmas",
+    "party",
+    "firebase",
+    "realtime",
+    "multiplayer"
+  ],
+  "author": "BladeLabs",
+  "license": "MIT",
+  "dependencies": {
+    "firebase": "^9.23.0"
+  }
+}
