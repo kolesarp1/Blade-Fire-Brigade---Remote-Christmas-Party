@@ -21,6 +21,13 @@ Transform the Blade Fire Brigade Christmas Party into a sellable product that ot
 
 ---
 
+## Known Bugs (from first party)
+
+- [ ] Arrow/cursor sync sometimes fails - saw arrow with empty name tag moving around
+- [ ] Investigate cursor sync reliability under load
+
+---
+
 ## Phase 2: Party Builder Framework
 
 ### Template System
@@ -100,6 +107,60 @@ Transform the Blade Fire Brigade Christmas Party into a sellable product that ot
 - [ ] Version history (last 10 saves)
 - [ ] Manual save button
 - [ ] "Saved" indicator with timestamp
+
+---
+
+## Gameplay Features (Host Tools)
+
+### Quick Card Reveal (Host Shortcut)
+- [ ] Keyboard shortcut (e.g., `C` or `Space`) to toggle card overlay
+- [ ] Overlay brings all cards to current screen position
+- [ ] Click card to reveal, stays on screen
+- [ ] Press shortcut again or click arrow to dismiss overlay
+- [ ] Cards return to original board position
+- [ ] No need to navigate to card board and back
+
+### Scene Picker / Highlighter
+- [ ] Click any object to check if it belongs to a scene
+- [ ] If object is part of a scene, highlight entire scene with light border
+- [ ] Border fades after 2-3 seconds
+- [ ] Helps players understand which objects are:
+  - Part of the current guessing scene
+  - Random background props
+  - Part of another scene
+- [ ] Scene grouping defined in editor (link objects to card)
+
+### Leaderboard & Scoring
+- [ ] Scoreboard panel (toggle with shortcut or button)
+- [ ] After each reveal, host selects winner(s) for closest guess
+- [ ] Support split points (2+ people can share a point)
+- [ ] Running score display during game
+- [ ] "Announce Winner" button at end
+- [ ] Winner celebration animation (confetti, spotlight, sound)
+- [ ] Final leaderboard with rankings
+
+---
+
+## Logging & Analytics (Post-Game Insights)
+
+### Session Logging
+- [ ] Log all cursor movements (sampled, not every frame)
+- [ ] Log card reveal timestamps
+- [ ] Log user join/leave events
+- [ ] Log connection issues and reconnects
+
+### Post-Game Dashboard
+- [ ] View session replay (optional)
+- [ ] Heatmap of where cursors spent most time
+- [ ] Timeline of card reveals
+- [ ] Connection quality report per user
+- [ ] Export session data for analysis
+
+### Behavioral Insights
+- [ ] Which scenes got the most attention?
+- [ ] Average time to guess per card
+- [ ] Engagement patterns (who was most active?)
+- [ ] Use insights to improve future games
 
 ---
 
