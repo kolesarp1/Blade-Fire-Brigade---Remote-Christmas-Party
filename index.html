@@ -8264,10 +8264,7 @@
       // Set up cursor tracking
       setupCursorTracking();
 
-      // Update connection status
-      updateConnectionStatus('connected');
-
-      // Start Firebase sync (or local simulation)
+      // Start Firebase sync (connection status will be updated by Firebase listener)
       initFirebaseSync();
     }
 
@@ -8624,6 +8621,15 @@
       // Remove user data when disconnecting
       myUserRef.onDisconnect().remove();
       myCursorRef.onDisconnect().remove();
+
+      // Monitor actual connection state
+      database.ref('.info/connected').on('value', (snapshot) => {
+        if (snapshot.val() === true) {
+          updateConnectionStatus('connected');
+        } else {
+          updateConnectionStatus('disconnected');
+        }
+      });
 
       // Listen for other users joining/updating
       usersRef.on('child_added', (snapshot) => {
