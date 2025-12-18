@@ -172,9 +172,8 @@ Transform the Blade Fire Brigade Christmas Party into a sellable product that ot
 | Tier | Price | Features |
 |------|-------|----------|
 | Trial | Free | 2 connections, 1 week, full editor |
-| Basic | $10 | 12 players, 1 layout, basic templates |
-| Pro | $20 | 25 players, 3 layouts, all templates, AI generation |
-| Enterprise | Custom | Unlimited, custom branding, priority support |
+| Basic | $10 | 12 players, 1 layout/game, no AI generation |
+| Pro | $20 | 50 players, unlimited layouts/games, AI generation |
 
 ---
 
@@ -198,7 +197,7 @@ Transform the Blade Fire Brigade Christmas Party into a sellable product that ot
 - The coordinate display feature is a good foundation for the editor
 - Consider keyboard shortcuts early (delete, duplicate, undo)
 - Mobile support is low priority (this is a desktop editing experience)
-- Demo video should show: idea → finished party in under 10 minutes
+- Demo video should show: idea → finished party in under 1 minute
 
 ---
 
