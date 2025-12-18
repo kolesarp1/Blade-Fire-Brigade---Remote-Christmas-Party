@@ -169,11 +169,22 @@ Transform the Blade Fire Brigade Christmas Party into a sellable product that ot
 
 ## Pricing Strategy
 
+### Launch Phase (First 10 customers)
+- **Free Pro access** in exchange for testimonial + feedback
+
+### Early Bird (Next 50 customers)
 | Tier | Price | Features |
 |------|-------|----------|
-| Trial | Free | 2 connections, 1 week, full editor |
-| Basic | $10 | 12 players, 1 layout/game, no AI generation |
-| Pro | $20 | 50 players, unlimited layouts/games, AI generation |
+| Trial | Free | 3 connections, 2 weeks, full editor |
+| Starter | **$5** | 15 players, 1 game, no AI generation |
+| Pro | **$10** | 50 players, unlimited games, AI generation |
+
+### Regular Pricing (After early bird)
+| Tier | Price | Features |
+|------|-------|----------|
+| Trial | Free | 3 connections, 2 weeks, full editor |
+| Starter | $9 | 15 players, 1 game, no AI generation |
+| Pro | $19 | 50 players, unlimited games, AI generation |
 
 ---
 
