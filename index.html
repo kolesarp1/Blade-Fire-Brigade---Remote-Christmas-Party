@@ -356,6 +356,9 @@
     .ruslan .avatar { background: linear-gradient(180deg, #6d4c41 0%, #4e342e 100%); }
     .ruslan .avatar::after { content: '☕'; font-size: 16px; bottom: 0px; right: -2px; }
     .ruslan .avatar::before { content: '👨'; font-size: 28px; }
+    .erik .avatar { background: linear-gradient(180deg, #00aaff 0%, #0066cc 100%); }
+    .erik .avatar::after { content: '⏰'; font-size: 14px; bottom: 0px; right: -2px; }
+    .erik .avatar::before { content: '😴'; font-size: 28px; }
     .join-btn {
       background: linear-gradient(135deg, #4CAF50, #45a049);
       border: none;
@@ -614,6 +617,63 @@
       border-left: 3px solid #3498db;
       margin-bottom: 10px;
     }
+
+    /* Personal Card Preview - Bottom Right (for individual viewing) */
+    .personal-preview {
+      display: none;
+      position: fixed;
+      bottom: 20px;
+      right: 220px;
+      z-index: 1999;
+      max-width: 350px;
+      width: calc(100% - 260px);
+    }
+    .personal-preview.active {
+      display: block;
+    }
+    .personal-preview-content {
+      background: linear-gradient(135deg, rgba(230,240,255,0.95) 0%, rgba(200,220,245,0.95) 100%);
+      border-radius: 12px;
+      padding: 14px 18px;
+      color: #333;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      border: 2px solid #7aa3cc;
+      position: relative;
+      backdrop-filter: blur(10px);
+    }
+    .personal-preview-label {
+      position: absolute;
+      top: -10px;
+      left: 12px;
+      background: #5588bb;
+      color: #fff;
+      font-size: 9px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .personal-preview-close {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: #5588bb;
+      border: none;
+      color: #fff;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+    }
+    .personal-preview-close:hover {
+      background: #3366aa;
+    }
+
     /* Online Users Panel */
     .online-users {
       position: fixed;
@@ -722,6 +782,45 @@
     .switch-user-btn:hover {
       background: rgba(255,255,255,0.2);
       color: #fff;
+    }
+    .hide-cursors-btn {
+      display: block;
+      margin-top: 8px;
+      padding: 6px 10px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 6px;
+      color: #aaa;
+      font-size: 11px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .hide-cursors-btn:hover {
+      background: rgba(255,255,255,0.2);
+      color: #fff;
+    }
+    .hide-cursors-btn.active {
+      background: rgba(255,100,100,0.3);
+      border-color: rgba(255,100,100,0.5);
+      color: #ff6666;
+    }
+    .user-item {
+      cursor: pointer;
+      position: relative;
+    }
+    .user-item .hide-cursor-icon {
+      margin-left: auto;
+      font-size: 10px;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .user-item:hover .hide-cursor-icon {
+      opacity: 0.5;
+    }
+    .user-item.cursor-hidden .hide-cursor-icon {
+      opacity: 1;
+      color: #ff6666;
     }
 
     /* Multiplayer Cursors */
@@ -843,7 +942,7 @@
 
   <!-- Card Deck -->
   <div class="card-deck" id="cardDeck">
-    <h3 id="cardDeckHeader"><span class="card-icon">🃏</span> Story Cards (24)<span class="toggle-arrow">▼</span></h3>
+    <h3 id="cardDeckHeader"><span class="card-icon">🃏</span> Story Cards (25)<span class="toggle-arrow">▼</span></h3>
     <div class="cards-grid" id="cardsGrid">
       <!-- Cards will be populated by JavaScript -->
     </div>
@@ -860,12 +959,19 @@
       <!-- Offline users will be populated by JavaScript -->
     </div>
     <button class="switch-user-btn" id="switchUserBtn">Switch Character</button>
+    <button class="hide-cursors-btn" id="hideCursorsBtn">Hide All Cursors</button>
+    <button class="hide-cursors-btn" id="showCoordsBtn">Show Coords</button>
+  </div>
+
+  <!-- Coordinate Display -->
+  <div id="coordsDisplay" style="display: none; position: fixed; top: 10px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.85); color: #0f0; font-family: monospace; font-size: 18px; padding: 10px 20px; border-radius: 8px; z-index: 10000; pointer-events: none; border: 2px solid #0f0;">
+    X: 0, Y: 0
   </div>
 
   <!-- Story Preview Panel (Bottom Left) -->
   <div class="story-preview" id="storyPreview">
     <div class="story-preview-content">
-      <button class="story-preview-close" onclick="closeStoryPreview()">×</button>
+      <button class="story-preview-close" onclick="closeStoryPreview(true)">×</button>
       <div class="story-preview-header">
         <div>
           <div class="person-name"><span id="previewPersonIcon">🧑‍🚒</span> <span id="previewPersonName">SAMI</span></div>
@@ -874,6 +980,24 @@
         <span class="card-number" id="previewCardNumber">#1</span>
       </div>
       <div class="story-preview-story" id="previewCardStory">
+        Story text will appear here...
+      </div>
+    </div>
+  </div>
+
+  <!-- Personal Card Preview Panel (Bottom Right - individual viewing) -->
+  <div class="personal-preview" id="personalPreview">
+    <div class="personal-preview-content">
+      <div class="personal-preview-label">Your View</div>
+      <button class="personal-preview-close" onclick="closePersonalPreview()">×</button>
+      <div class="story-preview-header">
+        <div>
+          <div class="person-name"><span id="personalPersonIcon">🧑‍🚒</span> <span id="personalPersonName">SAMI</span></div>
+          <h3 id="personalCardTitle">The Hot Speech</h3>
+        </div>
+        <span class="card-number" id="personalCardNumber">#1</span>
+      </div>
+      <div class="story-preview-story" id="personalCardStory">
         Story text will appear here...
       </div>
     </div>
@@ -916,6 +1040,13 @@
         <stop offset="0%" style="stop-color:#cc3333"/>
         <stop offset="100%" style="stop-color:#8b2222"/>
       </linearGradient>
+
+      <!-- Moon gradient -->
+      <radialGradient id="moonGradient" cx="35%" cy="35%" r="60%">
+        <stop offset="0%" style="stop-color:#fffff5"/>
+        <stop offset="50%" style="stop-color:#f5f5dc"/>
+        <stop offset="100%" style="stop-color:#e5e5c5"/>
+      </radialGradient>
 
       <!-- Path cobblestone pattern -->
       <pattern id="cobblestone" x="0" y="0" width="12" height="12" patternUnits="userSpaceOnUse">
@@ -1370,7 +1501,7 @@
         <ellipse cx="12" cy="6" rx="8" ry="3" fill="#fff" opacity="0.85"/>
       </g>
 
-      <g transform="translate(2000, 2100)">
+      <g transform="translate(2500, 2100)">
         <ellipse cx="0" cy="22" rx="16" ry="6" fill="rgba(0,0,0,0.2)"/>
         <rect x="-3" y="8" width="6" height="14" fill="#5c3317"/>
         <polygon points="0,-30 -18,8 18,8" fill="#1a472a" stroke="#0f2d1a" stroke-width="1"/>
@@ -2849,16 +2980,16 @@
         <ellipse cx="0" cy="18" rx="10" ry="6" fill="#000" opacity="0.1"/>
         <ellipse cx="0" cy="8" rx="9" ry="14" fill="#2255aa" stroke="#333" stroke-width="1"/>
         <circle cx="0" cy="-10" r="10" fill="#ffd5b4" stroke="#333" stroke-width="1"/>
-        <!-- HYPER WIDE CAFFEINATED EYES -->
+        <!-- Serious eyes -->
         <circle cx="-4" cy="-11" r="3.5" fill="#fff" stroke="#333" stroke-width="0.5"/>
         <circle cx="4" cy="-11" r="3.5" fill="#fff" stroke="#333" stroke-width="0.5"/>
         <circle cx="-4" cy="-11" r="1.8" fill="#333"/>
         <circle cx="4" cy="-11" r="1.8" fill="#333"/>
-        <!-- Tiny pupils (caffeinated!) -->
-        <circle cx="-4" cy="-11" r="0.6" fill="#000"/>
-        <circle cx="4" cy="-11" r="0.6" fill="#000"/>
-        <!-- Slight jittery smile -->
-        <path d="M -3,-5 Q 0,-3 3,-5" stroke="#333" fill="none" stroke-width="1"/>
+        <!-- Furrowed brows (serious) -->
+        <line x1="-7" y1="-15" x2="-1" y2="-14" stroke="#333" stroke-width="1"/>
+        <line x1="7" y1="-15" x2="1" y2="-14" stroke="#333" stroke-width="1"/>
+        <!-- Serious straight mouth -->
+        <line x1="-3" y1="-5" x2="3" y2="-5" stroke="#333" stroke-width="1.2"/>
         <!-- Vibration lines -->
         <line x1="-12" y1="-12" x2="-14" y2="-13" stroke="#666" stroke-width="0.5"/>
         <line x1="12" y1="-12" x2="14" y2="-13" stroke="#666" stroke-width="0.5"/>
@@ -3275,6 +3406,275 @@
           <circle cx="-8" cy="-13" r="2" fill="#ffd5b4"/>
           <circle cx="8" cy="-13" r="2" fill="#ffd5b4"/>
         </g>
+
+        <!-- ROW 2: 6 more people -->
+        <g transform="translate(-45, 25)">
+          <ellipse cx="0" cy="12" rx="5" ry="8" fill="#3399ff" stroke="#333" stroke-width="0.6"/>
+          <circle cx="0" cy="-2" r="5" fill="#ffd5b4" stroke="#333" stroke-width="0.4"/>
+          <line x1="-4" y1="4" x2="-6" y2="-10" stroke="#3399ff" stroke-width="2.5"/>
+          <line x1="4" y1="4" x2="6" y2="-10" stroke="#3399ff" stroke-width="2.5"/>
+          <circle cx="-6" cy="-10" r="2" fill="#ffd5b4"/>
+          <circle cx="6" cy="-10" r="2" fill="#ffd5b4"/>
+        </g>
+        <g transform="translate(-25, 28)">
+          <ellipse cx="0" cy="12" rx="5" ry="8" fill="#ff6633" stroke="#333" stroke-width="0.6"/>
+          <circle cx="0" cy="-2" r="5" fill="#ffd5b4" stroke="#333" stroke-width="0.4"/>
+          <line x1="-4" y1="4" x2="-7" y2="-9" stroke="#ff6633" stroke-width="2.5"/>
+          <line x1="4" y1="4" x2="7" y2="-9" stroke="#ff6633" stroke-width="2.5"/>
+          <circle cx="-7" cy="-9" r="2" fill="#ffd5b4"/>
+          <circle cx="7" cy="-9" r="2" fill="#ffd5b4"/>
+        </g>
+        <g transform="translate(-5, 26)">
+          <ellipse cx="0" cy="12" rx="5" ry="8" fill="#66cc44" stroke="#333" stroke-width="0.6"/>
+          <circle cx="0" cy="-2" r="5" fill="#ffd5b4" stroke="#333" stroke-width="0.4"/>
+          <line x1="-4" y1="4" x2="-5" y2="-11" stroke="#66cc44" stroke-width="2.5"/>
+          <line x1="4" y1="4" x2="5" y2="-11" stroke="#66cc44" stroke-width="2.5"/>
+          <circle cx="-5" cy="-11" r="2" fill="#ffd5b4"/>
+          <circle cx="5" cy="-11" r="2" fill="#ffd5b4"/>
+        </g>
+        <g transform="translate(15, 29)">
+          <ellipse cx="0" cy="12" rx="5" ry="8" fill="#cc33cc" stroke="#333" stroke-width="0.6"/>
+          <circle cx="0" cy="-2" r="5" fill="#ffd5b4" stroke="#333" stroke-width="0.4"/>
+          <line x1="-4" y1="4" x2="-6" y2="-10" stroke="#cc33cc" stroke-width="2.5"/>
+          <line x1="4" y1="4" x2="6" y2="-10" stroke="#cc33cc" stroke-width="2.5"/>
+          <circle cx="-6" cy="-10" r="2" fill="#ffd5b4"/>
+          <circle cx="6" cy="-10" r="2" fill="#ffd5b4"/>
+        </g>
+        <g transform="translate(35, 27)">
+          <ellipse cx="0" cy="12" rx="5" ry="8" fill="#ffcc00" stroke="#333" stroke-width="0.6"/>
+          <circle cx="0" cy="-2" r="5" fill="#ffd5b4" stroke="#333" stroke-width="0.4"/>
+          <line x1="-4" y1="4" x2="-7" y2="-9" stroke="#ffcc00" stroke-width="2.5"/>
+          <line x1="4" y1="4" x2="7" y2="-9" stroke="#ffcc00" stroke-width="2.5"/>
+          <circle cx="-7" cy="-9" r="2" fill="#ffd5b4"/>
+          <circle cx="7" cy="-9" r="2" fill="#ffd5b4"/>
+        </g>
+        <g transform="translate(50, 25)">
+          <ellipse cx="0" cy="12" rx="5" ry="8" fill="#33cccc" stroke="#333" stroke-width="0.6"/>
+          <circle cx="0" cy="-2" r="5" fill="#ffd5b4" stroke="#333" stroke-width="0.4"/>
+          <line x1="-4" y1="4" x2="-5" y2="-11" stroke="#33cccc" stroke-width="2.5"/>
+          <line x1="4" y1="4" x2="5" y2="-11" stroke="#33cccc" stroke-width="2.5"/>
+          <circle cx="-5" cy="-11" r="2" fill="#ffd5b4"/>
+          <circle cx="5" cy="-11" r="2" fill="#ffd5b4"/>
+        </g>
+
+        <!-- ROW 3: 8 more people (smaller, farther back) -->
+        <g transform="translate(-55, 45)">
+          <ellipse cx="0" cy="10" rx="4" ry="7" fill="#9944ff" stroke="#333" stroke-width="0.5"/>
+          <circle cx="0" cy="-2" r="4" fill="#ffd5b4" stroke="#333" stroke-width="0.3"/>
+          <line x1="-3" y1="3" x2="-5" y2="-8" stroke="#9944ff" stroke-width="2"/>
+          <line x1="3" y1="3" x2="5" y2="-8" stroke="#9944ff" stroke-width="2"/>
+          <circle cx="-5" cy="-8" r="1.5" fill="#ffd5b4"/>
+          <circle cx="5" cy="-8" r="1.5" fill="#ffd5b4"/>
+        </g>
+        <g transform="translate(-38, 48)">
+          <ellipse cx="0" cy="10" rx="4" ry="7" fill="#ff4488" stroke="#333" stroke-width="0.5"/>
+          <circle cx="0" cy="-2" r="4" fill="#ffd5b4" stroke="#333" stroke-width="0.3"/>
+          <line x1="-3" y1="3" x2="-4" y2="-9" stroke="#ff4488" stroke-width="2"/>
+          <line x1="3" y1="3" x2="4" y2="-9" stroke="#ff4488" stroke-width="2"/>
+          <circle cx="-4" cy="-9" r="1.5" fill="#ffd5b4"/>
+          <circle cx="4" cy="-9" r="1.5" fill="#ffd5b4"/>
+        </g>
+        <g transform="translate(-20, 46)">
+          <ellipse cx="0" cy="10" rx="4" ry="7" fill="#44aaff" stroke="#333" stroke-width="0.5"/>
+          <circle cx="0" cy="-2" r="4" fill="#ffd5b4" stroke="#333" stroke-width="0.3"/>
+          <line x1="-3" y1="3" x2="-5" y2="-7" stroke="#44aaff" stroke-width="2"/>
+          <line x1="3" y1="3" x2="5" y2="-7" stroke="#44aaff" stroke-width="2"/>
+          <circle cx="-5" cy="-7" r="1.5" fill="#ffd5b4"/>
+          <circle cx="5" cy="-7" r="1.5" fill="#ffd5b4"/>
+        </g>
+        <g transform="translate(-2, 49)">
+          <ellipse cx="0" cy="10" rx="4" ry="7" fill="#88cc22" stroke="#333" stroke-width="0.5"/>
+          <circle cx="0" cy="-2" r="4" fill="#ffd5b4" stroke="#333" stroke-width="0.3"/>
+          <line x1="-3" y1="3" x2="-4" y2="-8" stroke="#88cc22" stroke-width="2"/>
+          <line x1="3" y1="3" x2="4" y2="-8" stroke="#88cc22" stroke-width="2"/>
+          <circle cx="-4" cy="-8" r="1.5" fill="#ffd5b4"/>
+          <circle cx="4" cy="-8" r="1.5" fill="#ffd5b4"/>
+        </g>
+        <g transform="translate(16, 47)">
+          <ellipse cx="0" cy="10" rx="4" ry="7" fill="#ff9922" stroke="#333" stroke-width="0.5"/>
+          <circle cx="0" cy="-2" r="4" fill="#ffd5b4" stroke="#333" stroke-width="0.3"/>
+          <line x1="-3" y1="3" x2="-5" y2="-9" stroke="#ff9922" stroke-width="2"/>
+          <line x1="3" y1="3" x2="5" y2="-9" stroke="#ff9922" stroke-width="2"/>
+          <circle cx="-5" cy="-9" r="1.5" fill="#ffd5b4"/>
+          <circle cx="5" cy="-9" r="1.5" fill="#ffd5b4"/>
+        </g>
+        <g transform="translate(34, 50)">
+          <ellipse cx="0" cy="10" rx="4" ry="7" fill="#cc2266" stroke="#333" stroke-width="0.5"/>
+          <circle cx="0" cy="-2" r="4" fill="#ffd5b4" stroke="#333" stroke-width="0.3"/>
+          <line x1="-3" y1="3" x2="-4" y2="-8" stroke="#cc2266" stroke-width="2"/>
+          <line x1="3" y1="3" x2="4" y2="-8" stroke="#cc2266" stroke-width="2"/>
+          <circle cx="-4" cy="-8" r="1.5" fill="#ffd5b4"/>
+          <circle cx="4" cy="-8" r="1.5" fill="#ffd5b4"/>
+        </g>
+        <g transform="translate(52, 46)">
+          <ellipse cx="0" cy="10" rx="4" ry="7" fill="#2299cc" stroke="#333" stroke-width="0.5"/>
+          <circle cx="0" cy="-2" r="4" fill="#ffd5b4" stroke="#333" stroke-width="0.3"/>
+          <line x1="-3" y1="3" x2="-5" y2="-7" stroke="#2299cc" stroke-width="2"/>
+          <line x1="3" y1="3" x2="5" y2="-7" stroke="#2299cc" stroke-width="2"/>
+          <circle cx="-5" cy="-7" r="1.5" fill="#ffd5b4"/>
+          <circle cx="5" cy="-7" r="1.5" fill="#ffd5b4"/>
+        </g>
+        <g transform="translate(68, 48)">
+          <ellipse cx="0" cy="10" rx="4" ry="7" fill="#aa66cc" stroke="#333" stroke-width="0.5"/>
+          <circle cx="0" cy="-2" r="4" fill="#ffd5b4" stroke="#333" stroke-width="0.3"/>
+          <line x1="-3" y1="3" x2="-4" y2="-9" stroke="#aa66cc" stroke-width="2"/>
+          <line x1="3" y1="3" x2="4" y2="-9" stroke="#aa66cc" stroke-width="2"/>
+          <circle cx="-4" cy="-9" r="1.5" fill="#ffd5b4"/>
+          <circle cx="4" cy="-9" r="1.5" fill="#ffd5b4"/>
+        </g>
+
+        <!-- ROW 4: 10 more people (even smaller) -->
+        <g transform="translate(-65, 62)">
+          <ellipse cx="0" cy="8" rx="3.5" ry="6" fill="#dd5533" stroke="#333" stroke-width="0.4"/>
+          <circle cx="0" cy="-2" r="3.5" fill="#ffd5b4" stroke="#333" stroke-width="0.3"/>
+          <line x1="-2" y1="2" x2="-4" y2="-6" stroke="#dd5533" stroke-width="1.8"/>
+          <line x1="2" y1="2" x2="4" y2="-6" stroke="#dd5533" stroke-width="1.8"/>
+        </g>
+        <g transform="translate(-50, 64)">
+          <ellipse cx="0" cy="8" rx="3.5" ry="6" fill="#33bb77" stroke="#333" stroke-width="0.4"/>
+          <circle cx="0" cy="-2" r="3.5" fill="#ffd5b4" stroke="#333" stroke-width="0.3"/>
+          <line x1="-2" y1="2" x2="-4" y2="-7" stroke="#33bb77" stroke-width="1.8"/>
+          <line x1="2" y1="2" x2="4" y2="-7" stroke="#33bb77" stroke-width="1.8"/>
+        </g>
+        <g transform="translate(-35, 66)">
+          <ellipse cx="0" cy="8" rx="3.5" ry="6" fill="#7744cc" stroke="#333" stroke-width="0.4"/>
+          <circle cx="0" cy="-2" r="3.5" fill="#ffd5b4" stroke="#333" stroke-width="0.3"/>
+          <line x1="-2" y1="2" x2="-3" y2="-6" stroke="#7744cc" stroke-width="1.8"/>
+          <line x1="2" y1="2" x2="3" y2="-6" stroke="#7744cc" stroke-width="1.8"/>
+        </g>
+        <g transform="translate(-18, 63)">
+          <ellipse cx="0" cy="8" rx="3.5" ry="6" fill="#cc8833" stroke="#333" stroke-width="0.4"/>
+          <circle cx="0" cy="-2" r="3.5" fill="#ffd5b4" stroke="#333" stroke-width="0.3"/>
+          <line x1="-2" y1="2" x2="-4" y2="-5" stroke="#cc8833" stroke-width="1.8"/>
+          <line x1="2" y1="2" x2="4" y2="-5" stroke="#cc8833" stroke-width="1.8"/>
+        </g>
+        <g transform="translate(0, 65)">
+          <ellipse cx="0" cy="8" rx="3.5" ry="6" fill="#3388dd" stroke="#333" stroke-width="0.4"/>
+          <circle cx="0" cy="-2" r="3.5" fill="#ffd5b4" stroke="#333" stroke-width="0.3"/>
+          <line x1="-2" y1="2" x2="-4" y2="-7" stroke="#3388dd" stroke-width="1.8"/>
+          <line x1="2" y1="2" x2="4" y2="-7" stroke="#3388dd" stroke-width="1.8"/>
+        </g>
+        <g transform="translate(18, 67)">
+          <ellipse cx="0" cy="8" rx="3.5" ry="6" fill="#ee4466" stroke="#333" stroke-width="0.4"/>
+          <circle cx="0" cy="-2" r="3.5" fill="#ffd5b4" stroke="#333" stroke-width="0.3"/>
+          <line x1="-2" y1="2" x2="-3" y2="-6" stroke="#ee4466" stroke-width="1.8"/>
+          <line x1="2" y1="2" x2="3" y2="-6" stroke="#ee4466" stroke-width="1.8"/>
+        </g>
+        <g transform="translate(36, 64)">
+          <ellipse cx="0" cy="8" rx="3.5" ry="6" fill="#55aa55" stroke="#333" stroke-width="0.4"/>
+          <circle cx="0" cy="-2" r="3.5" fill="#ffd5b4" stroke="#333" stroke-width="0.3"/>
+          <line x1="-2" y1="2" x2="-4" y2="-6" stroke="#55aa55" stroke-width="1.8"/>
+          <line x1="2" y1="2" x2="4" y2="-6" stroke="#55aa55" stroke-width="1.8"/>
+        </g>
+        <g transform="translate(52, 66)">
+          <ellipse cx="0" cy="8" rx="3.5" ry="6" fill="#bb55cc" stroke="#333" stroke-width="0.4"/>
+          <circle cx="0" cy="-2" r="3.5" fill="#ffd5b4" stroke="#333" stroke-width="0.3"/>
+          <line x1="-2" y1="2" x2="-3" y2="-7" stroke="#bb55cc" stroke-width="1.8"/>
+          <line x1="2" y1="2" x2="3" y2="-7" stroke="#bb55cc" stroke-width="1.8"/>
+        </g>
+        <g transform="translate(68, 63)">
+          <ellipse cx="0" cy="8" rx="3.5" ry="6" fill="#ddaa22" stroke="#333" stroke-width="0.4"/>
+          <circle cx="0" cy="-2" r="3.5" fill="#ffd5b4" stroke="#333" stroke-width="0.3"/>
+          <line x1="-2" y1="2" x2="-4" y2="-5" stroke="#ddaa22" stroke-width="1.8"/>
+          <line x1="2" y1="2" x2="4" y2="-5" stroke="#ddaa22" stroke-width="1.8"/>
+        </g>
+        <g transform="translate(82, 65)">
+          <ellipse cx="0" cy="8" rx="3.5" ry="6" fill="#4477aa" stroke="#333" stroke-width="0.4"/>
+          <circle cx="0" cy="-2" r="3.5" fill="#ffd5b4" stroke="#333" stroke-width="0.3"/>
+          <line x1="-2" y1="2" x2="-4" y2="-6" stroke="#4477aa" stroke-width="1.8"/>
+          <line x1="2" y1="2" x2="4" y2="-6" stroke="#4477aa" stroke-width="1.8"/>
+        </g>
+
+        <!-- ROW 5: 12 more people (smallest, farthest back - just heads visible) -->
+        <g transform="translate(-70, 78)">
+          <ellipse cx="0" cy="6" rx="3" ry="5" fill="#cc4455" stroke="#333" stroke-width="0.3"/>
+          <circle cx="0" cy="-2" r="3" fill="#ffd5b4" stroke="#333" stroke-width="0.2"/>
+        </g>
+        <g transform="translate(-55, 80)">
+          <ellipse cx="0" cy="6" rx="3" ry="5" fill="#55cc88" stroke="#333" stroke-width="0.3"/>
+          <circle cx="0" cy="-2" r="3" fill="#ffd5b4" stroke="#333" stroke-width="0.2"/>
+        </g>
+        <g transform="translate(-40, 79)">
+          <ellipse cx="0" cy="6" rx="3" ry="5" fill="#8855cc" stroke="#333" stroke-width="0.3"/>
+          <circle cx="0" cy="-2" r="3" fill="#ffd5b4" stroke="#333" stroke-width="0.2"/>
+        </g>
+        <g transform="translate(-25, 81)">
+          <ellipse cx="0" cy="6" rx="3" ry="5" fill="#cc9933" stroke="#333" stroke-width="0.3"/>
+          <circle cx="0" cy="-2" r="3" fill="#ffd5b4" stroke="#333" stroke-width="0.2"/>
+        </g>
+        <g transform="translate(-10, 80)">
+          <ellipse cx="0" cy="6" rx="3" ry="5" fill="#3399cc" stroke="#333" stroke-width="0.3"/>
+          <circle cx="0" cy="-2" r="3" fill="#ffd5b4" stroke="#333" stroke-width="0.2"/>
+        </g>
+        <g transform="translate(5, 82)">
+          <ellipse cx="0" cy="6" rx="3" ry="5" fill="#dd4477" stroke="#333" stroke-width="0.3"/>
+          <circle cx="0" cy="-2" r="3" fill="#ffd5b4" stroke="#333" stroke-width="0.2"/>
+        </g>
+        <g transform="translate(20, 79)">
+          <ellipse cx="0" cy="6" rx="3" ry="5" fill="#44aa66" stroke="#333" stroke-width="0.3"/>
+          <circle cx="0" cy="-2" r="3" fill="#ffd5b4" stroke="#333" stroke-width="0.2"/>
+        </g>
+        <g transform="translate(35, 81)">
+          <ellipse cx="0" cy="6" rx="3" ry="5" fill="#9944aa" stroke="#333" stroke-width="0.3"/>
+          <circle cx="0" cy="-2" r="3" fill="#ffd5b4" stroke="#333" stroke-width="0.2"/>
+        </g>
+        <g transform="translate(50, 80)">
+          <ellipse cx="0" cy="6" rx="3" ry="5" fill="#ddbb33" stroke="#333" stroke-width="0.3"/>
+          <circle cx="0" cy="-2" r="3" fill="#ffd5b4" stroke="#333" stroke-width="0.2"/>
+        </g>
+        <g transform="translate(65, 82)">
+          <ellipse cx="0" cy="6" rx="3" ry="5" fill="#3377bb" stroke="#333" stroke-width="0.3"/>
+          <circle cx="0" cy="-2" r="3" fill="#ffd5b4" stroke="#333" stroke-width="0.2"/>
+        </g>
+        <g transform="translate(80, 79)">
+          <ellipse cx="0" cy="6" rx="3" ry="5" fill="#cc5588" stroke="#333" stroke-width="0.3"/>
+          <circle cx="0" cy="-2" r="3" fill="#ffd5b4" stroke="#333" stroke-width="0.2"/>
+        </g>
+        <g transform="translate(95, 81)">
+          <ellipse cx="0" cy="6" rx="3" ry="5" fill="#55aa99" stroke="#333" stroke-width="0.3"/>
+          <circle cx="0" cy="-2" r="3" fill="#ffd5b4" stroke="#333" stroke-width="0.2"/>
+        </g>
+
+        <!-- ROW 6: More distant crowd (just heads in a line) -->
+        <g transform="translate(-75, 92)">
+          <circle cx="0" cy="0" r="2.5" fill="#bb4466" stroke="#333" stroke-width="0.2"/>
+        </g>
+        <g transform="translate(-60, 94)">
+          <circle cx="0" cy="0" r="2.5" fill="#44bb77" stroke="#333" stroke-width="0.2"/>
+        </g>
+        <g transform="translate(-45, 93)">
+          <circle cx="0" cy="0" r="2.5" fill="#7744bb" stroke="#333" stroke-width="0.2"/>
+        </g>
+        <g transform="translate(-30, 95)">
+          <circle cx="0" cy="0" r="2.5" fill="#bb8844" stroke="#333" stroke-width="0.2"/>
+        </g>
+        <g transform="translate(-15, 93)">
+          <circle cx="0" cy="0" r="2.5" fill="#4488bb" stroke="#333" stroke-width="0.2"/>
+        </g>
+        <g transform="translate(0, 95)">
+          <circle cx="0" cy="0" r="2.5" fill="#bb4488" stroke="#333" stroke-width="0.2"/>
+        </g>
+        <g transform="translate(15, 94)">
+          <circle cx="0" cy="0" r="2.5" fill="#44aa55" stroke="#333" stroke-width="0.2"/>
+        </g>
+        <g transform="translate(30, 93)">
+          <circle cx="0" cy="0" r="2.5" fill="#aa55bb" stroke="#333" stroke-width="0.2"/>
+        </g>
+        <g transform="translate(45, 95)">
+          <circle cx="0" cy="0" r="2.5" fill="#bbaa44" stroke="#333" stroke-width="0.2"/>
+        </g>
+        <g transform="translate(60, 94)">
+          <circle cx="0" cy="0" r="2.5" fill="#4466aa" stroke="#333" stroke-width="0.2"/>
+        </g>
+        <g transform="translate(75, 93)">
+          <circle cx="0" cy="0" r="2.5" fill="#aa5577" stroke="#333" stroke-width="0.2"/>
+        </g>
+        <g transform="translate(90, 95)">
+          <circle cx="0" cy="0" r="2.5" fill="#55bb88" stroke="#333" stroke-width="0.2"/>
+        </g>
+        <g transform="translate(105, 94)">
+          <circle cx="0" cy="0" r="2.5" fill="#8855aa" stroke="#333" stroke-width="0.2"/>
+        </g>
       </g>
 
       <!-- "EMPRESS OF BEAUTIFUL CHAOS" banner (widened to fit text) -->
@@ -3437,15 +3837,608 @@
             <circle cx="0" cy="0" r="2" fill="#ffcc00"/>
           </g>
         </g>
-        <!-- Music notes -->
+
+        <!-- EXTENDED CONGA LINE: 10 kids, 10 snowmen, 10 penguins (shuffled) -->
+        <!-- Kid 1 -->
+        <g transform="translate(265, 45)">
+          <ellipse cx="0" cy="15" rx="5" ry="3" fill="#000" opacity="0.15"/>
+          <ellipse cx="0" cy="8" rx="5" ry="8" fill="#ff5588" stroke="#333" stroke-width="0.6"/>
+          <circle cx="0" cy="-4" r="5" fill="#ffd5b4" stroke="#333" stroke-width="0.4"/>
+        </g>
+        <!-- Penguin 1 -->
+        <g transform="translate(290, 50)">
+          <ellipse cx="0" cy="15" rx="6" ry="3" fill="#000" opacity="0.15"/>
+          <ellipse cx="0" cy="8" rx="7" ry="10" fill="#1a1a2e" stroke="#333" stroke-width="0.8"/>
+          <ellipse cx="0" cy="8" rx="4" ry="7" fill="#fff"/>
+          <circle cx="0" cy="-3" r="5" fill="#1a1a2e" stroke="#333" stroke-width="0.6"/>
+          <circle cx="-2" cy="-4" r="1.2" fill="#fff"/>
+          <circle cx="2" cy="-4" r="1.2" fill="#fff"/>
+          <circle cx="-2" cy="-4" r="0.5" fill="#333"/>
+          <circle cx="2" cy="-4" r="0.5" fill="#333"/>
+          <polygon points="0,0 2,3 -2,3" fill="#ff8c00"/>
+        </g>
+        <!-- Snowman 1 -->
+        <g transform="translate(320, 55)">
+          <ellipse cx="0" cy="18" rx="8" ry="4" fill="#000" opacity="0.15"/>
+          <circle cx="0" cy="12" r="8" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+          <circle cx="0" cy="0" r="6" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+          <circle cx="0" cy="-10" r="5" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+          <circle cx="-2" cy="-11" r="1" fill="#333"/>
+          <circle cx="2" cy="-11" r="1" fill="#333"/>
+          <polygon points="0,-9 5,-8 0,-7" fill="#ff6600"/>
+          <rect x="-4" y="-16" width="8" height="4" fill="#ff0000"/>
+        </g>
+        <!-- Kid 2 -->
+        <g transform="translate(350, 60)">
+          <ellipse cx="0" cy="15" rx="5" ry="3" fill="#000" opacity="0.15"/>
+          <ellipse cx="0" cy="8" rx="5" ry="8" fill="#44ccff" stroke="#333" stroke-width="0.6"/>
+          <circle cx="0" cy="-4" r="5" fill="#ffd5b4" stroke="#333" stroke-width="0.4"/>
+        </g>
+        <!-- Snowman 2 -->
+        <g transform="translate(375, 65)">
+          <ellipse cx="0" cy="18" rx="8" ry="4" fill="#000" opacity="0.15"/>
+          <circle cx="0" cy="12" r="8" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+          <circle cx="0" cy="0" r="6" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+          <circle cx="0" cy="-10" r="5" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+          <circle cx="-2" cy="-11" r="1" fill="#333"/>
+          <circle cx="2" cy="-11" r="1" fill="#333"/>
+          <polygon points="0,-9 5,-8 0,-7" fill="#ff6600"/>
+          <rect x="-4" y="-16" width="8" height="4" fill="#00cc00"/>
+        </g>
+        <!-- Penguin 2 -->
+        <g transform="translate(405, 70)">
+          <ellipse cx="0" cy="15" rx="6" ry="3" fill="#000" opacity="0.15"/>
+          <ellipse cx="0" cy="8" rx="7" ry="10" fill="#1a1a2e" stroke="#333" stroke-width="0.8"/>
+          <ellipse cx="0" cy="8" rx="4" ry="7" fill="#fff"/>
+          <circle cx="0" cy="-3" r="5" fill="#1a1a2e" stroke="#333" stroke-width="0.6"/>
+          <circle cx="-2" cy="-4" r="1.2" fill="#fff"/>
+          <circle cx="2" cy="-4" r="1.2" fill="#fff"/>
+          <circle cx="-2" cy="-4" r="0.5" fill="#333"/>
+          <circle cx="2" cy="-4" r="0.5" fill="#333"/>
+          <polygon points="0,0 2,3 -2,3" fill="#ff8c00"/>
+        </g>
+        <!-- Snowman 3 -->
+        <g transform="translate(435, 75)">
+          <ellipse cx="0" cy="18" rx="8" ry="4" fill="#000" opacity="0.15"/>
+          <circle cx="0" cy="12" r="8" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+          <circle cx="0" cy="0" r="6" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+          <circle cx="0" cy="-10" r="5" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+          <circle cx="-2" cy="-11" r="1" fill="#333"/>
+          <circle cx="2" cy="-11" r="1" fill="#333"/>
+          <polygon points="0,-9 5,-8 0,-7" fill="#ff6600"/>
+          <rect x="-4" y="-16" width="8" height="4" fill="#0066ff"/>
+        </g>
+        <!-- Kid 3 -->
+        <g transform="translate(465, 80)">
+          <ellipse cx="0" cy="15" rx="5" ry="3" fill="#000" opacity="0.15"/>
+          <ellipse cx="0" cy="8" rx="5" ry="8" fill="#ffcc00" stroke="#333" stroke-width="0.6"/>
+          <circle cx="0" cy="-4" r="5" fill="#ffd5b4" stroke="#333" stroke-width="0.4"/>
+        </g>
+        <!-- Penguin 3 -->
+        <g transform="translate(490, 85)">
+          <ellipse cx="0" cy="15" rx="6" ry="3" fill="#000" opacity="0.15"/>
+          <ellipse cx="0" cy="8" rx="7" ry="10" fill="#1a1a2e" stroke="#333" stroke-width="0.8"/>
+          <ellipse cx="0" cy="8" rx="4" ry="7" fill="#fff"/>
+          <circle cx="0" cy="-3" r="5" fill="#1a1a2e" stroke="#333" stroke-width="0.6"/>
+          <circle cx="-2" cy="-4" r="1.2" fill="#fff"/>
+          <circle cx="2" cy="-4" r="1.2" fill="#fff"/>
+          <circle cx="-2" cy="-4" r="0.5" fill="#333"/>
+          <circle cx="2" cy="-4" r="0.5" fill="#333"/>
+          <polygon points="0,0 2,3 -2,3" fill="#ff8c00"/>
+        </g>
+        <!-- Kid 4 -->
+        <g transform="translate(520, 90)">
+          <ellipse cx="0" cy="15" rx="5" ry="3" fill="#000" opacity="0.15"/>
+          <ellipse cx="0" cy="8" rx="5" ry="8" fill="#cc44ff" stroke="#333" stroke-width="0.6"/>
+          <circle cx="0" cy="-4" r="5" fill="#ffd5b4" stroke="#333" stroke-width="0.4"/>
+        </g>
+        <!-- Snowman 4 -->
+        <g transform="translate(545, 95)">
+          <ellipse cx="0" cy="18" rx="8" ry="4" fill="#000" opacity="0.15"/>
+          <circle cx="0" cy="12" r="8" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+          <circle cx="0" cy="0" r="6" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+          <circle cx="0" cy="-10" r="5" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+          <circle cx="-2" cy="-11" r="1" fill="#333"/>
+          <circle cx="2" cy="-11" r="1" fill="#333"/>
+          <polygon points="0,-9 5,-8 0,-7" fill="#ff6600"/>
+          <rect x="-4" y="-16" width="8" height="4" fill="#ff00ff"/>
+        </g>
+        <!-- Penguin 4 -->
+        <g transform="translate(575, 100)">
+          <ellipse cx="0" cy="15" rx="6" ry="3" fill="#000" opacity="0.15"/>
+          <ellipse cx="0" cy="8" rx="7" ry="10" fill="#1a1a2e" stroke="#333" stroke-width="0.8"/>
+          <ellipse cx="0" cy="8" rx="4" ry="7" fill="#fff"/>
+          <circle cx="0" cy="-3" r="5" fill="#1a1a2e" stroke="#333" stroke-width="0.6"/>
+          <circle cx="-2" cy="-4" r="1.2" fill="#fff"/>
+          <circle cx="2" cy="-4" r="1.2" fill="#fff"/>
+          <circle cx="-2" cy="-4" r="0.5" fill="#333"/>
+          <circle cx="2" cy="-4" r="0.5" fill="#333"/>
+          <polygon points="0,0 2,3 -2,3" fill="#ff8c00"/>
+        </g>
+        <!-- Kid 5 -->
+        <g transform="translate(605, 105)">
+          <ellipse cx="0" cy="15" rx="5" ry="3" fill="#000" opacity="0.15"/>
+          <ellipse cx="0" cy="8" rx="5" ry="8" fill="#44ff88" stroke="#333" stroke-width="0.6"/>
+          <circle cx="0" cy="-4" r="5" fill="#ffd5b4" stroke="#333" stroke-width="0.4"/>
+        </g>
+        <!-- Snowman 5 -->
+        <g transform="translate(630, 110)">
+          <ellipse cx="0" cy="18" rx="8" ry="4" fill="#000" opacity="0.15"/>
+          <circle cx="0" cy="12" r="8" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+          <circle cx="0" cy="0" r="6" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+          <circle cx="0" cy="-10" r="5" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+          <circle cx="-2" cy="-11" r="1" fill="#333"/>
+          <circle cx="2" cy="-11" r="1" fill="#333"/>
+          <polygon points="0,-9 5,-8 0,-7" fill="#ff6600"/>
+          <rect x="-4" y="-16" width="8" height="4" fill="#ff8800"/>
+        </g>
+        <!-- Penguin 5 -->
+        <g transform="translate(660, 115)">
+          <ellipse cx="0" cy="15" rx="6" ry="3" fill="#000" opacity="0.15"/>
+          <ellipse cx="0" cy="8" rx="7" ry="10" fill="#1a1a2e" stroke="#333" stroke-width="0.8"/>
+          <ellipse cx="0" cy="8" rx="4" ry="7" fill="#fff"/>
+          <circle cx="0" cy="-3" r="5" fill="#1a1a2e" stroke="#333" stroke-width="0.6"/>
+          <circle cx="-2" cy="-4" r="1.2" fill="#fff"/>
+          <circle cx="2" cy="-4" r="1.2" fill="#fff"/>
+          <circle cx="-2" cy="-4" r="0.5" fill="#333"/>
+          <circle cx="2" cy="-4" r="0.5" fill="#333"/>
+          <polygon points="0,0 2,3 -2,3" fill="#ff8c00"/>
+        </g>
+        <!-- Snowman 6 -->
+        <g transform="translate(690, 120)">
+          <ellipse cx="0" cy="18" rx="8" ry="4" fill="#000" opacity="0.15"/>
+          <circle cx="0" cy="12" r="8" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+          <circle cx="0" cy="0" r="6" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+          <circle cx="0" cy="-10" r="5" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+          <circle cx="-2" cy="-11" r="1" fill="#333"/>
+          <circle cx="2" cy="-11" r="1" fill="#333"/>
+          <polygon points="0,-9 5,-8 0,-7" fill="#ff6600"/>
+          <rect x="-4" y="-16" width="8" height="4" fill="#00ffff"/>
+        </g>
+        <!-- Kid 6 -->
+        <g transform="translate(720, 125)">
+          <ellipse cx="0" cy="15" rx="5" ry="3" fill="#000" opacity="0.15"/>
+          <ellipse cx="0" cy="8" rx="5" ry="8" fill="#ff4444" stroke="#333" stroke-width="0.6"/>
+          <circle cx="0" cy="-4" r="5" fill="#ffd5b4" stroke="#333" stroke-width="0.4"/>
+        </g>
+        <!-- Penguin 6 -->
+        <g transform="translate(745, 130)">
+          <ellipse cx="0" cy="15" rx="6" ry="3" fill="#000" opacity="0.15"/>
+          <ellipse cx="0" cy="8" rx="7" ry="10" fill="#1a1a2e" stroke="#333" stroke-width="0.8"/>
+          <ellipse cx="0" cy="8" rx="4" ry="7" fill="#fff"/>
+          <circle cx="0" cy="-3" r="5" fill="#1a1a2e" stroke="#333" stroke-width="0.6"/>
+          <circle cx="-2" cy="-4" r="1.2" fill="#fff"/>
+          <circle cx="2" cy="-4" r="1.2" fill="#fff"/>
+          <circle cx="-2" cy="-4" r="0.5" fill="#333"/>
+          <circle cx="2" cy="-4" r="0.5" fill="#333"/>
+          <polygon points="0,0 2,3 -2,3" fill="#ff8c00"/>
+        </g>
+        <!-- Kid 7 -->
+        <g transform="translate(775, 135)">
+          <ellipse cx="0" cy="15" rx="5" ry="3" fill="#000" opacity="0.15"/>
+          <ellipse cx="0" cy="8" rx="5" ry="8" fill="#8888ff" stroke="#333" stroke-width="0.6"/>
+          <circle cx="0" cy="-4" r="5" fill="#ffd5b4" stroke="#333" stroke-width="0.4"/>
+        </g>
+        <!-- Snowman 7 -->
+        <g transform="translate(800, 140)">
+          <ellipse cx="0" cy="18" rx="8" ry="4" fill="#000" opacity="0.15"/>
+          <circle cx="0" cy="12" r="8" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+          <circle cx="0" cy="0" r="6" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+          <circle cx="0" cy="-10" r="5" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+          <circle cx="-2" cy="-11" r="1" fill="#333"/>
+          <circle cx="2" cy="-11" r="1" fill="#333"/>
+          <polygon points="0,-9 5,-8 0,-7" fill="#ff6600"/>
+          <rect x="-4" y="-16" width="8" height="4" fill="#884488"/>
+        </g>
+        <!-- Penguin 7 -->
+        <g transform="translate(830, 145)">
+          <ellipse cx="0" cy="15" rx="6" ry="3" fill="#000" opacity="0.15"/>
+          <ellipse cx="0" cy="8" rx="7" ry="10" fill="#1a1a2e" stroke="#333" stroke-width="0.8"/>
+          <ellipse cx="0" cy="8" rx="4" ry="7" fill="#fff"/>
+          <circle cx="0" cy="-3" r="5" fill="#1a1a2e" stroke="#333" stroke-width="0.6"/>
+          <circle cx="-2" cy="-4" r="1.2" fill="#fff"/>
+          <circle cx="2" cy="-4" r="1.2" fill="#fff"/>
+          <circle cx="-2" cy="-4" r="0.5" fill="#333"/>
+          <circle cx="2" cy="-4" r="0.5" fill="#333"/>
+          <polygon points="0,0 2,3 -2,3" fill="#ff8c00"/>
+        </g>
+        <!-- Snowman 8 -->
+        <g transform="translate(860, 150)">
+          <ellipse cx="0" cy="18" rx="8" ry="4" fill="#000" opacity="0.15"/>
+          <circle cx="0" cy="12" r="8" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+          <circle cx="0" cy="0" r="6" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+          <circle cx="0" cy="-10" r="5" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+          <circle cx="-2" cy="-11" r="1" fill="#333"/>
+          <circle cx="2" cy="-11" r="1" fill="#333"/>
+          <polygon points="0,-9 5,-8 0,-7" fill="#ff6600"/>
+          <rect x="-4" y="-16" width="8" height="4" fill="#448844"/>
+        </g>
+        <!-- Kid 8 -->
+        <g transform="translate(890, 155)">
+          <ellipse cx="0" cy="15" rx="5" ry="3" fill="#000" opacity="0.15"/>
+          <ellipse cx="0" cy="8" rx="5" ry="8" fill="#ff88cc" stroke="#333" stroke-width="0.6"/>
+          <circle cx="0" cy="-4" r="5" fill="#ffd5b4" stroke="#333" stroke-width="0.4"/>
+        </g>
+        <!-- Penguin 8 -->
+        <g transform="translate(915, 160)">
+          <ellipse cx="0" cy="15" rx="6" ry="3" fill="#000" opacity="0.15"/>
+          <ellipse cx="0" cy="8" rx="7" ry="10" fill="#1a1a2e" stroke="#333" stroke-width="0.8"/>
+          <ellipse cx="0" cy="8" rx="4" ry="7" fill="#fff"/>
+          <circle cx="0" cy="-3" r="5" fill="#1a1a2e" stroke="#333" stroke-width="0.6"/>
+          <circle cx="-2" cy="-4" r="1.2" fill="#fff"/>
+          <circle cx="2" cy="-4" r="1.2" fill="#fff"/>
+          <circle cx="-2" cy="-4" r="0.5" fill="#333"/>
+          <circle cx="2" cy="-4" r="0.5" fill="#333"/>
+          <polygon points="0,0 2,3 -2,3" fill="#ff8c00"/>
+        </g>
+        <!-- Kid 9 -->
+        <g transform="translate(945, 165)">
+          <ellipse cx="0" cy="15" rx="5" ry="3" fill="#000" opacity="0.15"/>
+          <ellipse cx="0" cy="8" rx="5" ry="8" fill="#88ccff" stroke="#333" stroke-width="0.6"/>
+          <circle cx="0" cy="-4" r="5" fill="#ffd5b4" stroke="#333" stroke-width="0.4"/>
+        </g>
+        <!-- Snowman 9 -->
+        <g transform="translate(970, 170)">
+          <ellipse cx="0" cy="18" rx="8" ry="4" fill="#000" opacity="0.15"/>
+          <circle cx="0" cy="12" r="8" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+          <circle cx="0" cy="0" r="6" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+          <circle cx="0" cy="-10" r="5" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+          <circle cx="-2" cy="-11" r="1" fill="#333"/>
+          <circle cx="2" cy="-11" r="1" fill="#333"/>
+          <polygon points="0,-9 5,-8 0,-7" fill="#ff6600"/>
+          <rect x="-4" y="-16" width="8" height="4" fill="#cc4444"/>
+        </g>
+        <!-- Penguin 9 -->
+        <g transform="translate(1000, 175)">
+          <ellipse cx="0" cy="15" rx="6" ry="3" fill="#000" opacity="0.15"/>
+          <ellipse cx="0" cy="8" rx="7" ry="10" fill="#1a1a2e" stroke="#333" stroke-width="0.8"/>
+          <ellipse cx="0" cy="8" rx="4" ry="7" fill="#fff"/>
+          <circle cx="0" cy="-3" r="5" fill="#1a1a2e" stroke="#333" stroke-width="0.6"/>
+          <circle cx="-2" cy="-4" r="1.2" fill="#fff"/>
+          <circle cx="2" cy="-4" r="1.2" fill="#fff"/>
+          <circle cx="-2" cy="-4" r="0.5" fill="#333"/>
+          <circle cx="2" cy="-4" r="0.5" fill="#333"/>
+          <polygon points="0,0 2,3 -2,3" fill="#ff8c00"/>
+        </g>
+        <!-- Snowman 10 -->
+        <g transform="translate(1030, 180)">
+          <ellipse cx="0" cy="18" rx="8" ry="4" fill="#000" opacity="0.15"/>
+          <circle cx="0" cy="12" r="8" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+          <circle cx="0" cy="0" r="6" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+          <circle cx="0" cy="-10" r="5" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+          <circle cx="-2" cy="-11" r="1" fill="#333"/>
+          <circle cx="2" cy="-11" r="1" fill="#333"/>
+          <polygon points="0,-9 5,-8 0,-7" fill="#ff6600"/>
+          <rect x="-4" y="-16" width="8" height="4" fill="#4488cc"/>
+        </g>
+        <!-- Kid 10 -->
+        <g transform="translate(1060, 185)">
+          <ellipse cx="0" cy="15" rx="5" ry="3" fill="#000" opacity="0.15"/>
+          <ellipse cx="0" cy="8" rx="5" ry="8" fill="#ffaa44" stroke="#333" stroke-width="0.6"/>
+          <circle cx="0" cy="-4" r="5" fill="#ffd5b4" stroke="#333" stroke-width="0.4"/>
+        </g>
+        <!-- Penguin 10 -->
+        <g transform="translate(1085, 190)">
+          <ellipse cx="0" cy="15" rx="6" ry="3" fill="#000" opacity="0.15"/>
+          <ellipse cx="0" cy="8" rx="7" ry="10" fill="#1a1a2e" stroke="#333" stroke-width="0.8"/>
+          <ellipse cx="0" cy="8" rx="4" ry="7" fill="#fff"/>
+          <circle cx="0" cy="-3" r="5" fill="#1a1a2e" stroke="#333" stroke-width="0.6"/>
+          <circle cx="-2" cy="-4" r="1.2" fill="#fff"/>
+          <circle cx="2" cy="-4" r="1.2" fill="#fff"/>
+          <circle cx="-2" cy="-4" r="0.5" fill="#333"/>
+          <circle cx="2" cy="-4" r="0.5" fill="#333"/>
+          <polygon points="0,0 2,3 -2,3" fill="#ff8c00"/>
+        </g>
+
+        <!-- Music notes (extended for longer conga line) -->
         <text x="-10" y="-15" font-size="14">♪</text>
         <text x="40" y="-10" font-size="12">♫</text>
         <text x="90" y="-5" font-size="14">♪</text>
         <text x="140" y="0" font-size="12">♫</text>
         <text x="190" y="5" font-size="14">♪</text>
-        <text x="220" y="10" font-size="12">♫</text>
         <text x="250" y="15" font-size="14">♪</text>
+        <text x="320" y="30" font-size="12">♫</text>
+        <text x="400" y="50" font-size="14">♪</text>
+        <text x="480" y="65" font-size="12">♫</text>
+        <text x="560" y="80" font-size="14">♪</text>
+        <text x="640" y="95" font-size="12">♫</text>
+        <text x="720" y="110" font-size="14">♪</text>
+        <text x="800" y="125" font-size="12">♫</text>
+        <text x="880" y="140" font-size="14">♪</text>
+        <text x="960" y="155" font-size="12">♫</text>
+        <text x="1040" y="170" font-size="14">♪</text>
+        <text x="1100" y="180" font-size="12">♫</text>
       </g>
+    </g>
+
+    <!-- ============================================ -->
+    <!-- RAINBOW TRAIL from Olena - Dance-like curvy path -->
+    <!-- Weaves through the winter wonderland with flowing curves -->
+    <!-- Avoids: Sami crowd, Patrik DJ name, Olena Empress banner -->
+    <!-- ============================================ -->
+    <g id="rainbow-trail" opacity="0.6">
+      <!-- Rainbow trail starts from Olena's cape (at conga scene position 2500, 950) -->
+      <!-- Dances through the map with curves and loops, avoiding key scenes -->
+
+      <!-- Layer 1 - Red -->
+      <path d="M 2470,950
+               Q 2400,1050 2300,1000
+               Q 2100,900 1900,1000
+               Q 1650,1100 1350,1050
+               Q 1100,1000 900,1100
+               Q 700,1200 650,1350
+               Q 600,1500 700,1650
+               Q 800,1800 600,1900
+               Q 400,2000 350,1850
+               Q 300,1700 250,1550
+               Q 200,1400 250,1300
+               Q 300,1250 200,1100
+               Q 150,1000 200,750
+               Q 250,600 450,550
+               Q 700,500 900,600
+               Q 1100,700 1300,650
+               Q 1550,600 1800,700
+               Q 2000,800 2100,650
+               Q 2200,550 2400,600
+               Q 2600,650 2700,800
+               Q 2800,950 2900,1100
+               Q 2950,1250 2850,1400
+               Q 2750,1550 2600,1700
+               Q 2450,1850 2300,2000
+               Q 2150,2100 1950,2050
+               Q 1750,2000 1550,2100
+               Q 1350,2150 1150,2100
+               Q 950,2050 800,2150
+               Q 650,2200 500,2150
+               Q 400,2100 450,1950
+               Q 500,1800 650,1700
+               Q 800,1600 950,1500
+               Q 1100,1400 1250,1450
+               Q 1400,1500 1600,1450
+               Q 1800,1400 2050,1300
+               Q 2200,1150 2350,1050
+               Q 2500,1010 2520,950"
+            stroke="#ff0000" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+      <!-- Layer 2 - Orange -->
+      <path d="M 2470,952
+               Q 2400,1052 2300,1002
+               Q 2100,902 1900,1002
+               Q 1650,1102 1350,1052
+               Q 1100,1002 900,1102
+               Q 700,1202 650,1352
+               Q 600,1502 700,1652
+               Q 800,1802 600,1902
+               Q 400,2002 350,1852
+               Q 300,1702 250,1552
+               Q 200,1402 250,1302
+               Q 300,1252 200,1102
+               Q 150,1002 200,752
+               Q 250,602 450,552
+               Q 700,502 900,602
+               Q 1100,702 1300,652
+               Q 1550,602 1800,702
+               Q 2000,802 2100,652
+               Q 2200,552 2400,602
+               Q 2600,652 2700,802
+               Q 2800,952 2900,1102
+               Q 2950,1252 2850,1402
+               Q 2750,1552 2600,1702
+               Q 2450,1852 2300,2002
+               Q 2150,2102 1950,2052
+               Q 1750,2002 1550,2102
+               Q 1350,2152 1150,2102
+               Q 950,2052 800,2152
+               Q 650,2202 500,2152
+               Q 400,2102 450,1952
+               Q 500,1802 650,1702
+               Q 800,1602 950,1502
+               Q 1100,1402 1250,1452
+               Q 1400,1502 1600,1452
+               Q 1800,1402 2050,1302
+               Q 2200,1152 2350,1052
+               Q 2500,1012 2518,952"
+            stroke="#ff8800" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+      <!-- Layer 3 - Yellow -->
+      <path d="M 2470,954
+               Q 2400,1054 2300,1004
+               Q 2100,904 1900,1004
+               Q 1650,1104 1350,1054
+               Q 1100,1004 900,1104
+               Q 700,1204 650,1354
+               Q 600,1504 700,1654
+               Q 800,1804 600,1904
+               Q 400,2004 350,1854
+               Q 300,1704 250,1554
+               Q 200,1404 250,1304
+               Q 300,1254 200,1104
+               Q 150,1004 200,754
+               Q 250,604 450,554
+               Q 700,504 900,604
+               Q 1100,704 1300,654
+               Q 1550,604 1800,704
+               Q 2000,804 2100,654
+               Q 2200,554 2400,604
+               Q 2600,654 2700,804
+               Q 2800,954 2900,1104
+               Q 2950,1254 2850,1404
+               Q 2750,1554 2600,1704
+               Q 2450,1854 2300,2004
+               Q 2150,2104 1950,2054
+               Q 1750,2004 1550,2104
+               Q 1350,2154 1150,2104
+               Q 950,2054 800,2154
+               Q 650,2204 500,2154
+               Q 400,2104 450,1954
+               Q 500,1804 650,1704
+               Q 800,1604 950,1504
+               Q 1100,1404 1250,1454
+               Q 1400,1504 1600,1454
+               Q 1800,1404 2050,1304
+               Q 2200,1154 2350,1054
+               Q 2500,1014 2516,954"
+            stroke="#ffff00" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+      <!-- Layer 4 - Green -->
+      <path d="M 2470,956
+               Q 2400,1056 2300,1006
+               Q 2100,906 1900,1006
+               Q 1650,1106 1350,1056
+               Q 1100,1006 900,1106
+               Q 700,1206 650,1356
+               Q 600,1506 700,1656
+               Q 800,1806 600,1906
+               Q 400,2006 350,1856
+               Q 300,1706 250,1556
+               Q 200,1406 250,1306
+               Q 300,1256 200,1106
+               Q 150,1006 200,756
+               Q 250,606 450,556
+               Q 700,506 900,606
+               Q 1100,706 1300,656
+               Q 1550,606 1800,706
+               Q 2000,806 2100,656
+               Q 2200,556 2400,606
+               Q 2600,656 2700,806
+               Q 2800,956 2900,1106
+               Q 2950,1256 2850,1406
+               Q 2750,1556 2600,1706
+               Q 2450,1856 2300,2006
+               Q 2150,2106 1950,2056
+               Q 1750,2006 1550,2106
+               Q 1350,2156 1150,2106
+               Q 950,2056 800,2156
+               Q 650,2206 500,2156
+               Q 400,2106 450,1956
+               Q 500,1806 650,1706
+               Q 800,1606 950,1506
+               Q 1100,1406 1250,1456
+               Q 1400,1506 1600,1456
+               Q 1800,1406 2050,1306
+               Q 2200,1156 2350,1056
+               Q 2500,1016 2514,956"
+            stroke="#00ff00" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+      <!-- Layer 5 - Cyan -->
+      <path d="M 2470,958
+               Q 2400,1058 2300,1008
+               Q 2100,908 1900,1008
+               Q 1650,1108 1350,1058
+               Q 1100,1008 900,1108
+               Q 700,1208 650,1358
+               Q 600,1508 700,1658
+               Q 800,1808 600,1908
+               Q 400,2008 350,1858
+               Q 300,1708 250,1558
+               Q 200,1408 250,1308
+               Q 300,1258 200,1108
+               Q 150,1008 200,758
+               Q 250,608 450,558
+               Q 700,508 900,608
+               Q 1100,708 1300,658
+               Q 1550,608 1800,708
+               Q 2000,808 2100,658
+               Q 2200,558 2400,608
+               Q 2600,658 2700,808
+               Q 2800,958 2900,1108
+               Q 2950,1258 2850,1408
+               Q 2750,1558 2600,1708
+               Q 2450,1858 2300,2008
+               Q 2150,2108 1950,2058
+               Q 1750,2008 1550,2108
+               Q 1350,2158 1150,2108
+               Q 950,2058 800,2158
+               Q 650,2208 500,2158
+               Q 400,2108 450,1958
+               Q 500,1808 650,1708
+               Q 800,1608 950,1508
+               Q 1100,1408 1250,1458
+               Q 1400,1508 1600,1458
+               Q 1800,1408 2050,1308
+               Q 2200,1158 2350,1058
+               Q 2500,1018 2512,958"
+            stroke="#00ffff" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+      <!-- Layer 6 - Blue -->
+      <path d="M 2470,960
+               Q 2400,1060 2300,1010
+               Q 2100,910 1900,1010
+               Q 1650,1110 1350,1060
+               Q 1100,1010 900,1110
+               Q 700,1210 650,1360
+               Q 600,1510 700,1660
+               Q 800,1810 600,1910
+               Q 400,2010 350,1860
+               Q 300,1710 250,1560
+               Q 200,1410 250,1310
+               Q 300,1260 200,1110
+               Q 150,1010 200,760
+               Q 250,610 450,560
+               Q 700,510 900,610
+               Q 1100,710 1300,660
+               Q 1550,610 1800,710
+               Q 2000,810 2100,660
+               Q 2200,560 2400,610
+               Q 2600,660 2700,810
+               Q 2800,960 2900,1110
+               Q 2950,1260 2850,1410
+               Q 2750,1560 2600,1710
+               Q 2450,1860 2300,2010
+               Q 2150,2110 1950,2060
+               Q 1750,2010 1550,2110
+               Q 1350,2160 1150,2110
+               Q 950,2060 800,2160
+               Q 650,2210 500,2160
+               Q 400,2110 450,1960
+               Q 500,1810 650,1710
+               Q 800,1610 950,1510
+               Q 1100,1410 1250,1460
+               Q 1400,1510 1600,1460
+               Q 1800,1410 2050,1310
+               Q 2200,1160 2350,1060
+               Q 2500,1020 2510,960"
+            stroke="#0088ff" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+      <!-- Layer 7 - Purple -->
+      <path d="M 2470,962
+               Q 2400,1062 2300,1012
+               Q 2100,912 1900,1012
+               Q 1650,1112 1350,1062
+               Q 1100,1012 900,1112
+               Q 700,1212 650,1362
+               Q 600,1512 700,1662
+               Q 800,1812 600,1912
+               Q 400,2012 350,1862
+               Q 300,1712 250,1562
+               Q 200,1412 250,1312
+               Q 300,1262 200,1112
+               Q 150,1012 200,762
+               Q 250,612 450,562
+               Q 700,512 900,612
+               Q 1100,712 1300,662
+               Q 1550,612 1800,712
+               Q 2000,812 2100,662
+               Q 2200,562 2400,612
+               Q 2600,662 2700,812
+               Q 2800,962 2900,1112
+               Q 2950,1262 2850,1412
+               Q 2750,1562 2600,1712
+               Q 2450,1862 2300,2012
+               Q 2150,2112 1950,2062
+               Q 1750,2012 1550,2112
+               Q 1350,2162 1150,2112
+               Q 950,2062 800,2162
+               Q 650,2212 500,2162
+               Q 400,2112 450,1962
+               Q 500,1812 650,1712
+               Q 800,1612 950,1512
+               Q 1100,1412 1250,1462
+               Q 1400,1512 1600,1462
+               Q 1800,1412 2050,1312
+               Q 2200,1162 2350,1062
+               Q 2500,1022 2508,962"
+            stroke="#ff00ff" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
     </g>
 
     <!-- ============================================ -->
@@ -3706,30 +4699,93 @@
         <ellipse cx="15" cy="52" rx="12" ry="6" fill="#333" stroke="#222" stroke-width="1"/>
       </g>
 
-      <!-- IGLOO FORTRESS being built -->
+      <!-- IGLOO FORTRESS being built - 3D style! -->
       <g id="igloo-fortress" transform="translate(200, 20)">
         <!-- Igloo shadow -->
-        <ellipse cx="0" cy="80" rx="100" ry="35" fill="#000" opacity="0.15"/>
-        <!-- Igloo dome -->
-        <ellipse cx="0" cy="30" rx="90" ry="60" fill="#f0f8ff" stroke="#cce0ee" stroke-width="2"/>
-        <!-- Ice brick lines -->
-        <path d="M -80,40 Q -40,35 0,40 Q 40,45 80,40" stroke="#cce0ee" stroke-width="1.5" fill="none"/>
-        <path d="M -75,55 Q -35,50 0,55 Q 35,60 75,55" stroke="#cce0ee" stroke-width="1.5" fill="none"/>
-        <path d="M -65,70 Q -30,65 0,70 Q 30,75 65,70" stroke="#cce0ee" stroke-width="1.5" fill="none"/>
-        <path d="M -85,25 Q -45,20 0,25 Q 45,30 85,25" stroke="#cce0ee" stroke-width="1.5" fill="none"/>
-        <path d="M -80,10 Q -40,5 0,10 Q 40,15 80,10" stroke="#cce0ee" stroke-width="1.5" fill="none"/>
-        <!-- Entrance -->
-        <ellipse cx="0" cy="65" rx="25" ry="20" fill="#1a1a2e"/>
+        <ellipse cx="0" cy="90" rx="110" ry="30" fill="#000" opacity="0.15"/>
+
+        <!-- Main igloo dome - 3D effect with gradient -->
+        <defs>
+          <radialGradient id="iglooGradient" cx="30%" cy="30%" r="70%">
+            <stop offset="0%" style="stop-color:#ffffff"/>
+            <stop offset="50%" style="stop-color:#e8f4f8"/>
+            <stop offset="100%" style="stop-color:#b8d4e3"/>
+          </radialGradient>
+          <radialGradient id="iglooInnerGradient" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" style="stop-color:#1a1a2e"/>
+            <stop offset="100%" style="stop-color:#0a0a15"/>
+          </radialGradient>
+        </defs>
+
+        <!-- Back dome section (3D depth) -->
+        <ellipse cx="0" cy="35" rx="95" ry="65" fill="#d0e8f0" stroke="#a8c8d8" stroke-width="1"/>
+
+        <!-- Main dome -->
+        <ellipse cx="0" cy="40" rx="90" ry="60" fill="url(#iglooGradient)" stroke="#a8c8d8" stroke-width="2"/>
+
+        <!-- Ice block rows - curved to show 3D shape -->
+        <!-- Row 1 - top -->
+        <path d="M -50,-15 Q -25,-20 0,-15 Q 25,-10 50,-15" stroke="#a8c8d8" stroke-width="1.5" fill="none"/>
+        <path d="M -35,-18 L -35,-12" stroke="#a8c8d8" stroke-width="1"/>
+        <path d="M 0,-20 L 0,-14" stroke="#a8c8d8" stroke-width="1"/>
+        <path d="M 35,-18 L 35,-12" stroke="#a8c8d8" stroke-width="1"/>
+
+        <!-- Row 2 -->
+        <path d="M -75,5 Q -40,0 0,5 Q 40,10 75,5" stroke="#a8c8d8" stroke-width="1.5" fill="none"/>
+        <path d="M -55,2 L -55,8" stroke="#a8c8d8" stroke-width="1"/>
+        <path d="M -20,3 L -20,9" stroke="#a8c8d8" stroke-width="1"/>
+        <path d="M 20,8 L 20,14" stroke="#a8c8d8" stroke-width="1"/>
+        <path d="M 55,7 L 55,13" stroke="#a8c8d8" stroke-width="1"/>
+
+        <!-- Row 3 -->
+        <path d="M -85,25 Q -45,20 0,25 Q 45,30 85,25" stroke="#a8c8d8" stroke-width="1.5" fill="none"/>
+        <path d="M -70,22 L -70,28" stroke="#a8c8d8" stroke-width="1"/>
+        <path d="M -35,20 L -35,26" stroke="#a8c8d8" stroke-width="1"/>
+        <path d="M 35,27 L 35,33" stroke="#a8c8d8" stroke-width="1"/>
+        <path d="M 70,26 L 70,32" stroke="#a8c8d8" stroke-width="1"/>
+
+        <!-- Row 4 -->
+        <path d="M -88,45 Q -45,40 0,45 Q 45,50 88,45" stroke="#a8c8d8" stroke-width="1.5" fill="none"/>
+        <path d="M -75,42 L -75,48" stroke="#a8c8d8" stroke-width="1"/>
+        <path d="M -45,40 L -45,46" stroke="#a8c8d8" stroke-width="1"/>
+        <path d="M 45,48 L 45,54" stroke="#a8c8d8" stroke-width="1"/>
+        <path d="M 75,46 L 75,52" stroke="#a8c8d8" stroke-width="1"/>
+
+        <!-- Row 5 - bottom -->
+        <path d="M -85,65 Q -45,60 0,65 Q 45,70 85,65" stroke="#a8c8d8" stroke-width="1.5" fill="none"/>
+        <path d="M -68,62 L -68,68" stroke="#a8c8d8" stroke-width="1"/>
+        <path d="M -35,60 L -35,66" stroke="#a8c8d8" stroke-width="1"/>
+        <path d="M 35,68 L 35,74" stroke="#a8c8d8" stroke-width="1"/>
+        <path d="M 68,66 L 68,72" stroke="#a8c8d8" stroke-width="1"/>
+
+        <!-- Base ring (3D effect) -->
+        <ellipse cx="0" cy="80" rx="88" ry="20" fill="#d8e8f0" stroke="#a8c8d8" stroke-width="2"/>
+
+        <!-- Entrance tunnel (3D tube) -->
+        <ellipse cx="0" cy="75" rx="30" ry="22" fill="#c8d8e8" stroke="#a8c8d8" stroke-width="1.5"/>
+        <ellipse cx="0" cy="72" rx="25" ry="18" fill="url(#iglooInnerGradient)"/>
+        <!-- Entrance tunnel top arch for 3D effect -->
+        <path d="M -28,60 Q 0,45 28,60" stroke="#b8d0e0" stroke-width="3" fill="none"/>
+
+        <!-- Snow pile around entrance -->
+        <ellipse cx="-35" cy="85" rx="12" ry="6" fill="#f0f8ff" stroke="#d8e8f0" stroke-width="1"/>
+        <ellipse cx="35" cy="85" rx="12" ry="6" fill="#f0f8ff" stroke="#d8e8f0" stroke-width="1"/>
+
         <!-- "IGLOO TAX: COOKIES" sign -->
-        <g transform="translate(0, -50)">
-          <rect x="-55" y="-12" width="110" height="24" rx="3" fill="#fff" stroke="#333" stroke-width="1"/>
-          <text x="0" y="5" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="#333">🍪 IGLOO TAX: COOKIES 🍪</text>
+        <g transform="translate(0, -55)">
+          <rect x="-70" y="-12" width="140" height="28" rx="4" fill="#fff" stroke="#333" stroke-width="1.5"/>
+          <text x="0" y="7" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#333">🍪 IGLOO TAX: COOKIES 🍪</text>
         </g>
-        <!-- Trapped people inside ("HELP!") -->
-        <g transform="translate(0, 50)">
-          <circle cx="-8" cy="0" r="5" fill="#ffd5b4" stroke="#333" stroke-width="0.5"/>
-          <circle cx="8" cy="0" r="5" fill="#ffd5b4" stroke="#333" stroke-width="0.5"/>
-          <text x="0" y="-15" text-anchor="middle" font-family="Arial, sans-serif" font-size="8" font-weight="bold" fill="#ff0000">HELP!</text>
+
+        <!-- Trapped people inside ("HELP!") - visible through entrance -->
+        <g transform="translate(0, 55)">
+          <circle cx="-10" cy="5" r="6" fill="#ffd5b4" stroke="#333" stroke-width="0.5"/>
+          <circle cx="-9" cy="3" r="1.5" fill="#333"/>
+          <circle cx="-11" cy="3" r="1.5" fill="#333"/>
+          <circle cx="10" cy="5" r="6" fill="#ffd5b4" stroke="#333" stroke-width="0.5"/>
+          <circle cx="9" cy="3" r="1.5" fill="#333"/>
+          <circle cx="11" cy="3" r="1.5" fill="#333"/>
+          <text x="0" y="-12" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="#ff0000">HELP!</text>
         </g>
       </g>
 
@@ -3834,23 +4890,150 @@
         <text x="0" y="5" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="#fff">🦸 HERO: FREE COCOA</text>
       </g>
 
-      <!-- Admirers queue -->
-      <g transform="translate(80, 100)">
+      <!-- 20 KIDS WITH PHONES crowding around Kostya! -->
+      <g id="kids-with-phones" transform="translate(60, 85)">
+        <!-- Row 1 - closest to Kostya (5 kids) -->
         <g transform="translate(0, 0)">
           <ellipse cx="0" cy="12" rx="5" ry="3" fill="#000" opacity="0.15"/>
           <ellipse cx="0" cy="5" rx="5" ry="8" fill="#ff6699" stroke="#333" stroke-width="0.6"/>
           <circle cx="0" cy="-5" r="5" fill="#ffd5b4" stroke="#333" stroke-width="0.4"/>
+          <rect x="3" y="0" width="4" height="7" rx="0.5" fill="#333"/><rect x="3.5" y="1" width="3" height="4" fill="#4af"/>
         </g>
-        <g transform="translate(15, 3)">
+        <g transform="translate(18, 3)">
           <ellipse cx="0" cy="12" rx="5" ry="3" fill="#000" opacity="0.15"/>
           <ellipse cx="0" cy="5" rx="5" ry="8" fill="#66ccff" stroke="#333" stroke-width="0.6"/>
           <circle cx="0" cy="-5" r="5" fill="#ffd5b4" stroke="#333" stroke-width="0.4"/>
+          <rect x="3" y="-2" width="4" height="7" rx="0.5" fill="#333"/><rect x="3.5" y="-1" width="3" height="4" fill="#4f4"/>
         </g>
-        <g transform="translate(30, 5)">
+        <g transform="translate(36, 5)">
           <ellipse cx="0" cy="12" rx="5" ry="3" fill="#000" opacity="0.15"/>
           <ellipse cx="0" cy="5" rx="5" ry="8" fill="#ffcc44" stroke="#333" stroke-width="0.6"/>
           <circle cx="0" cy="-5" r="5" fill="#ffd5b4" stroke="#333" stroke-width="0.4"/>
+          <rect x="3" y="1" width="4" height="7" rx="0.5" fill="#333"/><rect x="3.5" y="2" width="3" height="4" fill="#f4f"/>
         </g>
+        <g transform="translate(54, 2)">
+          <ellipse cx="0" cy="12" rx="5" ry="3" fill="#000" opacity="0.15"/>
+          <ellipse cx="0" cy="5" rx="5" ry="8" fill="#99ff99" stroke="#333" stroke-width="0.6"/>
+          <circle cx="0" cy="-5" r="5" fill="#ffd5b4" stroke="#333" stroke-width="0.4"/>
+          <rect x="3" y="0" width="4" height="7" rx="0.5" fill="#333"/><rect x="3.5" y="1" width="3" height="4" fill="#ff4"/>
+        </g>
+        <g transform="translate(72, 6)">
+          <ellipse cx="0" cy="12" rx="5" ry="3" fill="#000" opacity="0.15"/>
+          <ellipse cx="0" cy="5" rx="5" ry="8" fill="#ff9966" stroke="#333" stroke-width="0.6"/>
+          <circle cx="0" cy="-5" r="5" fill="#ffd5b4" stroke="#333" stroke-width="0.4"/>
+          <rect x="3" y="-1" width="4" height="7" rx="0.5" fill="#333"/><rect x="3.5" y="0" width="3" height="4" fill="#4ff"/>
+        </g>
+
+        <!-- Row 2 (5 kids) -->
+        <g transform="translate(-10, 25)">
+          <ellipse cx="0" cy="12" rx="5" ry="3" fill="#000" opacity="0.15"/>
+          <ellipse cx="0" cy="5" rx="5" ry="8" fill="#cc99ff" stroke="#333" stroke-width="0.6"/>
+          <circle cx="0" cy="-5" r="5" fill="#ffd5b4" stroke="#333" stroke-width="0.4"/>
+          <rect x="3" y="0" width="4" height="7" rx="0.5" fill="#333"/><rect x="3.5" y="1" width="3" height="4" fill="#f44"/>
+        </g>
+        <g transform="translate(10, 28)">
+          <ellipse cx="0" cy="12" rx="5" ry="3" fill="#000" opacity="0.15"/>
+          <ellipse cx="0" cy="5" rx="5" ry="8" fill="#44aaff" stroke="#333" stroke-width="0.6"/>
+          <circle cx="0" cy="-5" r="5" fill="#ffd5b4" stroke="#333" stroke-width="0.4"/>
+          <rect x="3" y="1" width="4" height="7" rx="0.5" fill="#333"/><rect x="3.5" y="2" width="3" height="4" fill="#4af"/>
+        </g>
+        <g transform="translate(28, 26)">
+          <ellipse cx="0" cy="12" rx="5" ry="3" fill="#000" opacity="0.15"/>
+          <ellipse cx="0" cy="5" rx="5" ry="8" fill="#ffaa77" stroke="#333" stroke-width="0.6"/>
+          <circle cx="0" cy="-5" r="5" fill="#ffd5b4" stroke="#333" stroke-width="0.4"/>
+          <rect x="3" y="-1" width="4" height="7" rx="0.5" fill="#333"/><rect x="3.5" y="0" width="3" height="4" fill="#af4"/>
+        </g>
+        <g transform="translate(46, 30)">
+          <ellipse cx="0" cy="12" rx="5" ry="3" fill="#000" opacity="0.15"/>
+          <ellipse cx="0" cy="5" rx="5" ry="8" fill="#77ddff" stroke="#333" stroke-width="0.6"/>
+          <circle cx="0" cy="-5" r="5" fill="#ffd5b4" stroke="#333" stroke-width="0.4"/>
+          <rect x="3" y="0" width="4" height="7" rx="0.5" fill="#333"/><rect x="3.5" y="1" width="3" height="4" fill="#f4a"/>
+        </g>
+        <g transform="translate(64, 27)">
+          <ellipse cx="0" cy="12" rx="5" ry="3" fill="#000" opacity="0.15"/>
+          <ellipse cx="0" cy="5" rx="5" ry="8" fill="#ff77aa" stroke="#333" stroke-width="0.6"/>
+          <circle cx="0" cy="-5" r="5" fill="#ffd5b4" stroke="#333" stroke-width="0.4"/>
+          <rect x="3" y="1" width="4" height="7" rx="0.5" fill="#333"/><rect x="3.5" y="2" width="3" height="4" fill="#4ff"/>
+        </g>
+
+        <!-- Row 3 (5 kids) -->
+        <g transform="translate(-5, 50)">
+          <ellipse cx="0" cy="12" rx="5" ry="3" fill="#000" opacity="0.15"/>
+          <ellipse cx="0" cy="5" rx="5" ry="8" fill="#aaffaa" stroke="#333" stroke-width="0.6"/>
+          <circle cx="0" cy="-5" r="5" fill="#ffd5b4" stroke="#333" stroke-width="0.4"/>
+          <rect x="3" y="-1" width="4" height="7" rx="0.5" fill="#333"/><rect x="3.5" y="0" width="3" height="4" fill="#44f"/>
+        </g>
+        <g transform="translate(15, 53)">
+          <ellipse cx="0" cy="12" rx="5" ry="3" fill="#000" opacity="0.15"/>
+          <ellipse cx="0" cy="5" rx="5" ry="8" fill="#ffaaff" stroke="#333" stroke-width="0.6"/>
+          <circle cx="0" cy="-5" r="5" fill="#ffd5b4" stroke="#333" stroke-width="0.4"/>
+          <rect x="3" y="0" width="4" height="7" rx="0.5" fill="#333"/><rect x="3.5" y="1" width="3" height="4" fill="#fa4"/>
+        </g>
+        <g transform="translate(33, 55)">
+          <ellipse cx="0" cy="12" rx="5" ry="3" fill="#000" opacity="0.15"/>
+          <ellipse cx="0" cy="5" rx="5" ry="8" fill="#aaccff" stroke="#333" stroke-width="0.6"/>
+          <circle cx="0" cy="-5" r="5" fill="#ffd5b4" stroke="#333" stroke-width="0.4"/>
+          <rect x="3" y="1" width="4" height="7" rx="0.5" fill="#333"/><rect x="3.5" y="2" width="3" height="4" fill="#4fa"/>
+        </g>
+        <g transform="translate(51, 52)">
+          <ellipse cx="0" cy="12" rx="5" ry="3" fill="#000" opacity="0.15"/>
+          <ellipse cx="0" cy="5" rx="5" ry="8" fill="#ffcc99" stroke="#333" stroke-width="0.6"/>
+          <circle cx="0" cy="-5" r="5" fill="#ffd5b4" stroke="#333" stroke-width="0.4"/>
+          <rect x="3" y="-2" width="4" height="7" rx="0.5" fill="#333"/><rect x="3.5" y="-1" width="3" height="4" fill="#f44"/>
+        </g>
+        <g transform="translate(70, 56)">
+          <ellipse cx="0" cy="12" rx="5" ry="3" fill="#000" opacity="0.15"/>
+          <ellipse cx="0" cy="5" rx="5" ry="8" fill="#99ddaa" stroke="#333" stroke-width="0.6"/>
+          <circle cx="0" cy="-5" r="5" fill="#ffd5b4" stroke="#333" stroke-width="0.4"/>
+          <rect x="3" y="0" width="4" height="7" rx="0.5" fill="#333"/><rect x="3.5" y="1" width="3" height="4" fill="#a4f"/>
+        </g>
+
+        <!-- Row 4 (5 kids) -->
+        <g transform="translate(-15, 75)">
+          <ellipse cx="0" cy="12" rx="5" ry="3" fill="#000" opacity="0.15"/>
+          <ellipse cx="0" cy="5" rx="5" ry="8" fill="#ddaa99" stroke="#333" stroke-width="0.6"/>
+          <circle cx="0" cy="-5" r="5" fill="#ffd5b4" stroke="#333" stroke-width="0.4"/>
+          <rect x="3" y="1" width="4" height="7" rx="0.5" fill="#333"/><rect x="3.5" y="2" width="3" height="4" fill="#4af"/>
+        </g>
+        <g transform="translate(5, 78)">
+          <ellipse cx="0" cy="12" rx="5" ry="3" fill="#000" opacity="0.15"/>
+          <ellipse cx="0" cy="5" rx="5" ry="8" fill="#99aadd" stroke="#333" stroke-width="0.6"/>
+          <circle cx="0" cy="-5" r="5" fill="#ffd5b4" stroke="#333" stroke-width="0.4"/>
+          <rect x="3" y="0" width="4" height="7" rx="0.5" fill="#333"/><rect x="3.5" y="1" width="3" height="4" fill="#fa4"/>
+        </g>
+        <g transform="translate(25, 80)">
+          <ellipse cx="0" cy="12" rx="5" ry="3" fill="#000" opacity="0.15"/>
+          <ellipse cx="0" cy="5" rx="5" ry="8" fill="#dddd99" stroke="#333" stroke-width="0.6"/>
+          <circle cx="0" cy="-5" r="5" fill="#ffd5b4" stroke="#333" stroke-width="0.4"/>
+          <rect x="3" y="-1" width="4" height="7" rx="0.5" fill="#333"/><rect x="3.5" y="0" width="3" height="4" fill="#4ff"/>
+        </g>
+        <g transform="translate(45, 76)">
+          <ellipse cx="0" cy="12" rx="5" ry="3" fill="#000" opacity="0.15"/>
+          <ellipse cx="0" cy="5" rx="5" ry="8" fill="#aa99dd" stroke="#333" stroke-width="0.6"/>
+          <circle cx="0" cy="-5" r="5" fill="#ffd5b4" stroke="#333" stroke-width="0.4"/>
+          <rect x="3" y="1" width="4" height="7" rx="0.5" fill="#333"/><rect x="3.5" y="2" width="3" height="4" fill="#f4f"/>
+        </g>
+        <g transform="translate(65, 82)">
+          <ellipse cx="0" cy="12" rx="5" ry="3" fill="#000" opacity="0.15"/>
+          <ellipse cx="0" cy="5" rx="5" ry="8" fill="#ff9999" stroke="#333" stroke-width="0.6"/>
+          <circle cx="0" cy="-5" r="5" fill="#ffd5b4" stroke="#333" stroke-width="0.4"/>
+          <rect x="3" y="0" width="4" height="7" rx="0.5" fill="#333"/><rect x="3.5" y="1" width="3" height="4" fill="#4f4"/>
+        </g>
+      </g>
+
+      <!-- Confused penguin watching the kids -->
+      <g transform="translate(20, 110)">
+        <ellipse cx="0" cy="15" rx="6" ry="4" fill="#000" opacity="0.15"/>
+        <ellipse cx="0" cy="8" rx="6" ry="9" fill="#1a1a2e" stroke="#333" stroke-width="0.8"/>
+        <ellipse cx="0" cy="8" rx="4" ry="7" fill="#fff"/>
+        <circle cx="0" cy="0" r="6" fill="#1a1a2e" stroke="#333" stroke-width="0.6"/>
+        <circle cx="-2" cy="-2" r="1.5" fill="#fff"/>
+        <circle cx="2" cy="-2" r="1.5" fill="#fff"/>
+        <circle cx="-2" cy="-2" r="0.8" fill="#333"/>
+        <circle cx="2" cy="-2" r="0.8" fill="#333"/>
+        <polygon points="0,2 -2,4 2,4" fill="#ff9900"/>
+        <!-- Question mark -->
+        <text x="12" y="-5" font-family="Arial, sans-serif" font-size="10" fill="#333">?</text>
       </g>
     </g>
 
@@ -4281,6 +5464,33 @@
         </g>
       </g>
 
+      <!-- MARSHMALLOW PILE (under Yeehaw area!) -->
+      <g id="marshmallow-pile" transform="translate(100, 10)">
+        <!-- Pile of marshmallows scattered -->
+        <ellipse cx="0" cy="45" rx="40" ry="10" fill="#000" opacity="0.1"/>
+        <!-- Bottom layer marshmallows -->
+        <ellipse cx="-25" cy="40" rx="8" ry="10" fill="#fff" stroke="#e8e8e8" stroke-width="1"/>
+        <ellipse cx="-10" cy="42" rx="9" ry="11" fill="#fff" stroke="#e8e8e8" stroke-width="1"/>
+        <ellipse cx="8" cy="40" rx="8" ry="10" fill="#fff" stroke="#e8e8e8" stroke-width="1"/>
+        <ellipse cx="25" cy="42" rx="9" ry="11" fill="#fff" stroke="#e8e8e8" stroke-width="1"/>
+        <ellipse cx="40" cy="38" rx="7" ry="9" fill="#fff" stroke="#e8e8e8" stroke-width="1"/>
+        <!-- Middle layer -->
+        <ellipse cx="-18" cy="30" rx="8" ry="10" fill="#fff" stroke="#e8e8e8" stroke-width="1"/>
+        <ellipse cx="0" cy="32" rx="9" ry="11" fill="#fff" stroke="#e8e8e8" stroke-width="1"/>
+        <ellipse cx="18" cy="30" rx="8" ry="10" fill="#fff" stroke="#e8e8e8" stroke-width="1"/>
+        <ellipse cx="35" cy="28" rx="7" ry="9" fill="#fff" stroke="#e8e8e8" stroke-width="1"/>
+        <!-- Top layer -->
+        <ellipse cx="-8" cy="20" rx="7" ry="9" fill="#fff" stroke="#e8e8e8" stroke-width="1"/>
+        <ellipse cx="10" cy="18" rx="8" ry="10" fill="#fff" stroke="#e8e8e8" stroke-width="1"/>
+        <ellipse cx="28" cy="16" rx="6" ry="8" fill="#fff" stroke="#e8e8e8" stroke-width="1"/>
+        <!-- A few slightly toasted ones -->
+        <ellipse cx="-30" cy="35" rx="6" ry="8" fill="#f5e6d3" stroke="#d4c4a8" stroke-width="1"/>
+        <ellipse cx="45" cy="25" rx="6" ry="8" fill="#e8d9c0" stroke="#c9b896" stroke-width="1"/>
+        <!-- Peak marshmallows -->
+        <ellipse cx="5" cy="8" rx="6" ry="8" fill="#fff" stroke="#e8e8e8" stroke-width="1"/>
+        <ellipse cx="22" cy="5" rx="5" ry="7" fill="#fff" stroke="#e8e8e8" stroke-width="1"/>
+      </g>
+
       <!-- "JUST LIKE PRODUCTION" sign -->
       <g transform="translate(-100, -80)">
         <rect x="0" y="0" width="80" height="50" rx="3" fill="#fff" stroke="#333" stroke-width="2"/>
@@ -4579,6 +5789,132 @@
           <rect x="-20" y="0" width="40" height="16" rx="2" fill="#ffcc00" stroke="#cc9900" stroke-width="1"/>
           <text x="0" y="11" text-anchor="middle" font-family="Arial, sans-serif" font-size="6" font-weight="bold" fill="#333">☕ 15 MIN WAIT</text>
         </g>
+
+        <!-- EXTENDED QUEUE going down! -->
+        <!-- Person 11 -->
+        <g transform="translate(-280, 70)">
+          <ellipse cx="0" cy="28" rx="8" ry="4" fill="#000" opacity="0.15"/>
+          <ellipse cx="0" cy="15" rx="7" ry="12" fill="#66aa88" stroke="#333" stroke-width="0.8"/>
+          <circle cx="0" cy="0" r="7" fill="#ffd5b4" stroke="#333" stroke-width="0.6"/>
+          <circle cx="-2" cy="-1" r="1" fill="#333"/>
+          <circle cx="2" cy="-1" r="1" fill="#333"/>
+        </g>
+        <!-- Person 12 -->
+        <g transform="translate(-275, 100)">
+          <ellipse cx="0" cy="28" rx="8" ry="4" fill="#000" opacity="0.15"/>
+          <ellipse cx="0" cy="15" rx="7" ry="12" fill="#aa6688" stroke="#333" stroke-width="0.8"/>
+          <circle cx="0" cy="0" r="7" fill="#ffd5b4" stroke="#333" stroke-width="0.6"/>
+          <circle cx="-2" cy="-1" r="1" fill="#333"/>
+          <circle cx="2" cy="-1" r="1" fill="#333"/>
+        </g>
+        <!-- Person 13 -->
+        <g transform="translate(-270, 130)">
+          <ellipse cx="0" cy="28" rx="8" ry="4" fill="#000" opacity="0.15"/>
+          <ellipse cx="0" cy="15" rx="7" ry="12" fill="#88aa66" stroke="#333" stroke-width="0.8"/>
+          <circle cx="0" cy="0" r="7" fill="#ffd5b4" stroke="#333" stroke-width="0.6"/>
+          <circle cx="-2" cy="-1" r="1" fill="#333"/>
+          <circle cx="2" cy="-1" r="1" fill="#333"/>
+        </g>
+        <!-- Person 14 -->
+        <g transform="translate(-265, 160)">
+          <ellipse cx="0" cy="28" rx="8" ry="4" fill="#000" opacity="0.15"/>
+          <ellipse cx="0" cy="15" rx="7" ry="12" fill="#6688aa" stroke="#333" stroke-width="0.8"/>
+          <circle cx="0" cy="0" r="7" fill="#ffd5b4" stroke="#333" stroke-width="0.6"/>
+          <circle cx="-2" cy="-1" r="1" fill="#333"/>
+          <circle cx="2" cy="-1" r="1" fill="#333"/>
+        </g>
+        <!-- Person 15 -->
+        <g transform="translate(-260, 190)">
+          <ellipse cx="0" cy="28" rx="8" ry="4" fill="#000" opacity="0.15"/>
+          <ellipse cx="0" cy="15" rx="7" ry="12" fill="#aa88aa" stroke="#333" stroke-width="0.8"/>
+          <circle cx="0" cy="0" r="7" fill="#ffd5b4" stroke="#333" stroke-width="0.6"/>
+          <circle cx="-2" cy="-1" r="1" fill="#333"/>
+          <circle cx="2" cy="-1" r="1" fill="#333"/>
+        </g>
+        <!-- Person 16 -->
+        <g transform="translate(-255, 220)">
+          <ellipse cx="0" cy="28" rx="8" ry="4" fill="#000" opacity="0.15"/>
+          <ellipse cx="0" cy="15" rx="7" ry="12" fill="#88aaaa" stroke="#333" stroke-width="0.8"/>
+          <circle cx="0" cy="0" r="7" fill="#ffd5b4" stroke="#333" stroke-width="0.6"/>
+          <circle cx="-2" cy="-1" r="1" fill="#333"/>
+          <circle cx="2" cy="-1" r="1" fill="#333"/>
+        </g>
+        <!-- Person 17 -->
+        <g transform="translate(-250, 250)">
+          <ellipse cx="0" cy="28" rx="8" ry="4" fill="#000" opacity="0.15"/>
+          <ellipse cx="0" cy="15" rx="7" ry="12" fill="#aaaa66" stroke="#333" stroke-width="0.8"/>
+          <circle cx="0" cy="0" r="7" fill="#ffd5b4" stroke="#333" stroke-width="0.6"/>
+          <circle cx="-2" cy="-1" r="1" fill="#333"/>
+          <circle cx="2" cy="-1" r="1" fill="#333"/>
+        </g>
+        <!-- Person 18 -->
+        <g transform="translate(-245, 280)">
+          <ellipse cx="0" cy="28" rx="8" ry="4" fill="#000" opacity="0.15"/>
+          <ellipse cx="0" cy="15" rx="7" ry="12" fill="#66aaaa" stroke="#333" stroke-width="0.8"/>
+          <circle cx="0" cy="0" r="7" fill="#ffd5b4" stroke="#333" stroke-width="0.6"/>
+          <circle cx="-2" cy="-1" r="1" fill="#333"/>
+          <circle cx="2" cy="-1" r="1" fill="#333"/>
+        </g>
+        <!-- Person 19 -->
+        <g transform="translate(-240, 310)">
+          <ellipse cx="0" cy="28" rx="8" ry="4" fill="#000" opacity="0.15"/>
+          <ellipse cx="0" cy="15" rx="7" ry="12" fill="#aa6666" stroke="#333" stroke-width="0.8"/>
+          <circle cx="0" cy="0" r="7" fill="#ffd5b4" stroke="#333" stroke-width="0.6"/>
+          <circle cx="-2" cy="-1" r="1" fill="#333"/>
+          <circle cx="2" cy="-1" r="1" fill="#333"/>
+        </g>
+        <!-- Person 20 -->
+        <g transform="translate(-235, 340)">
+          <ellipse cx="0" cy="28" rx="8" ry="4" fill="#000" opacity="0.15"/>
+          <ellipse cx="0" cy="15" rx="7" ry="12" fill="#6666aa" stroke="#333" stroke-width="0.8"/>
+          <circle cx="0" cy="0" r="7" fill="#ffd5b4" stroke="#333" stroke-width="0.6"/>
+          <circle cx="-2" cy="-1" r="1" fill="#333"/>
+          <circle cx="2" cy="-1" r="1" fill="#333"/>
+        </g>
+        <!-- Person 21 -->
+        <g transform="translate(-230, 370)">
+          <ellipse cx="0" cy="28" rx="8" ry="4" fill="#000" opacity="0.15"/>
+          <ellipse cx="0" cy="15" rx="7" ry="12" fill="#aa88aa" stroke="#333" stroke-width="0.8"/>
+          <circle cx="0" cy="0" r="7" fill="#ffd5b4" stroke="#333" stroke-width="0.6"/>
+          <circle cx="-2" cy="-1" r="1" fill="#333"/>
+          <circle cx="2" cy="-1" r="1" fill="#333"/>
+        </g>
+        <!-- Person 22 - at edge, fading -->
+        <g transform="translate(-225, 400)">
+          <ellipse cx="0" cy="28" rx="8" ry="4" fill="#000" opacity="0.1"/>
+          <ellipse cx="0" cy="15" rx="7" ry="12" fill="#88aa88" stroke="#333" stroke-width="0.8" opacity="0.8"/>
+          <circle cx="0" cy="0" r="7" fill="#ffd5b4" stroke="#333" stroke-width="0.6" opacity="0.8"/>
+          <circle cx="-2" cy="-1" r="1" fill="#333" opacity="0.8"/>
+          <circle cx="2" cy="-1" r="1" fill="#333" opacity="0.8"/>
+        </g>
+        <!-- Person 23 - fading more -->
+        <g transform="translate(-220, 430)">
+          <ellipse cx="0" cy="28" rx="8" ry="4" fill="#000" opacity="0.08"/>
+          <ellipse cx="0" cy="15" rx="7" ry="12" fill="#aa8888" stroke="#333" stroke-width="0.8" opacity="0.6"/>
+          <circle cx="0" cy="0" r="7" fill="#ffd5b4" stroke="#333" stroke-width="0.6" opacity="0.6"/>
+          <circle cx="-2" cy="-1" r="1" fill="#333" opacity="0.6"/>
+          <circle cx="2" cy="-1" r="1" fill="#333" opacity="0.6"/>
+        </g>
+        <!-- Person 24 - almost gone -->
+        <g transform="translate(-215, 460)">
+          <ellipse cx="0" cy="28" rx="8" ry="4" fill="#000" opacity="0.05"/>
+          <ellipse cx="0" cy="15" rx="7" ry="12" fill="#8888aa" stroke="#333" stroke-width="0.8" opacity="0.4"/>
+          <circle cx="0" cy="0" r="7" fill="#ffd5b4" stroke="#333" stroke-width="0.6" opacity="0.4"/>
+        </g>
+        <!-- Dots indicating queue continues... -->
+        <g transform="translate(-210, 500)">
+          <circle cx="0" cy="0" r="3" fill="#666" opacity="0.5"/>
+          <circle cx="0" cy="15" r="3" fill="#666" opacity="0.4"/>
+          <circle cx="0" cy="30" r="3" fill="#666" opacity="0.3"/>
+        </g>
+
+        <!-- "3km" sign with arrow pointing down -->
+        <g transform="translate(-200, 550)">
+          <rect x="-30" y="0" width="60" height="35" rx="3" fill="#ff6600" stroke="#cc5500" stroke-width="2"/>
+          <text x="0" y="16" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#fff">3km</text>
+          <!-- Arrow pointing down -->
+          <polygon points="0,22 -10,22 0,32 10,22 0,22" fill="#fff"/>
+        </g>
       </g>
 
       <!-- RUSLAN photobombing group photo -->
@@ -4629,12 +5965,16 @@
           <line x1="-19" y1="-17" x2="-16" y2="-25" stroke="#ffd5b4" stroke-width="2"/>
           <line x1="21" y1="-17" x2="24" y2="-25" stroke="#ffd5b4" stroke-width="2"/>
           <line x1="19" y1="-17" x2="16" y2="-25" stroke="#ffd5b4" stroke-width="2"/>
-          <!-- Big goofy grin -->
+          <!-- Serious face -->
           <circle cx="-3" cy="-6" r="2" fill="#fff" stroke="#333" stroke-width="0.3"/>
           <circle cx="3" cy="-6" r="2" fill="#fff" stroke="#333" stroke-width="0.3"/>
           <circle cx="-3" cy="-6" r="1" fill="#333"/>
           <circle cx="3" cy="-6" r="1" fill="#333"/>
-          <path d="M -4,0 Q 0,5 4,0" stroke="#333" fill="#fff" stroke-width="0.8"/>
+          <!-- Furrowed brows (serious) -->
+          <line x1="-6" y1="-10" x2="-1" y2="-9" stroke="#333" stroke-width="0.8"/>
+          <line x1="6" y1="-10" x2="1" y2="-9" stroke="#333" stroke-width="0.8"/>
+          <!-- Serious straight mouth -->
+          <line x1="-3" y1="0" x2="3" y2="0" stroke="#333" stroke-width="1"/>
         </g>
         <!-- "📸 RUSLAN STRIKES AGAIN" floating text -->
         <g transform="translate(20, -70)">
@@ -4816,35 +6156,48 @@
         </g>
       </g>
 
-      <!-- INTS with cocoa, bewildered by ducks -->
+      <!-- INTS chasing ducks with fishing net, surprised! -->
       <g id="ints-character" transform="translate(180, 80)">
         <!-- Shadow -->
         <ellipse cx="0" cy="35" rx="12" ry="6" fill="#000" opacity="0.2"/>
-        <!-- Body -->
-        <ellipse cx="0" cy="18" rx="11" ry="17" fill="#336699" stroke="#333" stroke-width="1.5"/>
-        <!-- Arms -->
-        <line x1="-10" y1="12" x2="-22" y2="5" stroke="#336699" stroke-width="5"/>
-        <line x1="10" y1="12" x2="22" y2="5" stroke="#336699" stroke-width="5"/>
-        <!-- Holding cocoa cup -->
-        <g transform="translate(-25, 0)">
-          <polygon points="-6,0 6,0 5,14 -5,14" fill="#8b4513" stroke="#333" stroke-width="1"/>
-          <ellipse cx="0" cy="0" rx="6" ry="2.5" fill="#3d1f0d"/>
-          <ellipse cx="0" cy="-2" rx="5" ry="3" fill="#fff"/>
-          <!-- Steam -->
-          <path d="M -2,-6 Q 0,-12 2,-6" stroke="#ccc" stroke-width="1" fill="none" opacity="0.5"/>
+        <!-- Body (leaning forward, running pose) -->
+        <ellipse cx="0" cy="18" rx="11" ry="17" fill="#336699" stroke="#333" stroke-width="1.5" transform="rotate(-15)"/>
+        <!-- Arms raised holding net -->
+        <line x1="-8" y1="8" x2="-18" y2="-15" stroke="#336699" stroke-width="5"/>
+        <line x1="8" y1="8" x2="25" y2="-10" stroke="#336699" stroke-width="5"/>
+        <!-- Hands -->
+        <circle cx="-20" cy="-17" r="4" fill="#ffd5b4" stroke="#333" stroke-width="0.5"/>
+        <circle cx="27" cy="-12" r="4" fill="#ffd5b4" stroke="#333" stroke-width="0.5"/>
+        <!-- FISHING NET! -->
+        <g transform="translate(30, -15)">
+          <!-- Net handle -->
+          <rect x="-3" y="-35" width="6" height="50" fill="#8b5a2b" stroke="#5c3317" stroke-width="1" rx="1"/>
+          <!-- Net ring -->
+          <ellipse cx="0" cy="-40" rx="22" ry="8" fill="none" stroke="#5c3317" stroke-width="2"/>
+          <!-- Net mesh -->
+          <path d="M -22,-40 Q -18,-25 0,-15 Q 18,-25 22,-40" fill="none" stroke="#888" stroke-width="0.8"/>
+          <path d="M -18,-40 Q -14,-28 0,-20 Q 14,-28 18,-40" fill="none" stroke="#888" stroke-width="0.8"/>
+          <path d="M -14,-40 Q -10,-30 0,-22 Q 10,-30 14,-40" fill="none" stroke="#888" stroke-width="0.8"/>
+          <path d="M -10,-40 L 0,-25 L 10,-40" fill="none" stroke="#888" stroke-width="0.8"/>
+          <!-- Cross lines of net -->
+          <path d="M -20,-35 Q 0,-20 20,-35" fill="none" stroke="#888" stroke-width="0.6"/>
+          <path d="M -18,-30 Q 0,-18 18,-30" fill="none" stroke="#888" stroke-width="0.6"/>
         </g>
         <!-- Head -->
         <circle cx="0" cy="-5" r="12" fill="#ffd5b4" stroke="#333" stroke-width="1.5"/>
-        <!-- Confused/overwhelmed expression -->
-        <circle cx="-4" cy="-7" r="2.5" fill="#fff" stroke="#333" stroke-width="0.5"/>
-        <circle cx="4" cy="-7" r="2.5" fill="#fff" stroke="#333" stroke-width="0.5"/>
-        <circle cx="-4" cy="-7" r="1.2" fill="#333"/>
-        <circle cx="4" cy="-7" r="1.2" fill="#333"/>
-        <!-- Raised eyebrows -->
-        <path d="M -8,-12 Q -4,-15 0,-12" stroke="#333" stroke-width="1" fill="none"/>
-        <path d="M 8,-12 Q 4,-15 0,-12" stroke="#333" stroke-width="1" fill="none"/>
-        <!-- Small confused frown -->
-        <path d="M -3,2 Q 0,0 3,2" stroke="#333" fill="none" stroke-width="1"/>
+        <!-- SURPRISED expression - wide eyes! -->
+        <circle cx="-4" cy="-7" r="3.5" fill="#fff" stroke="#333" stroke-width="0.5"/>
+        <circle cx="4" cy="-7" r="3.5" fill="#fff" stroke="#333" stroke-width="0.5"/>
+        <circle cx="-4" cy="-6" r="1.8" fill="#333"/>
+        <circle cx="4" cy="-6" r="1.8" fill="#333"/>
+        <!-- Tiny white reflections in eyes -->
+        <circle cx="-3" cy="-7" r="0.6" fill="#fff"/>
+        <circle cx="5" cy="-7" r="0.6" fill="#fff"/>
+        <!-- High raised eyebrows (very surprised!) -->
+        <path d="M -8,-13 Q -4,-17 0,-13" stroke="#333" stroke-width="1.2" fill="none"/>
+        <path d="M 8,-13 Q 4,-17 0,-13" stroke="#333" stroke-width="1.2" fill="none"/>
+        <!-- Open mouth (surprised!) -->
+        <ellipse cx="0" cy="2" rx="4" ry="3" fill="#333" stroke="#333" stroke-width="0.5"/>
         <!-- Beanie hat -->
         <ellipse cx="0" cy="-15" rx="13" ry="6" fill="#225588" stroke="#333" stroke-width="1"/>
         <ellipse cx="0" cy="-18" rx="10" ry="8" fill="#225588" stroke="#333" stroke-width="1"/>
@@ -5800,10 +7153,458 @@
       <circle cx="3080" cy="920" r="2" fill="#fff" opacity="0.5"/>
     </g>
 
+    <!-- ============================================ -->
+    <!-- BLADE WALLET SERVICES STAND (Bottom Left) -->
+    <!-- With Ints running it + Kasturi, Patrik, Artem -->
+    <!-- ============================================ -->
+    <g id="blade-wallet-stand" transform="translate(750, 2220)">
+      <!-- Stand structure -->
+      <rect x="-80" y="0" width="160" height="100" rx="5" fill="#1a1a3e" stroke="#3498db" stroke-width="2"/>
+      <rect x="-75" y="5" width="150" height="50" rx="3" fill="#0d1b2a"/>
+
+      <!-- Blade Wallet Logo area -->
+      <g transform="translate(0, 30)">
+        <!-- Stylized wallet icon -->
+        <rect x="-25" y="-15" width="50" height="30" rx="5" fill="#3498db" stroke="#2980b9" stroke-width="1"/>
+        <rect x="-20" y="-10" width="40" height="5" rx="2" fill="#2980b9"/>
+        <rect x="-20" y="0" width="25" height="10" rx="2" fill="#1a5276"/>
+        <!-- Crypto symbol -->
+        <circle cx="10" cy="5" r="6" fill="#f39c12" stroke="#d68910" stroke-width="1"/>
+        <text x="10" y="8" font-size="8" fill="#fff" text-anchor="middle" font-weight="bold">₿</text>
+      </g>
+
+      <!-- Stand banner -->
+      <rect x="-70" y="60" width="140" height="35" rx="3" fill="#2c3e50"/>
+      <text x="0" y="82" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="#3498db">BLADE WALLET</text>
+      <text x="0" y="92" text-anchor="middle" font-family="Arial, sans-serif" font-size="7" fill="#85c1e9">Digital Wallet Infrastructure</text>
+
+      <!-- Phone display -->
+      <g transform="translate(-50, 15)">
+        <rect x="0" y="0" width="20" height="35" rx="3" fill="#2c3e50" stroke="#3498db" stroke-width="1"/>
+        <rect x="2" y="3" width="16" height="26" fill="#0d1b2a"/>
+        <circle cx="10" cy="32" r="2" fill="#3498db"/>
+      </g>
+
+      <!-- INTS running the stand -->
+      <g transform="translate(60, 40)">
+        <ellipse cx="0" cy="45" rx="10" ry="5" fill="#000" opacity="0.2"/>
+        <ellipse cx="0" cy="30" rx="10" ry="15" fill="#3498db" stroke="#333" stroke-width="1"/>
+        <circle cx="0" cy="8" r="10" fill="#ffd5b4" stroke="#333" stroke-width="1"/>
+        <circle cx="-3" cy="6" r="2" fill="#333"/>
+        <circle cx="3" cy="6" r="2" fill="#333"/>
+        <path d="M -4,12 Q 0,16 4,12" stroke="#333" fill="none" stroke-width="1"/>
+        <ellipse cx="0" cy="-2" rx="10" ry="6" fill="#4a3728" stroke="#333" stroke-width="0.5"/>
+        <!-- Pointing at stand -->
+        <line x1="-12" y1="25" x2="-25" y2="15" stroke="#ffd5b4" stroke-width="3"/>
+        <g transform="translate(0, 50)">
+          <rect x="-12" y="0" width="24" height="10" rx="2" fill="#3498db" stroke="#333" stroke-width="0.5"/>
+          <text x="0" y="7" text-anchor="middle" font-size="6" font-weight="bold" fill="#fff">INTS</text>
+        </g>
+      </g>
+
+      <!-- Kasturi visiting -->
+      <g transform="translate(-100, 60)">
+        <ellipse cx="0" cy="35" rx="8" ry="4" fill="#000" opacity="0.15"/>
+        <ellipse cx="0" cy="22" rx="8" ry="12" fill="#9b59b6" stroke="#333" stroke-width="0.8"/>
+        <circle cx="0" cy="5" r="8" fill="#ffd5b4" stroke="#333" stroke-width="0.6"/>
+        <circle cx="-2" cy="3" r="1.5" fill="#333"/>
+        <circle cx="2" cy="3" r="1.5" fill="#333"/>
+        <path d="M -3,8 Q 0,11 3,8" stroke="#333" fill="none" stroke-width="0.8"/>
+        <ellipse cx="0" cy="-3" rx="8" ry="5" fill="#1a1a1a"/>
+        <text x="0" y="48" text-anchor="middle" font-size="5" fill="#9b59b6" font-weight="bold">KASTURI</text>
+      </g>
+
+      <!-- Patrik visiting -->
+      <g transform="translate(-60, 90)">
+        <ellipse cx="0" cy="35" rx="8" ry="4" fill="#000" opacity="0.15"/>
+        <ellipse cx="0" cy="22" rx="8" ry="12" fill="#2ecc71" stroke="#333" stroke-width="0.8"/>
+        <circle cx="0" cy="5" r="8" fill="#ffd5b4" stroke="#333" stroke-width="0.6"/>
+        <circle cx="-2" cy="3" r="1.5" fill="#333"/>
+        <circle cx="2" cy="3" r="1.5" fill="#333"/>
+        <path d="M -3,8 Q 0,11 3,8" stroke="#333" fill="none" stroke-width="0.8"/>
+        <rect x="-6" y="-1" width="12" height="4" rx="1" fill="#5d4e37"/>
+        <text x="0" y="48" text-anchor="middle" font-size="5" fill="#2ecc71" font-weight="bold">PATRIK</text>
+      </g>
+
+      <!-- Artem visiting -->
+      <g transform="translate(100, 80)">
+        <ellipse cx="0" cy="35" rx="8" ry="4" fill="#000" opacity="0.15"/>
+        <ellipse cx="0" cy="22" rx="8" ry="12" fill="#f39c12" stroke="#333" stroke-width="0.8"/>
+        <circle cx="0" cy="5" r="8" fill="#ffd5b4" stroke="#333" stroke-width="0.6"/>
+        <circle cx="-2" cy="3" r="1.5" fill="#333"/>
+        <circle cx="2" cy="3" r="1.5" fill="#333"/>
+        <path d="M -3,8 Q 0,11 3,8" stroke="#333" fill="none" stroke-width="0.8"/>
+        <rect x="-8" y="-5" width="16" height="6" rx="1" fill="#f39c12"/>
+        <text x="0" y="48" text-anchor="middle" font-size="5" fill="#f39c12" font-weight="bold">ARTEM</text>
+      </g>
+    </g>
+
+    <!-- ============================================ -->
+    <!-- ZEROH STAND (Bottom Center) -->
+    <!-- With Sami running it + Kostya, Olena, Vova -->
+    <!-- ============================================ -->
+    <g id="zeroh-stand" transform="translate(1550, 2250)">
+      <!-- Stand structure - green theme -->
+      <rect x="-80" y="0" width="160" height="100" rx="5" fill="#0a2e0a" stroke="#00ff00" stroke-width="2"/>
+      <rect x="-75" y="5" width="150" height="50" rx="3" fill="#051a05"/>
+
+      <!-- ZeroH Logo -->
+      <g transform="translate(0, 30)">
+        <!-- Stylized 0H logo -->
+        <circle cx="-15" cy="0" r="12" fill="none" stroke="#00ff00" stroke-width="3"/>
+        <text x="-15" y="5" font-size="12" fill="#00ff00" text-anchor="middle" font-weight="bold">0</text>
+        <text x="10" y="8" font-size="18" fill="#00ff00" font-weight="bold">H</text>
+        <!-- Glow effect -->
+        <circle cx="-15" cy="0" r="15" fill="none" stroke="#00ff00" stroke-width="1" opacity="0.3"/>
+      </g>
+
+      <!-- Stand banner -->
+      <rect x="-70" y="60" width="140" height="35" rx="3" fill="#1a3a1a"/>
+      <text x="0" y="80" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#00ff00">ZEROH</text>
+      <text x="0" y="92" text-anchor="middle" font-family="Arial, sans-serif" font-size="7" fill="#7dff7d">Agentic GRC Automation</text>
+
+      <!-- SAMI running the stand -->
+      <g transform="translate(70, 40)">
+        <ellipse cx="0" cy="45" rx="10" ry="5" fill="#000" opacity="0.2"/>
+        <ellipse cx="0" cy="30" rx="10" ry="15" fill="#e74c3c" stroke="#333" stroke-width="1"/>
+        <circle cx="0" cy="8" r="10" fill="#ffd5b4" stroke="#333" stroke-width="1"/>
+        <circle cx="-3" cy="6" r="2" fill="#333"/>
+        <circle cx="3" cy="6" r="2" fill="#333"/>
+        <path d="M -4,12 Q 0,16 4,12" stroke="#333" fill="none" stroke-width="1"/>
+        <!-- Firefighter helmet -->
+        <ellipse cx="0" cy="-2" rx="11" ry="6" fill="#c0392b" stroke="#922b21" stroke-width="1"/>
+        <rect x="-8" y="-6" width="16" height="4" fill="#ffd700"/>
+        <g transform="translate(0, 50)">
+          <rect x="-12" y="0" width="24" height="10" rx="2" fill="#e74c3c" stroke="#333" stroke-width="0.5"/>
+          <text x="0" y="7" text-anchor="middle" font-size="6" font-weight="bold" fill="#fff">SAMI</text>
+        </g>
+      </g>
+
+      <!-- Kostya visiting -->
+      <g transform="translate(-100, 55)">
+        <ellipse cx="0" cy="35" rx="8" ry="4" fill="#000" opacity="0.15"/>
+        <ellipse cx="0" cy="22" rx="8" ry="12" fill="#1abc9c" stroke="#333" stroke-width="0.8"/>
+        <circle cx="0" cy="5" r="8" fill="#ffd5b4" stroke="#333" stroke-width="0.6"/>
+        <circle cx="-2" cy="3" r="1.5" fill="#333"/>
+        <circle cx="2" cy="3" r="1.5" fill="#333"/>
+        <path d="M -3,8 Q 0,11 3,8" stroke="#333" fill="none" stroke-width="0.8"/>
+        <!-- Lab goggles -->
+        <rect x="-6" y="0" width="12" height="4" rx="1" fill="#333" opacity="0.5"/>
+        <text x="0" y="48" text-anchor="middle" font-size="5" fill="#1abc9c" font-weight="bold">KOSTYA</text>
+      </g>
+
+      <!-- Olena visiting -->
+      <g transform="translate(-50, 85)">
+        <ellipse cx="0" cy="35" rx="8" ry="4" fill="#000" opacity="0.15"/>
+        <ellipse cx="0" cy="22" rx="8" ry="12" fill="#e91e63" stroke="#333" stroke-width="0.8"/>
+        <circle cx="0" cy="5" r="8" fill="#ffd5b4" stroke="#333" stroke-width="0.6"/>
+        <circle cx="-2" cy="3" r="1.5" fill="#333"/>
+        <circle cx="2" cy="3" r="1.5" fill="#333"/>
+        <path d="M -3,8 Q 0,11 3,8" stroke="#333" fill="none" stroke-width="0.8"/>
+        <ellipse cx="0" cy="-3" rx="8" ry="5" fill="#8b4513"/>
+        <!-- Crown -->
+        <polygon points="0,-10 -4,-5 4,-5" fill="#ffd700" stroke="#daa520" stroke-width="0.3"/>
+        <text x="0" y="48" text-anchor="middle" font-size="5" fill="#e91e63" font-weight="bold">OLENA</text>
+      </g>
+
+      <!-- Vova visiting -->
+      <g transform="translate(110, 70)">
+        <ellipse cx="0" cy="35" rx="8" ry="4" fill="#000" opacity="0.15"/>
+        <ellipse cx="0" cy="22" rx="8" ry="12" fill="#00bcd4" stroke="#333" stroke-width="0.8"/>
+        <circle cx="0" cy="5" r="8" fill="#ffd5b4" stroke="#333" stroke-width="0.6"/>
+        <circle cx="-2" cy="3" r="1.5" fill="#333"/>
+        <circle cx="2" cy="3" r="1.5" fill="#333"/>
+        <path d="M -3,8 Q 0,11 3,8" stroke="#333" fill="none" stroke-width="0.8"/>
+        <text x="0" y="48" text-anchor="middle" font-size="5" fill="#00bcd4" font-weight="bold">VOVA</text>
+      </g>
+    </g>
+
+    <!-- ============================================ -->
+    <!-- BLADE LABS STAND (Bottom Right) -->
+    <!-- With Valera running it + fire + Dima, Misha, Ruslan -->
+    <!-- All bulky, happy but tough -->
+    <!-- ============================================ -->
+    <g id="blade-labs-stand" transform="translate(2350, 2230)">
+      <!-- Stand structure -->
+      <rect x="-80" y="0" width="160" height="100" rx="5" fill="#2c1810" stroke="#ff5722" stroke-width="2"/>
+      <rect x="-75" y="5" width="150" height="50" rx="3" fill="#1a0f0a"/>
+
+      <!-- Blade Labs Logo with Fire -->
+      <g transform="translate(0, 25)">
+        <!-- Blade shape -->
+        <polygon points="-20,-10 0,-20 20,-10 15,10 -15,10" fill="#ff5722" stroke="#e64a19" stroke-width="1"/>
+        <polygon points="-12,-5 0,-12 12,-5 8,5 -8,5" fill="#ff7043"/>
+
+        <!-- Fire next to logo -->
+        <g transform="translate(35, -5)" class="fire">
+          <ellipse cx="0" cy="5" rx="10" ry="15" fill="#ff4500" opacity="0.9"/>
+          <ellipse cx="0" cy="2" rx="7" ry="10" fill="#ff8c00"/>
+          <ellipse cx="0" cy="0" rx="4" ry="6" fill="#ffd700"/>
+          <ellipse cx="0" cy="-2" rx="2" ry="3" fill="#fff5e0"/>
+        </g>
+        <g transform="translate(-35, -5)" class="fire">
+          <ellipse cx="0" cy="5" rx="10" ry="15" fill="#ff4500" opacity="0.9"/>
+          <ellipse cx="0" cy="2" rx="7" ry="10" fill="#ff8c00"/>
+          <ellipse cx="0" cy="0" rx="4" ry="6" fill="#ffd700"/>
+          <ellipse cx="0" cy="-2" rx="2" ry="3" fill="#fff5e0"/>
+        </g>
+      </g>
+
+      <!-- Stand banner -->
+      <rect x="-70" y="60" width="140" height="35" rx="3" fill="#3e2723"/>
+      <text x="0" y="80" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#ff5722">BLADE LABS</text>
+      <text x="0" y="92" text-anchor="middle" font-family="Arial, sans-serif" font-size="7" fill="#ffab91">Innovation through Fire 🔥</text>
+
+      <!-- VALERA running the stand (bulky, happy-tough, headband, unibrow) -->
+      <g transform="translate(70, 35)">
+        <ellipse cx="0" cy="50" rx="12" ry="6" fill="#000" opacity="0.2"/>
+        <ellipse cx="0" cy="32" rx="12" ry="18" fill="#ff5722" stroke="#333" stroke-width="1"/>
+        <circle cx="0" cy="8" r="11" fill="#ffd5b4" stroke="#333" stroke-width="1"/>
+        <!-- Colored headband -->
+        <path d="M -10,-1 Q 0,-4 10,-1" stroke="#ff5722" stroke-width="4" fill="none"/>
+        <path d="M -10,-1 Q 0,-4 10,-1" stroke="#e64a19" stroke-width="2" fill="none"/>
+        <circle cx="-4" cy="6" r="2" fill="#333"/>
+        <circle cx="4" cy="6" r="2" fill="#333"/>
+        <!-- Thick furry unibrow -->
+        <path d="M -7,2 Q 0,0 7,2" stroke="#333" stroke-width="2.5" fill="none"/>
+        <!-- Happy but tough smile -->
+        <path d="M -3,11 Q 0,14 3,11" stroke="#333" fill="none" stroke-width="1.2"/>
+        <!-- Muscular arms flexing -->
+        <path d="M -12,20 Q -20,15 -18,25 Q -22,30 -15,35" stroke="#ffd5b4" stroke-width="4" fill="none"/>
+        <path d="M 12,20 Q 20,15 18,25 Q 22,30 15,35" stroke="#ffd5b4" stroke-width="4" fill="none"/>
+        <g transform="translate(0, 55)">
+          <rect x="-14" y="0" width="28" height="10" rx="2" fill="#ff5722" stroke="#333" stroke-width="0.5"/>
+          <text x="0" y="7" text-anchor="middle" font-size="6" font-weight="bold" fill="#fff">VALERA</text>
+        </g>
+      </g>
+
+      <!-- Dima (bulky, happy-tough, headband, unibrow) -->
+      <g transform="translate(-110, 50)">
+        <ellipse cx="0" cy="50" rx="12" ry="6" fill="#000" opacity="0.2"/>
+        <ellipse cx="0" cy="32" rx="12" ry="18" fill="#8bc34a" stroke="#333" stroke-width="1"/>
+        <circle cx="0" cy="8" r="11" fill="#ffd5b4" stroke="#333" stroke-width="1"/>
+        <!-- Colored headband -->
+        <path d="M -10,-1 Q 0,-4 10,-1" stroke="#8bc34a" stroke-width="4" fill="none"/>
+        <path d="M -10,-1 Q 0,-4 10,-1" stroke="#7cb342" stroke-width="2" fill="none"/>
+        <circle cx="-4" cy="6" r="2" fill="#333"/>
+        <circle cx="4" cy="6" r="2" fill="#333"/>
+        <!-- Thick furry unibrow -->
+        <path d="M -7,2 Q 0,0 7,2" stroke="#333" stroke-width="2.5" fill="none"/>
+        <!-- Happy but tough smile -->
+        <path d="M -3,11 Q 0,14 3,11" stroke="#333" fill="none" stroke-width="1.2"/>
+        <!-- Muscular arms flexing -->
+        <path d="M -12,20 Q -20,15 -18,25 Q -22,30 -15,35" stroke="#ffd5b4" stroke-width="4" fill="none"/>
+        <path d="M 12,20 Q 20,15 18,25 Q 22,30 15,35" stroke="#ffd5b4" stroke-width="4" fill="none"/>
+        <g transform="translate(0, 55)">
+          <rect x="-12" y="0" width="24" height="10" rx="2" fill="#8bc34a" stroke="#333" stroke-width="0.5"/>
+          <text x="0" y="7" text-anchor="middle" font-size="6" font-weight="bold" fill="#fff">DIMA</text>
+        </g>
+      </g>
+
+      <!-- Misha (bulky, happy-tough, headband, unibrow) -->
+      <g transform="translate(-55, 85)">
+        <ellipse cx="0" cy="50" rx="12" ry="6" fill="#000" opacity="0.2"/>
+        <ellipse cx="0" cy="32" rx="12" ry="18" fill="#ff9800" stroke="#333" stroke-width="1"/>
+        <circle cx="0" cy="8" r="11" fill="#ffd5b4" stroke="#333" stroke-width="1"/>
+        <!-- Colored headband (replaces cowboy hat) -->
+        <path d="M -10,-1 Q 0,-4 10,-1" stroke="#ff9800" stroke-width="4" fill="none"/>
+        <path d="M -10,-1 Q 0,-4 10,-1" stroke="#f57c00" stroke-width="2" fill="none"/>
+        <circle cx="-4" cy="6" r="2" fill="#333"/>
+        <circle cx="4" cy="6" r="2" fill="#333"/>
+        <!-- Thick furry unibrow -->
+        <path d="M -7,2 Q 0,0 7,2" stroke="#333" stroke-width="2.5" fill="none"/>
+        <!-- Happy but tough smile -->
+        <path d="M -3,11 Q 0,14 3,11" stroke="#333" fill="none" stroke-width="1.2"/>
+        <!-- Muscular arms flexing -->
+        <path d="M -12,20 Q -20,15 -18,25 Q -22,30 -15,35" stroke="#ffd5b4" stroke-width="4" fill="none"/>
+        <path d="M 12,20 Q 20,15 18,25 Q 22,30 15,35" stroke="#ffd5b4" stroke-width="4" fill="none"/>
+        <g transform="translate(0, 55)">
+          <rect x="-14" y="0" width="28" height="10" rx="2" fill="#ff9800" stroke="#333" stroke-width="0.5"/>
+          <text x="0" y="7" text-anchor="middle" font-size="6" font-weight="bold" fill="#fff">MISHA</text>
+        </g>
+      </g>
+
+      <!-- Ruslan (bulky, happy-tough, headband, unibrow) -->
+      <g transform="translate(110, 80)">
+        <ellipse cx="0" cy="50" rx="12" ry="6" fill="#000" opacity="0.2"/>
+        <ellipse cx="0" cy="32" rx="12" ry="18" fill="#673ab7" stroke="#333" stroke-width="1"/>
+        <circle cx="0" cy="8" r="11" fill="#ffd5b4" stroke="#333" stroke-width="1"/>
+        <!-- Colored headband -->
+        <path d="M -10,-1 Q 0,-4 10,-1" stroke="#673ab7" stroke-width="4" fill="none"/>
+        <path d="M -10,-1 Q 0,-4 10,-1" stroke="#512da8" stroke-width="2" fill="none"/>
+        <circle cx="-4" cy="6" r="2" fill="#333"/>
+        <circle cx="4" cy="6" r="2" fill="#333"/>
+        <!-- Thick furry unibrow -->
+        <path d="M -7,2 Q 0,0 7,2" stroke="#333" stroke-width="2.5" fill="none"/>
+        <!-- Happy but tough smile -->
+        <path d="M -3,11 Q 0,14 3,11" stroke="#333" fill="none" stroke-width="1.2"/>
+        <!-- Muscular arms flexing -->
+        <path d="M -12,20 Q -20,15 -18,25 Q -22,30 -15,35" stroke="#ffd5b4" stroke-width="4" fill="none"/>
+        <path d="M 12,20 Q 20,15 18,25 Q 22,30 15,35" stroke="#ffd5b4" stroke-width="4" fill="none"/>
+        <g transform="translate(0, 55)">
+          <rect x="-16" y="0" width="32" height="10" rx="2" fill="#673ab7" stroke="#333" stroke-width="0.5"/>
+          <text x="0" y="7" text-anchor="middle" font-size="6" font-weight="bold" fill="#fff">RUSLAN</text>
+        </g>
+      </g>
+    </g>
+
+    <!-- ============================================ -->
+    <!-- MOON (Top Left Corner) -->
+    <!-- ============================================ -->
+    <g id="moon" transform="translate(120, 120)">
+      <!-- Moon glow -->
+      <circle cx="0" cy="0" r="70" fill="#fffde7" opacity="0.15"/>
+      <circle cx="0" cy="0" r="55" fill="#fffde7" opacity="0.2"/>
+      <!-- Moon body -->
+      <circle cx="0" cy="0" r="45" fill="#f5f5dc"/>
+      <circle cx="0" cy="0" r="45" fill="url(#moonGradient)"/>
+      <!-- Moon craters -->
+      <circle cx="-15" cy="-10" r="8" fill="#e0e0c0" opacity="0.6"/>
+      <circle cx="10" cy="5" r="12" fill="#dcdcb0" opacity="0.5"/>
+      <circle cx="-5" cy="18" r="6" fill="#e5e5c5" opacity="0.5"/>
+      <circle cx="20" cy="-15" r="5" fill="#e0e0c0" opacity="0.4"/>
+      <circle cx="-20" cy="8" r="4" fill="#dcdcb0" opacity="0.5"/>
+      <!-- Moon highlight -->
+      <ellipse cx="-12" cy="-15" rx="15" ry="10" fill="#fff" opacity="0.3"/>
+    </g>
+
+    <!-- ============================================ -->
+    <!-- ERIK SCENE - AI Alarm Clock Dream Coder -->
+    <!-- Right side, below the road -->
+    <!-- ============================================ -->
+    <g id="erik-scene" transform="translate(2100, 2050)">
+      <!-- Bed/Sleeping area -->
+      <g id="erik-bed">
+        <!-- Bed shadow -->
+        <ellipse cx="30" cy="80" rx="70" ry="20" fill="#000" opacity="0.15"/>
+        <!-- Bed frame -->
+        <rect x="-40" y="30" width="140" height="50" rx="5" fill="#8b4513" stroke="#5c3317" stroke-width="2"/>
+        <!-- Mattress -->
+        <rect x="-35" y="20" width="130" height="35" rx="3" fill="#f0f0f0" stroke="#ddd" stroke-width="1"/>
+        <!-- Pillow -->
+        <ellipse cx="-10" cy="30" rx="25" ry="15" fill="#fff" stroke="#ddd" stroke-width="1"/>
+        <!-- Blanket (messy, half thrown off) -->
+        <path d="M -30,35 Q 10,25 60,40 Q 80,50 70,70 L -30,70 Z" fill="#4169e1" stroke="#2c4c9c" stroke-width="1"/>
+        <path d="M 60,40 Q 90,35 100,55 L 70,70 Q 80,50 60,40" fill="#5179f1" stroke="#2c4c9c" stroke-width="1"/>
+      </g>
+
+      <!-- ERIK bolting upright in bed -->
+      <g id="erik-character" transform="translate(20, 0)">
+        <!-- Body (sitting up suddenly) -->
+        <ellipse cx="0" cy="30" rx="15" ry="20" fill="#3498db" stroke="#333" stroke-width="1.5"/>
+        <!-- Arms raised in shock -->
+        <ellipse cx="-25" cy="15" rx="10" ry="5" fill="#3498db" stroke="#333" stroke-width="1" transform="rotate(-45 -25 15)"/>
+        <ellipse cx="25" cy="15" rx="10" ry="5" fill="#3498db" stroke="#333" stroke-width="1" transform="rotate(45 25 15)"/>
+        <circle cx="-32" cy="8" r="4" fill="#ffd5b4" stroke="#333" stroke-width="0.5"/>
+        <circle cx="32" cy="8" r="4" fill="#ffd5b4" stroke="#333" stroke-width="0.5"/>
+        <!-- Head (shocked expression) -->
+        <circle cx="0" cy="-5" r="15" fill="#ffd5b4" stroke="#333" stroke-width="1.5"/>
+        <!-- Messy bed hair -->
+        <path d="M -12,-18 Q -15,-25 -8,-22 Q -12,-28 -5,-24 Q -8,-30 0,-25 Q 5,-32 8,-24 Q 12,-28 10,-22 Q 15,-25 12,-18" fill="#4a3728" stroke="#333" stroke-width="0.5"/>
+        <!-- Wide shocked eyes -->
+        <circle cx="-5" cy="-8" r="4" fill="#fff" stroke="#333" stroke-width="0.5"/>
+        <circle cx="5" cy="-8" r="4" fill="#fff" stroke="#333" stroke-width="0.5"/>
+        <circle cx="-5" cy="-7" r="2" fill="#333"/>
+        <circle cx="5" cy="-7" r="2" fill="#333"/>
+        <!-- Open mouth (yelling) -->
+        <ellipse cx="0" cy="3" rx="6" ry="5" fill="#8B0000" stroke="#333" stroke-width="0.5"/>
+        <!-- Sweat drops -->
+        <path d="M 18,-5 Q 20,-8 22,-5 Q 20,-2 18,-5" fill="#87ceeb"/>
+        <path d="M -20,-3 Q -18,-6 -16,-3 Q -18,0 -20,-3" fill="#87ceeb"/>
+      </g>
+
+      <!-- AI Alarm Clock (glowing, futuristic) -->
+      <g id="ai-alarm-clock" transform="translate(80, 30)">
+        <!-- Clock glow -->
+        <ellipse cx="0" cy="20" rx="35" ry="8" fill="#00ffff" opacity="0.2"/>
+        <!-- Clock body -->
+        <rect x="-25" y="-15" width="50" height="35" rx="5" fill="#2c2c2c" stroke="#00ffff" stroke-width="2"/>
+        <!-- Digital display -->
+        <rect x="-20" y="-10" width="40" height="18" rx="2" fill="#001a1a"/>
+        <!-- AI eye/display -->
+        <circle cx="0" cy="-1" r="6" fill="#00ffff" opacity="0.8"/>
+        <circle cx="0" cy="-1" r="3" fill="#fff"/>
+        <!-- Time display -->
+        <text x="0" y="15" text-anchor="middle" font-family="monospace" font-size="6" fill="#00ffff">3:47 AM</text>
+        <!-- AI waves emanating -->
+        <path d="M -35,-5 Q -40,0 -35,5" stroke="#00ffff" stroke-width="1.5" fill="none" opacity="0.7"/>
+        <path d="M -40,-8 Q -48,0 -40,8" stroke="#00ffff" stroke-width="1" fill="none" opacity="0.5"/>
+        <path d="M 35,-5 Q 40,0 35,5" stroke="#00ffff" stroke-width="1.5" fill="none" opacity="0.7"/>
+        <path d="M 40,-8 Q 48,0 40,8" stroke="#00ffff" stroke-width="1" fill="none" opacity="0.5"/>
+        <!-- "DREAM DETECTED" text -->
+        <text x="0" y="-22" text-anchor="middle" font-family="Arial" font-size="5" fill="#00ffff">DREAM DETECTED!</text>
+      </g>
+
+      <!-- Speech bubble with code snippets -->
+      <g transform="translate(-50, -60)">
+        <ellipse cx="50" cy="0" rx="70" ry="35" fill="#fff" stroke="#333" stroke-width="1.5"/>
+        <polygon points="60,30 50,50 75,32" fill="#fff" stroke="#333" stroke-width="1.5"/>
+        <text x="50" y="-15" text-anchor="middle" font-family="monospace" font-size="7" fill="#333">if (dream.isEpic) {</text>
+        <text x="50" y="-5" text-anchor="middle" font-family="monospace" font-size="7" fill="#e74c3c">  app.create();</text>
+        <text x="50" y="5" text-anchor="middle" font-family="monospace" font-size="7" fill="#333">  sync(calendar);</text>
+        <text x="50" y="15" text-anchor="middle" font-family="monospace" font-size="7" fill="#333">}</text>
+      </g>
+
+      <!-- Sleep journal/laptop on nightstand -->
+      <g transform="translate(-80, 35)">
+        <!-- Nightstand -->
+        <rect x="-20" y="20" width="40" height="30" rx="2" fill="#8b4513" stroke="#5c3317" stroke-width="1"/>
+        <!-- Laptop -->
+        <rect x="-15" y="10" width="30" height="18" rx="2" fill="#333" stroke="#222" stroke-width="1"/>
+        <rect x="-13" y="12" width="26" height="13" fill="#1a1a2e"/>
+        <!-- Code on laptop screen -->
+        <text x="0" y="20" text-anchor="middle" font-family="monospace" font-size="4" fill="#00ff00">syncing...</text>
+        <!-- Calendar icon floating -->
+        <g transform="translate(25, -10)" opacity="0.8">
+          <rect x="-8" y="-8" width="16" height="16" rx="2" fill="#fff" stroke="#e74c3c" stroke-width="1"/>
+          <rect x="-8" y="-8" width="16" height="5" fill="#e74c3c"/>
+          <text x="0" y="4" text-anchor="middle" font-size="6" fill="#333">📅</text>
+        </g>
+      </g>
+
+      <!-- Dream cloud/thought bubble with adventure scene -->
+      <g transform="translate(130, -40)" opacity="0.7">
+        <!-- Cloud shape -->
+        <ellipse cx="0" cy="0" rx="40" ry="25" fill="#e6e6ff" stroke="#9999ff" stroke-width="1"/>
+        <ellipse cx="-25" cy="5" rx="15" ry="12" fill="#e6e6ff"/>
+        <ellipse cx="25" cy="5" rx="15" ry="12" fill="#e6e6ff"/>
+        <ellipse cx="0" cy="15" rx="20" ry="10" fill="#e6e6ff"/>
+        <!-- Mini adventure scene inside -->
+        <text x="0" y="-5" text-anchor="middle" font-size="10">🏔️</text>
+        <text x="-15" y="8" text-anchor="middle" font-size="8">🧗</text>
+        <text x="15" y="8" text-anchor="middle" font-size="8">💫</text>
+        <!-- Connection bubbles -->
+        <circle cx="-30" cy="35" r="6" fill="#e6e6ff" stroke="#9999ff" stroke-width="0.5"/>
+        <circle cx="-20" cy="45" r="4" fill="#e6e6ff" stroke="#9999ff" stroke-width="0.5"/>
+      </g>
+
+      <!-- "Subconscious Meeting" calendar popup -->
+      <g transform="translate(-100, -30)">
+        <rect x="-35" y="-15" width="70" height="30" rx="3" fill="#fff" stroke="#4CAF50" stroke-width="1.5"/>
+        <rect x="-35" y="-15" width="70" height="10" rx="3" fill="#4CAF50"/>
+        <text x="0" y="-8" text-anchor="middle" font-family="Arial" font-size="5" fill="#fff" font-weight="bold">📅 NEW EVENT</text>
+        <text x="0" y="2" text-anchor="middle" font-family="Arial" font-size="4" fill="#333">Subconscious Meeting</text>
+        <text x="0" y="10" text-anchor="middle" font-family="Arial" font-size="4" fill="#666">3:47 AM - Dream Sync</text>
+      </g>
+
+      <!-- ZZZ floating (waking up from sleep) -->
+      <g transform="translate(60, -50)">
+        <text x="0" y="0" font-size="12" fill="#666" opacity="0.5">Z</text>
+        <text x="10" y="-10" font-size="10" fill="#666" opacity="0.4">z</text>
+        <text x="18" y="-18" font-size="8" fill="#666" opacity="0.3">z</text>
+      </g>
+
+      <!-- NAME TAG -->
+      <g transform="translate(20, 85)">
+        <rect x="-15" y="0" width="30" height="12" rx="2" fill="#fff" stroke="#333" stroke-width="1"/>
+        <text x="0" y="9" font-family="Arial, sans-serif" font-size="8" font-weight="bold" fill="#333" text-anchor="middle">ERIK</text>
+      </g>
+    </g>
+
     <!-- VERSION INDICATOR (bottom right corner) - bump with each release -->
     <g id="version-indicator" transform="translate(3050, 2360)">
       <rect x="0" y="0" width="140" height="30" rx="5" fill="#000" opacity="0.6"/>
-      <text x="70" y="20" text-anchor="middle" font-family="monospace" font-size="14" fill="#fff" font-weight="bold">v4.4</text>
+      <text x="70" y="20" text-anchor="middle" font-family="monospace" font-size="14" fill="#fff" font-weight="bold">v4.7</text>
     </g>
 
   </svg>
@@ -6314,6 +8115,14 @@
         title: "Photo Bomb",
         story: "Ruslan tries to take a serious photo → photobombed by literally everyone in the city one by one → final photo has 312 people and 1 sneaky yeti.",
         hint: "Look for the photo spot"
+      },
+      // Erik (25)
+      {
+        id: 25,
+        person: "Erik",
+        title: "Dream Coder",
+        story: "Erik customizes his alarm clock with AI → clock predicts his dreams and wakes him mid-adventure → Erik bolts upright yelling code snippets → accidentally vibe codes a new app in his sleep journal, syncing his dreams to his calendar as \"subconscious meetings.\"",
+        hint: "Find the sleepy coder"
       }
     ];
 
@@ -6330,7 +8139,8 @@
       { name: "Vova", color: "#00bcd4", icon: "🧑" },
       { name: "Dima", color: "#8bc34a", icon: "👨‍💻" },
       { name: "Misha", color: "#ff9800", icon: "🤠" },
-      { name: "Ruslan", color: "#673ab7", icon: "👨" }
+      { name: "Ruslan", color: "#673ab7", icon: "👨" },
+      { name: "Erik", color: "#00aaff", icon: "😴" }
     ];
 
     // Persistent userId (survives page refresh)
@@ -6351,11 +8161,13 @@
       users: {},
       cards: {},
       userId: getOrCreateUserId(),
-      selectedName: null
+      selectedName: null,
+      hideAllCursors: false,
+      hiddenCursors: new Set() // Set of user names to hide cursors for
     };
 
     // Initialize cards state (all face-down)
-    for (let i = 1; i <= 24; i++) {
+    for (let i = 1; i <= 25; i++) {
       appState.cards[i] = { flipped: false };
     }
 
@@ -6366,12 +8178,14 @@
     const cardDeck = document.getElementById('cardDeck');
     const cardsGrid = document.getElementById('cardsGrid');
     const storyPreview = document.getElementById('storyPreview');
+    const personalPreview = document.getElementById('personalPreview');
     const userListOnline = document.getElementById('userListOnline');
     const userListOffline = document.getElementById('userListOffline');
     const cursorsContainer = document.getElementById('cursorsContainer');
     const connectionStatus = document.getElementById('connectionStatus');
     const connectionText = document.getElementById('connectionText');
     const svgContainer = document.getElementById('svgContainer');
+    const hideCursorsBtn = document.getElementById('hideCursorsBtn');
 
     // Check for secret host parameter in URL (use ?blade_host_key=winterfest2025)
     const urlParams = new URLSearchParams(window.location.search);
@@ -6450,10 +8264,7 @@
       // Set up cursor tracking
       setupCursorTracking();
 
-      // Update connection status
-      updateConnectionStatus('connected');
-
-      // Start Firebase sync (or local simulation)
+      // Start Firebase sync (connection status will be updated by Firebase listener)
       initFirebaseSync();
     }
 
@@ -6505,8 +8316,13 @@
       const isFlipped = appState.cards[cardId]?.flipped;
 
       if (isFlipped) {
-        // Anyone can view a flipped card
-        openCardModal(cardId);
+        if (appState.isHost) {
+          // Host opens synced preview for everyone
+          openCardModal(cardId);
+        } else {
+          // Non-host opens personal preview (not synced)
+          openPersonalPreview(cardId);
+        }
       } else if (appState.isHost) {
         // Only host can flip cards
         flipCard(cardId);
@@ -6541,15 +8357,15 @@
         cardEl.classList.remove('flipped');
       }
 
-      // Close story preview if showing this card
-      closeStoryPreview();
+      // Close story preview if showing this card - broadcast to all users
+      closeStoryPreview(true);
 
       // Sync to other users
       broadcastCardHide(cardId);
     }
 
-    // Open story preview (bottom-left panel instead of modal)
-    function openCardModal(cardId) {
+    // Open story preview (bottom-left panel instead of modal) - synced to all users!
+    function openCardModal(cardId, syncToOthers = true) {
       const cardData = CARDS_DATA.find(c => c.id === cardId);
       if (!cardData) return;
 
@@ -6564,17 +8380,50 @@
       document.getElementById('previewCardStory').textContent = cardData.story;
 
       storyPreview.classList.add('active');
+
+      // Broadcast to all users so everyone sees the same card
+      if (syncToOthers) {
+        broadcastCardView(cardId);
+      }
     }
 
-    // Close story preview
-    function closeStoryPreview() {
+    // Close story preview - synced to all users
+    function closeStoryPreview(syncToOthers = false) {
       storyPreview.classList.remove('active');
+      // Only broadcast if explicitly requested (to avoid infinite loops)
+      if (syncToOthers) {
+        broadcastCardClose();
+      }
     }
 
-    // Close preview on ESC
+    // Open personal preview (not synced - for individual viewing)
+    function openPersonalPreview(cardId) {
+      const cardData = CARDS_DATA.find(c => c.id === cardId);
+      if (!cardData) return;
+
+      // Find the person's icon
+      const member = TEAM_MEMBERS.find(m => m.name === cardData.person);
+      const icon = member ? member.icon : '👤';
+
+      document.getElementById('personalPersonIcon').textContent = icon;
+      document.getElementById('personalPersonName').textContent = cardData.person;
+      document.getElementById('personalCardTitle').textContent = cardData.title;
+      document.getElementById('personalCardNumber').textContent = `#${cardData.id}`;
+      document.getElementById('personalCardStory').textContent = cardData.story;
+
+      personalPreview.classList.add('active');
+    }
+
+    // Close personal preview (not synced)
+    function closePersonalPreview() {
+      personalPreview.classList.remove('active');
+    }
+
+    // Close preview on ESC - broadcasts to all users (and closes personal preview)
     document.addEventListener('keydown', function(e) {
       if (e.key === 'Escape') {
-        closeStoryPreview();
+        closeStoryPreview(true);
+        closePersonalPreview();
       }
     });
 
@@ -6593,21 +8442,38 @@
         const isOnline = onlineNames.has(member.name);
         const user = isOnline ? Object.values(appState.users).find(u => u.name === member.name) : null;
         const isIdle = user ? (Date.now() - user.lastActive > 5000) : false;
+        const isHidden = appState.hiddenCursors.has(member.name);
 
         const item = document.createElement('div');
-        item.className = 'user-item' + (isOnline ? (isIdle ? ' idle' : '') : ' offline');
+        item.className = 'user-item' + (isOnline ? (isIdle ? ' idle' : '') : ' offline') + (isHidden ? ' cursor-hidden' : '');
         item.innerHTML = `
           <span class="user-dot" style="background: ${member.color}"></span>
           <span>${member.name}</span>
           ${user?.isHost ? '<span class="host-badge">👑</span>' : ''}
+          ${isOnline ? '<span class="hide-cursor-icon" title="Click to toggle cursor visibility">👁</span>' : ''}
         `;
 
+        // Add click handler for online users to toggle cursor visibility
         if (isOnline) {
+          item.addEventListener('click', () => {
+            toggleUserCursor(member.name);
+          });
           userListOnline.appendChild(item);
         } else {
           userListOffline.appendChild(item);
         }
       });
+    }
+
+    // Toggle cursor visibility for a specific user
+    function toggleUserCursor(userName) {
+      if (appState.hiddenCursors.has(userName)) {
+        appState.hiddenCursors.delete(userName);
+      } else {
+        appState.hiddenCursors.add(userName);
+      }
+      renderUsersList();
+      renderCursors();
     }
 
     // Setup cursor tracking - converts to SVG viewBox coordinates for sync
@@ -6666,6 +8532,19 @@
       Object.entries(appState.users).forEach(([id, user]) => {
         if (id === appState.userId) return; // Don't show own cursor
         if (!user.cursor) return;
+
+        // Check if all cursors are hidden or this specific user's cursor is hidden
+        const shouldHide = appState.hideAllCursors || appState.hiddenCursors.has(user.name);
+
+        if (shouldHide) {
+          // Remove cursor if it exists
+          const existingCursor = cursorCache.get(id);
+          if (existingCursor) {
+            existingCursor.remove();
+            cursorCache.delete(id);
+          }
+          return;
+        }
 
         activeUserIds.add(id);
 
@@ -6727,6 +8606,7 @@
     const usersRef = database.ref(`rooms/${roomId}/users`);
     const cardsRef = database.ref(`rooms/${roomId}/cards`);
     const cursorsRef = database.ref(`rooms/${roomId}/cursors`);
+    const activeCardRef = database.ref(`rooms/${roomId}/activeCard`);
 
     function initFirebaseSync() {
       const myUserRef = usersRef.child(appState.userId);
@@ -6741,6 +8621,15 @@
       // Remove user data when disconnecting
       myUserRef.onDisconnect().remove();
       myCursorRef.onDisconnect().remove();
+
+      // Monitor actual connection state
+      database.ref('.info/connected').on('value', (snapshot) => {
+        if (snapshot.val() === true) {
+          updateConnectionStatus('connected');
+        } else {
+          updateConnectionStatus('disconnected');
+        }
+      });
 
       // Listen for other users joining/updating
       usersRef.on('child_added', (snapshot) => {
@@ -6823,6 +8712,18 @@
         }
       });
 
+      // Listen for active card view changes (sync card preview to all users!)
+      activeCardRef.on('value', (snapshot) => {
+        const data = snapshot.val();
+        if (data && data.cardId) {
+          // Someone opened a card - show it to everyone!
+          openCardModal(data.cardId, false); // false = don't re-broadcast
+        } else {
+          // Card was closed
+          closeStoryPreview();
+        }
+      });
+
       // High-frequency cursor rendering using requestAnimationFrame (~60fps)
       function cursorLoop() {
         renderCursors();
@@ -6875,6 +8776,18 @@
       cardsRef.child(cardId).set({ flipped: false });
     }
 
+    function broadcastCardView(cardId) {
+      activeCardRef.set({
+        cardId: cardId,
+        viewedBy: appState.users[appState.userId]?.name || 'Unknown',
+        timestamp: firebase.database.ServerValue.TIMESTAMP
+      });
+    }
+
+    function broadcastCardClose() {
+      activeCardRef.set(null);
+    }
+
     // Clean up on page unload
     window.addEventListener('beforeunload', () => {
       usersRef.child(appState.userId).remove();
@@ -6923,6 +8836,49 @@
 
     // Setup switch button
     document.getElementById('switchUserBtn').addEventListener('click', switchCharacter);
+
+    // Setup hide all cursors button
+    hideCursorsBtn.addEventListener('click', function() {
+      appState.hideAllCursors = !appState.hideAllCursors;
+      // When showing all cursors, also reset individual hidden cursors
+      if (!appState.hideAllCursors) {
+        appState.hiddenCursors.clear();
+        // Re-render user list to update individual toggle buttons
+        renderUsersList();
+      }
+      hideCursorsBtn.classList.toggle('active', appState.hideAllCursors);
+      hideCursorsBtn.textContent = appState.hideAllCursors ? 'Show All Cursors' : 'Hide All Cursors';
+      renderCursors();
+    });
+
+    // Setup show coordinates button
+    const showCoordsBtn = document.getElementById('showCoordsBtn');
+    const coordsDisplay = document.getElementById('coordsDisplay');
+    let showingCoords = false;
+
+    showCoordsBtn.addEventListener('click', function() {
+      showingCoords = !showingCoords;
+      coordsDisplay.style.display = showingCoords ? 'block' : 'none';
+      showCoordsBtn.classList.toggle('active', showingCoords);
+      showCoordsBtn.textContent = showingCoords ? 'Hide Coords' : 'Show Coords';
+    });
+
+    // Track mouse position on SVG and display coordinates
+    svgContainer.addEventListener('mousemove', function(e) {
+      if (!showingCoords) return;
+
+      const rect = svg.getBoundingClientRect();
+      const viewBox = svg.viewBox.baseVal;
+
+      // Convert screen coordinates to SVG viewBox coordinates
+      const scaleX = viewBox.width / rect.width;
+      const scaleY = viewBox.height / rect.height;
+
+      const svgX = Math.round((e.clientX - rect.left) * scaleX);
+      const svgY = Math.round((e.clientY - rect.top) * scaleY);
+
+      coordsDisplay.textContent = `X: ${svgX}, Y: ${svgY}`;
+    });
 
     // Initialize the app
     initNameGrid();
